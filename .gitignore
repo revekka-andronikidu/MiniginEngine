@@ -1,0 +1,15 @@
+bin/
+packages/
+.vs/
+*.user
+*.suo
+
+# Build artifacts
+Debug/
+Release/
+x64/
+x86/
+build/
+bin/
+obj/
+out/
