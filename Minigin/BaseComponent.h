@@ -24,11 +24,12 @@ namespace dae
 		bool IsMarkedForRemoval() const { return m_IsDeadComponent; };
 
 	protected:
-		GameObject* m_pOwner;
+		
 		explicit BaseComponent(GameObject* pOwner) : m_pOwner{ pOwner } {}; // protected constructor
 		GameObject* GetOwner() const { return m_pOwner; };
 
 	private:
+		GameObject* const m_pOwner;
 		bool m_IsDeadComponent{ false };
 
 	};

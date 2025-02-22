@@ -19,7 +19,7 @@ namespace dae
 		{
 			if (m_pTexture != nullptr)
 			{
-				const glm::vec3& pos = m_pOwner->GetTransform().GetPosition();
+				const glm::vec3& pos = GetOwner()->GetTransform().GetPosition();
 
 				Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
 

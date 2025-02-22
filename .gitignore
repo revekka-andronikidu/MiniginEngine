@@ -7,9 +7,12 @@ packages/
 # Build artifacts
 Debug/
 Release/
-x64/
-x86/
+
 build/
 bin/
 obj/
 out/
+
+#Whitelist SDL
+!SDL2/lib/**/
+!SDL2/lib/**/*

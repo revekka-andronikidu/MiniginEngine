@@ -36,7 +36,6 @@ namespace dae
 					static_assert(std::is_base_of_v<BaseComponent, ComponentType>,
 						"ComponentType must derive from BaseComponent");
 
-
 					// Check if a component of the exact type already exists
 					for (const auto& component : m_pComponents) 
 					{
@@ -48,9 +47,6 @@ namespace dae
 							return nullptr;
 						}
 					}
-
-					
-
 					// Create and add the new component
 					auto newComponent = std::make_unique<ComponentType>(this, std::forward<Args>(args)...);
 					ComponentType* rawPtr = newComponent.get(); // Store the raw pointer before moving ownership to avoid undefined behavior
