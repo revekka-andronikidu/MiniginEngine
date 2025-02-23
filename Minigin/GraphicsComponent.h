@@ -19,9 +19,10 @@ namespace dae
 		{
 			if (m_pTexture != nullptr)
 			{
-				const glm::vec3& pos = GetOwner()->GetTransform().GetLocalPosition();
+				const glm::vec3& pos = GetOwner()->GetTransform().GetWorldPosition();
+				const glm::vec3& scale = GetOwner()->GetTransform().GetScale();
 
-				Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y);
+				Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x, pos.y, scale);
 
 
 				//::cout << " rendered" << std::endl;

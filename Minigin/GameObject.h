@@ -33,7 +33,7 @@ namespace dae
 		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; }
 		bool IsChild(GameObject* parent);
 		void RemoveChild(GameObject* childToRemove);
-		void AddChild(GameObject* childToAdd);
+		
 
 
 		#pragma region Component system
@@ -111,6 +111,7 @@ namespace dae
 		std::vector<GameObject*> m_pChildren;
 
 		bool IsValidParent(GameObject* newParent);
+		void AddChild(GameObject* childToAdd);
 
 		
 	};

@@ -73,6 +73,9 @@
     <ClInclude Include="TextureComponent.h">
       <Filter>Engine\Objects\Components</Filter>
     </ClInclude>
+    <ClInclude Include="RotatorComponent.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
@@ -120,5 +123,6 @@
     <ClCompile Include="GraphicsComponent.cpp">
       <Filter>Engine\Objects\Components</Filter>
     </ClCompile>
+    <ClCompile Include="RotatorComponent.cpp" />
   </ItemGroup>
 </Project>

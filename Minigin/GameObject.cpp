@@ -28,6 +28,8 @@ void dae::GameObject::Update()
 	{
 		component->Update();
 	}
+
+
 }
 void dae::GameObject::FixedUpdate([[maybe_unused]] const float fixed_time_step)
 {
@@ -75,15 +77,17 @@ void dae::GameObject::SetParent(GameObject* newParent)
 	//Calculate new local transform based on new parent
 	if (m_pParent)
 	{
+		//m_transform.SetPosition(m_transform.GetWorldPosition() - newParent->GetTransform().GetWorldPosition());
+		
 		const glm::mat4 parentWorldInverse = glm::inverse(m_pParent->m_transform.GetWorldMatrix());
 		const glm::mat4 newLocalMatrix = parentWorldInverse * oldWorldMatrix;
 		m_transform.SetLocalMatrix(newLocalMatrix);
 	}
 	else
 	{
+		//m_transform.SetPosition(m_transform.GetWorldPosition());
 		m_transform.SetLocalMatrix(oldWorldMatrix);
 	}
-
 
 	// Remove from pervious parent
 	if (m_pParent)
@@ -94,22 +98,7 @@ void dae::GameObject::SetParent(GameObject* newParent)
 	if (m_pParent)
 		m_pParent->AddChild(this);//add itself as a child to given parent
 
-	/*m_transform.SetDirty();
-
-	  Update transform parent and recalculate local transform
-	m_transform.SetParent(m_parent ? &m_parent->m_transform : nullptr);
-
-	 Calculate new local transform based on new parent
-	if (m_parent)
-	{
-		const glm::mat4 parentWorldInverse = glm::inverse(m_parent->m_transform.GetWorldMatrix());
-		const glm::mat4 newLocalMatrix = parentWorldInverse * oldWorldMatrix;
-		m_transform.SetLocalMatrix(newLocalMatrix);
-	}
-	else
-	{
-		m_transform.SetLocalMatrix(oldWorldMatrix);
-	}*/
+	m_transform.SetDirty();
 }
 
 bool dae::GameObject::IsValidParent(GameObject* newParent)

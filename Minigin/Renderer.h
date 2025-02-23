@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL.h>
+#include <glm.hpp>
 #include "Singleton.h"
 
 namespace dae
@@ -20,6 +21,7 @@ namespace dae
 
 		void RenderTexture(const Texture2D& texture, float x, float y) const;
 		void RenderTexture(const Texture2D& texture, float x, float y, float width, float height) const;
+		void RenderTexture(const Texture2D& texture, const float x, const float y, const glm::vec3 scale) const;
 
 		SDL_Renderer* GetSDLRenderer() const;
 

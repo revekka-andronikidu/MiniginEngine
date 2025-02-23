@@ -19,7 +19,7 @@ void dae::Transform::SetDirty()
 
 void dae::Transform::SetPosition(const glm::vec3& newPosition)
 {
-    m_LoacalPosition = newPosition;
+    m_LocalPosition = newPosition;
     UpdateLocalMatrix();
     SetDirty();
 }
@@ -40,7 +40,7 @@ void dae::Transform::SetScale(const glm::vec3& newScale)
 
 void dae::Transform::UpdateLocalMatrix()
 {
-    const glm::mat4 translation = glm::translate(glm::mat4(1.0f), m_LoacalPosition);
+    const glm::mat4 translation = glm::translate(glm::mat4(1.0f), m_LocalPosition);
     const glm::mat4 rotationMat = glm::mat4_cast(m_LocalRotation);
     const glm::mat4 scaleMat = glm::scale(glm::mat4(1.0f), m_LocalScale);
     m_LocalMatrix = translation * rotationMat * scaleMat;
@@ -48,7 +48,7 @@ void dae::Transform::UpdateLocalMatrix()
 
 void dae::Transform::SetLocalMatrix(const glm::mat4& matrix)
 {
-    DecomposeMatrix(matrix, m_LoacalPosition, m_LocalRotation, m_LocalScale);
+    DecomposeMatrix(matrix, m_LocalPosition, m_LocalRotation, m_LocalScale);
     UpdateLocalMatrix();
     SetDirty();
 }
@@ -82,7 +82,6 @@ void dae::Transform::DecomposeMatrix(const glm::mat4& transform, glm::vec3& tran
     rotation = glm::quat_cast(rotMatrix);
 }
 
-// Matrix accessors
 const glm::mat4& dae::Transform::GetWorldMatrix() const
 {
     if (m_IsDirty) 
@@ -90,6 +89,33 @@ const glm::mat4& dae::Transform::GetWorldMatrix() const
         UpdateWorldMatrix();
     }
     return m_WorldMatrix;
+}
+
+const glm::vec3& dae::Transform::GetWorldPosition() const
+{
+    if (m_IsDirty)
+    {
+        UpdateWorldPosition();
+    }
+    return m_WorldPosition;
+}
+
+
+void dae::Transform::UpdateWorldPosition() const
+{
+    if (m_IsDirty)
+    {
+        auto parent = m_pOwner->GetParent();
+        if (parent == nullptr)
+        {
+            m_WorldPosition = m_LocalPosition;
+        }
+        else
+        {
+            m_WorldPosition = parent->GetTransform().GetWorldPosition() + m_LocalPosition;
+        }
+    }
+    m_IsDirty = false;
 }
 
 void dae::Transform::UpdateWorldMatrix() const
