@@ -7,7 +7,7 @@ namespace dae
 	class GameObject;
 	class BaseComponent
 	{
-		
+		GameObject* const m_pOwner;
 	public:
 		virtual ~BaseComponent() = default;
 		BaseComponent(const BaseComponent&) = delete;
@@ -29,7 +29,6 @@ namespace dae
 		GameObject* GetOwner() const { return m_pOwner; };
 
 	private:
-		GameObject* const m_pOwner;
 		bool m_IsDeadComponent{ false };
 
 	};

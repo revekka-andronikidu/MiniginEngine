@@ -17,16 +17,24 @@ namespace dae
 		virtual void FixedUpdate(const float fixed_time_step);
 		virtual void Render() const;
 
-		void SetPosition(float x, float y);
-
+	
 		GameObject() = default;
-		virtual ~GameObject() = default;
+		virtual ~GameObject();
 		GameObject(const GameObject& other) = delete;
 		GameObject(GameObject&& other) = delete;
 		GameObject& operator=(const GameObject& other) = delete;
 		GameObject& operator=(GameObject&& other) = delete;
 
 		Transform& GetTransform() { return m_transform; };
+
+		// Parent-child hierarchy methods (Scene-graph)
+		void SetParent(GameObject* parent);
+		GameObject* GetParent() const { return m_pParent; }
+		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; }
+		bool IsChild(GameObject* parent);
+		void RemoveChild(GameObject* childToRemove);
+		void AddChild(GameObject* childToAdd);
+
 
 		#pragma region Component system
 		
@@ -97,9 +105,14 @@ namespace dae
 
 	private:
 
-		Transform m_transform;
+		Transform m_transform{this};
 		std::vector<std::unique_ptr<BaseComponent>> m_pComponents;
+		GameObject* m_pParent = nullptr;
+		std::vector<GameObject*> m_pChildren;
 
+		bool IsValidParent(GameObject* newParent);
+
+		
 	};
 
 }
