@@ -64,41 +64,41 @@ void dae::GameObject::RemoveDeadComponents()
 	m_pComponents.erase(first, last);
 }
 
-void dae::GameObject::SetParent(GameObject* newParent)
+void dae::GameObject::SetParent(GameObject* newParent, bool keepWorldPosition)
 {
 	//check if new parent is valid
 	if (!IsValidParent(newParent))
 		return;
 
-
-	//Store world transform before changing hierarchy
-	const glm::mat4 oldWorldMatrix = m_transform.GetWorldMatrix();
-
 	//Calculate new local transform based on new parent
-	if (m_pParent)
+	if (newParent == nullptr)
 	{
-		//m_transform.SetPosition(m_transform.GetWorldPosition() - newParent->GetTransform().GetWorldPosition());
-		
-		const glm::mat4 parentWorldInverse = glm::inverse(m_pParent->m_transform.GetWorldMatrix());
-		const glm::mat4 newLocalMatrix = parentWorldInverse * oldWorldMatrix;
-		m_transform.SetLocalMatrix(newLocalMatrix);
+		//oldParent->m_Children.erase(std::remove(oldParent->m_Children.begin(), oldParent->m_Children.end(), shared_from_this()), oldParent->m_Children.end());
+		glm::vec3 worldPos = m_transform.GetWorldPosition();
+		m_transform.SetPosition(worldPos);
 	}
 	else
 	{
-		//m_transform.SetPosition(m_transform.GetWorldPosition());
-		m_transform.SetLocalMatrix(oldWorldMatrix);
+		if (keepWorldPosition)
+		{
+			m_transform.SetPosition(m_transform.GetLocalPosition() - newParent->m_transform.GetWorldPosition());
+		
+		}
+		
 	}
 
 	// Remove from pervious parent
-	if (m_pParent)
-		m_pParent->RemoveChild(this);
+	if(m_pParent)
+	m_pParent->m_pChildren.erase(std::remove(m_pParent->m_pChildren.begin(), m_pParent->m_pChildren.end(), this), m_pParent->m_pChildren.end());
+
 
 	// Set new parent
 	m_pParent = newParent;
-	if (m_pParent)
-		m_pParent->AddChild(this);//add itself as a child to given parent
 
-	m_transform.SetDirty();
+	//Add itself as a child to the given parent
+	if (m_pParent)
+		m_pParent->m_pChildren.push_back(this);
+	
 }
 
 bool dae::GameObject::IsValidParent(GameObject* newParent)
@@ -135,31 +135,7 @@ bool dae::GameObject::IsChild(GameObject* parent)
 	else return true;
 }
 
-void dae::GameObject::RemoveChild(GameObject* childToRemove)
-{
-	if (childToRemove == nullptr) //Check child is valid 
-		return;
-
-	auto find = std::find(m_pChildren.begin(), m_pChildren.end(), childToRemove);
-	if (find != m_pChildren.end())
-	{
-		m_pChildren.erase(find); //Remove the given child from the children list
-		childToRemove->SetParent(nullptr); //Remove itself as a parent of the child
-	}
-}
 
 
-void dae::GameObject::AddChild(GameObject* childToAdd)
-{
-	//Check if the new child is valid
-	if (childToAdd == nullptr)
-	{
-#if _DEBUG
-		std::cout << "Cannot add child that is nullptr!\n";
-#endif
-		return;
-	}
-		
 
-	m_pChildren.push_back(childToAdd);
-}
+

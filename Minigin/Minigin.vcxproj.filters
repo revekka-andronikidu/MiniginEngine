@@ -74,7 +74,13 @@
       <Filter>Engine\Objects\Components</Filter>
     </ClInclude>
     <ClInclude Include="RotatorComponent.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="XboxController.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommands.h">
+      <Filter>Engine\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +129,14 @@
     <ClCompile Include="GraphicsComponent.cpp">
       <Filter>Engine\Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="RotatorComponent.cpp" />
+    <ClCompile Include="RotatorComponent.cpp">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="XboxController.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.h">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

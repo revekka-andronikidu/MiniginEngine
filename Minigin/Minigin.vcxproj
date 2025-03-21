@@ -201,6 +201,7 @@ xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"</Command>
     <ClInclude Include="BaseComponent.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FPSComponent.h" />
+    <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsComponent.h" />
     <ClInclude Include="InputManager.h" />
@@ -216,8 +217,10 @@ xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"</Command>
     <ClInclude Include="TextureComponent.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="XboxController.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Command.h" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -234,6 +237,7 @@ xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"</Command>
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="XboxController.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

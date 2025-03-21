@@ -13,30 +13,36 @@ namespace dae
 		GameObject* const m_pOwner;
 
 	public:
-		explicit Transform(GameObject* pOwner) :
+		Transform(GameObject* pOwner) :
 			m_pOwner{ pOwner },
-			m_LocalPosition(glm::vec3(0.0f)),
-			m_LocalRotation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f)),
-			m_LocalScale(glm::vec3(1.0f)),
-			m_LocalMatrix(1.0f),
-			m_WorldMatrix(1.0f),
-			m_WorldPosition(glm::vec3(0.0f)),
-			m_IsDirty(false) {}
+			m_LocalPosition(0, 0, 0),
+			m_WorldPosition(0, 0, 0),
+			m_LocalScale(1,1,1)
+		{
+		};
+
+		~Transform() = default;
 		
-		void SetDirty();
+		void SetDirty() {m_IsDirty = true;};
+		void SetChildrenDirty();
+
+		void SetPosition(const glm::vec2& position);
 		void SetPosition(const glm::vec3& newPosition);
+		void SetPosition(float x, float y, float z);
+
 		void SetRotation(const glm::quat& newRotation);
 		void SetScale(const glm::vec3& newScale);
-		void SetLocalMatrix(const glm::mat4& matrix);
-		void DecomposeMatrix(const glm::mat4& transform, glm::vec3& translation, glm::quat& rotation, glm::vec3& scale);
+
+		/*void SetLocalMatrix(const glm::mat4& matrix);
+		void DecomposeMatrix(const glm::mat4& transform, glm::vec3& translation, glm::quat& rotation, glm::vec3& scale);*/
 
 		//Getters
-		const glm::mat4& GetLocalMatrix() const { return m_LocalMatrix; }
+		//const glm::mat4& GetLocalMatrix() const;
 		const glm::vec3& GetLocalPosition() const { return m_LocalPosition; }
 		const glm::quat& GetRotation() const { return m_LocalRotation; }
 		const glm::vec3& GetScale() const { return m_LocalScale; }
-		const glm::mat4& GetWorldMatrix() const;
-		const glm::vec3& GetWorldPosition() const;
+		//const glm::mat4& GetWorldMatrix() const;
+		const glm::vec3& GetWorldPosition();
 
 
 	private:
@@ -48,14 +54,14 @@ namespace dae
 		mutable glm::vec3 m_WorldPosition;
 
 		// Matrix storage
-		glm::mat4 m_LocalMatrix;
-		mutable glm::mat4 m_WorldMatrix;
+		//glm::mat4 m_LocalMatrix;
+		//mutable glm::mat4 m_WorldMatrix;
 		mutable bool m_IsDirty;
 
 
-		void UpdateLocalMatrix();
-		void UpdateWorldPosition() const;
-		void UpdateWorldMatrix() const;
+		//void UpdateLocalMatrix();
+		void UpdateWorldPosition();
+		//void UpdateWorldMatrix() const;
 
 	};
 }

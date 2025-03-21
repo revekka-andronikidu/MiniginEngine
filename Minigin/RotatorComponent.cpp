@@ -9,6 +9,7 @@ dae::RotatorComponent::RotatorComponent(GameObject* pOwner, float radius, float 
 , m_IsClockwise{ isClockwise }
 {
 	m_Origin = pOwner->GetTransform().GetLocalPosition();
+
 }
 
 void dae::RotatorComponent::Update()
