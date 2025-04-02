@@ -13,7 +13,7 @@ namespace dae {
 		~PointsComponent() = default;
 
 		void IncreasePoints(int points);
-		int GetPoints() { return m_Points; };
+		int GetPoints() const { return m_Points; };
 
 		void Update() override {};
 		void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};

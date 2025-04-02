@@ -23,7 +23,7 @@ namespace dae
 		LivesComponent& operator=(const LivesComponent& other) = delete;
 		LivesComponent& operator=(LivesComponent&& other) = delete;
 
-		int GetLives() { return m_CurrentLives; };
+		int GetLives() const { return m_CurrentLives; } ;
 
 		void SetLives(int lives)
 		{

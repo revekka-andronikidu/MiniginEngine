@@ -20,9 +20,6 @@
     <Filter Include="Engine\Objects\Components">
       <UniqueIdentifier>{bef574c4-f0b5-4c89-b162-465ec0871691}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Game Specific">
-      <UniqueIdentifier>{a7b62cfa-b26d-4970-8edd-380eb3e78115}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{ef70a5d8-fa9f-4350-9b9f-df1f1b221334}</UniqueIdentifier>
     </Filter>
@@ -82,24 +79,6 @@
     <ClInclude Include="XboxController.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="GameCommands.h">
-      <Filter>Engine\Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="LivesComponent.h">
-      <Filter>Engine\Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="GameEvents.h">
-      <Filter>Engine\Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="LivesDisplay.h">
-      <Filter>Engine\Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="PointsComponent.h">
-      <Filter>Engine\Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="PointsDisplay.h">
-      <Filter>Engine\Game Specific</Filter>
-    </ClInclude>
     <ClInclude Include="Event.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
@@ -110,9 +89,6 @@
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
       <Filter>Engine\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Minigin.cpp">
       <Filter>Engine</Filter>
@@ -158,15 +134,6 @@
     </ClCompile>
     <ClCompile Include="Command.h">
       <Filter>Engine\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="LivesDisplay.cpp">
-      <Filter>Engine\Game Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="PointsComponent.cpp">
-      <Filter>Engine\Game Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="PointsDisplay.cpp">
-      <Filter>Engine\Game Specific</Filter>
     </ClCompile>
     <ClCompile Include="Observer.h">
       <Filter>Engine\Events</Filter>

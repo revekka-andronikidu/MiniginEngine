@@ -26,26 +26,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -117,6 +117,9 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutputPat
 xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"
 xcopy "$(SolutionDir)3rdParty\sdk\redistributable_bin\*.dll" "$(OutputPath)" /Y</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -144,6 +147,9 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutputPat
 xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"
 xcopy "$(SolutionDir)3rdParty\sdk\redistributable_bin\win64\*.dll" "$(OutputPath)" /Y</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -174,6 +180,9 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutputPat
 xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"
 xcopy "$(SolutionDir)3rdParty\sdk\redistributable_bin\*.dll" "$(OutputPath)" /Y</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -204,22 +213,19 @@ xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib\$(PlatformTarget)\*.dll" "$(OutputPat
 xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"
 xcopy "$(SolutionDir)3rdParty\sdk\redistributable_bin\win64\*.dll" "$(OutputPath)" /Y</Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>xinput.lib</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BaseComponent.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FPSComponent.h" />
-    <ClInclude Include="GameCommands.h" />
-    <ClInclude Include="GameEvents.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsComponent.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="LivesComponent.h" />
-    <ClInclude Include="LivesDisplay.h" />
     <ClInclude Include="Minigin.h" />
-    <ClInclude Include="PointsComponent.h" />
-    <ClInclude Include="PointsDisplay.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Scene.h" />
@@ -240,12 +246,8 @@ xcopy "$(SolutionDir)3rdParty\sdk\redistributable_bin\win64\*.dll" "$(OutputPath
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GraphicsComponent.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="LivesDisplay.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="Observer.h" />
-    <ClCompile Include="PointsComponent.cpp" />
-    <ClCompile Include="PointsDisplay.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Scene.cpp" />

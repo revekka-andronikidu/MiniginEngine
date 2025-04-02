@@ -12,7 +12,7 @@
 #include "TimeManager.h"
 #include <thread>
 
-#define  USE_STEAMWORKS
+//#define  USE_STEAMWORKS
 #ifdef USE_STEAMWORKS
 #include <steam_api.h>
 #endif
