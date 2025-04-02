@@ -30,7 +30,6 @@ void dae::PointsDisplay::OnNotify(const GameObject& entity, const Event& event)
         m_CurrentPoints = entity.GetComponent<PointsComponent>()->GetPoints();
     }
 
-
 }
 
 void dae::PointsDisplay::Render() const

@@ -12,6 +12,11 @@
 #include "TimeManager.h"
 #include <thread>
 
+#define  USE_STEAMWORKS
+#ifdef USE_STEAMWORKS
+#include <steam_api.h>
+#endif
+
 SDL_Window* g_window{};
 
 void PrintSDLVersion()
@@ -121,6 +126,10 @@ void dae::Minigin::Run(const std::function<void()>& load)
 
 		sceneManager.Update();
 		renderer.Render();
+
+#ifdef USE_STEAMWORKS
+		SteamAPI_RunCallbacks();
+#endif
 
 		const auto sleep_time = time.GetLastFrameTime() + std::chrono::milliseconds(ms_per_frame) - std::chrono::high_resolution_clock::now();
 		std::this_thread::sleep_for(sleep_time);
