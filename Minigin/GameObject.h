@@ -32,9 +32,7 @@ namespace dae
 		GameObject* GetParent() const { return m_pParent; }
 		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; }
 		bool IsChild(GameObject* parent);
-		void RemoveChild(GameObject* childToRemove);
 		
-
 
 		#pragma region Component system
 		

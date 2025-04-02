@@ -2,6 +2,7 @@
 #include <string>
 #include <functional>
 
+
 namespace dae
 {
 	class Minigin
@@ -10,6 +11,7 @@ namespace dae
 		explicit Minigin(const std::string& dataPath);
 		~Minigin();
 		void Run(const std::function<void()>& load);
+		/*constfloat GetWindowWidth() const;*/
 
 		Minigin(const Minigin& other) = delete;
 		Minigin(Minigin&& other) = delete;

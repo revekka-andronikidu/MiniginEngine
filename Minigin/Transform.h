@@ -15,9 +15,11 @@ namespace dae
 	public:
 		Transform(GameObject* pOwner) :
 			m_pOwner{ pOwner },
-			m_LocalPosition(0, 0, 0),
-			m_WorldPosition(0, 0, 0),
-			m_LocalScale(1,1,1)
+			m_LocalPosition{ 0, 0, 0 },
+			m_WorldPosition{ 0, 0, 0 },
+			m_LocalScale{ 1, 1, 1 },
+			m_LocalRotation{},
+			m_IsDirty{ false }
 		{
 		};
 

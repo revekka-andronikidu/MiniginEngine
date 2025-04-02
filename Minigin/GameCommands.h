@@ -17,12 +17,12 @@ public:
 		auto translation = m_Direction * m_MoveSpeed * TimeManager::GetInstance().GetDeltaTime() + transform.GetLocalPosition();
 		GetGameObject()->GetTransform().SetPosition(translation);
 
-		glm::vec3 pos = translation;
+	/*	glm::vec3 pos = translation;
 		std::cout << "Moved to: ("
 			+ std::to_string(pos.x) + ", "
 			+ std::to_string(pos.y) + ", "
 			+ std::to_string(pos.z) + ")"
-			<< std::endl;
+			<< std::endl;*/
 
 	};
 	void SetDirection(glm::vec3 direction) { m_Direction = direction; };
@@ -31,4 +31,33 @@ public:
 private:
 	glm::vec3 m_Direction{};
 	float m_MoveSpeed{};
+};
+
+class LooseLiveCommand : public GameObjectCommand
+{
+public:
+
+	LooseLiveCommand(GameObject* gameObject) : GameObjectCommand(gameObject) {};
+
+	void Execute() override
+	{
+		GetGameObject()->GetComponent<LivesComponent>()->RemoveLive();
+	};
+
+};
+
+class AddScoreCommand : public GameObjectCommand
+{
+public:
+
+	AddScoreCommand(GameObject* gameObject, int points) : GameObjectCommand(gameObject), m_Points{ points } {};
+
+	void Execute() override
+	{
+		GetGameObject()->GetComponent<PointsComponent>()->IncreasePoints(m_Points);
+	};
+
+
+private:
+	int m_Points;
 };
