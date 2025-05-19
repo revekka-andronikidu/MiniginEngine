@@ -5,6 +5,8 @@
 #include "Renderer.h"
 #include "Texture2D.h"
 #include "Font.h"
+#include "ServiceLocator.h"
+#include "SoundHandle.h"
 
 namespace fs = std::filesystem;
 
@@ -54,4 +56,37 @@ void dae::ResourceManager::UnloadUnusedResources()
 		else
 			++it;
 	}
+
+	for (auto it = m_Sounds.begin(); it != m_Sounds.end();)
+	{
+		if (it->second.use_count() == 1)
+			it = m_Sounds.erase(it);
+		else
+			++it;
+	}
+}
+
+std::shared_ptr<dae::ISoundHandle> dae::ResourceManager::LoadSound(const std::string& file)
+{
+	const auto fullPath = m_dataPath/file;
+	//const auto filename = fs::path(fullPath).filename().string();
+
+	if (auto it = m_Sounds.find(file); it != m_Sounds.end()) 
+	{
+		return it->second; // Return existing sound
+	}
+
+	auto sound = ServiceLocator::GetAudioService().LoadSound(fullPath.string());
+
+
+	m_Sounds[file] = sound;
+
+
+	sound_id id = m_NextSoundId++;
+
+	// Store in maps
+	m_FileToId[id] = file;
+
+	
+	return m_Sounds.at(file);
 }

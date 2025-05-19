@@ -18,10 +18,7 @@ dae::PointsDisplay::PointsDisplay(GameObject* owner)
 
 
 }
-dae::PointsDisplay::~PointsDisplay()
-{
-    delete m_pText;
-}
+
 
 void dae::PointsDisplay::OnNotify(const GameObject& entity, const Event& event)
 {

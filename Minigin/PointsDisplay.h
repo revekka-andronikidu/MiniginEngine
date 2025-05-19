@@ -10,7 +10,7 @@ namespace dae
     {
     public:
         explicit PointsDisplay(GameObject* pOwner);
-        ~PointsDisplay();
+        ~PointsDisplay() {};
 
         void Render() const override;
         void Update() override {};

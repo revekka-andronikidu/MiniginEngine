@@ -23,15 +23,12 @@
     <Filter Include="Engine\Events">
       <UniqueIdentifier>{ef70a5d8-fa9f-4350-9b9f-df1f1b221334}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Services">
+      <UniqueIdentifier>{5a1798c7-fbb3-4ce0-b30c-33b0e0c80290}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Singleton.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="Minigin.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeManager.h">
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
@@ -85,15 +82,27 @@
     <ClInclude Include="Subject.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="ServiceLocator.h">
+      <Filter>Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundHandle.h">
+      <Filter>Engine\Services</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
       <Filter>Engine\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Minigin.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeManager.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="InputManager.cpp">
@@ -137,6 +146,15 @@
     </ClCompile>
     <ClCompile Include="Observer.h">
       <Filter>Engine\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="ServiceLocator.cpp">
+      <Filter>Engine\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>Engine\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Engine\Services</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
