@@ -15,9 +15,17 @@ namespace dae
 		void Update();
 		void FixedUpdate(const float fixed_time_step);
 		void Render();
+
+		void SetActiveScene(const std::string& name);
+		void SetActiveScene(const dae::Scene& scene);
+
+		//void SwitchScene();
+		Scene& GetScene(const std::string& name) const;
+
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
 		std::vector<std::shared_ptr<Scene>> m_scenes;
+		Scene* m_pActiveScene;
 	};
 }

@@ -10,7 +10,7 @@ namespace dae
 	public:
 		explicit Minigin(const std::string& dataPath);
 		~Minigin();
-		void Run(const std::function<void()>& load);
+		void Run(/*const std::function<void()>& load*/);
 		/*constfloat GetWindowWidth() const;*/
 
 		Minigin(const Minigin& other) = delete;
@@ -21,5 +21,7 @@ namespace dae
 	private:
 		const int m_fixedUpdateFramerate{ 60 };
 		const float m_fixed_time_step{ 1.f / m_fixedUpdateFramerate };
+		int m_WindowWidth = 480;
+		int m_WindowHeight = 512;
 	};
 }

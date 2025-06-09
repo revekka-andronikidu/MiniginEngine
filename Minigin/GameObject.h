@@ -28,7 +28,7 @@ namespace dae
 		Transform& GetTransform() { return m_transform; };
 
 		// Parent-child hierarchy methods (Scene-graph)
-		void SetParent(GameObject* parent, bool keepWorldPosition);
+		void SetParent(GameObject* parent, bool keepWorldPosition = true);
 		GameObject* GetParent() const { return m_pParent; }
 		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; }
 		bool IsChild(GameObject* parent);

@@ -37,6 +37,11 @@ namespace dae
 			}
 		};
 
+		glm::ivec2 GetTextureSize() const
+		{
+			return m_pTexture->GetSize();
+		}
+
 		virtual void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
 
 		void SetTexture(const std::string& fileName) { m_pTexture = ResourceManager::GetInstance().LoadTexture(fileName); };
