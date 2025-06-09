@@ -22,11 +22,12 @@ namespace dae
 
 		virtual void MarkForRemoval() { m_IsDeadComponent = true; };
 		bool IsMarkedForRemoval() const { return m_IsDeadComponent; };
+		GameObject* GetOwner() const { return m_pOwner; };
 
 	protected:
 		
 		explicit BaseComponent(GameObject* pOwner) : m_pOwner{ pOwner } {}; // protected constructor
-		GameObject* GetOwner() const { return m_pOwner; };
+		
 
 	private:
 		bool m_IsDeadComponent{ false };
