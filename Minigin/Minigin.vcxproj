@@ -222,14 +222,18 @@ xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"</Command>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActionComponent.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="BaseComponent.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FPSComponent.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GraphicsComponent.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="MenuComponent.h" />
     <ClInclude Include="Minigin.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="ResourceManager.h" />
@@ -251,9 +255,11 @@ xcopy /Y /E /I "$(SolutionDir)Data" "$(OutDir)Data\"</Command>
     <ClCompile Include="Command.h" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FPSComponent.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GraphicsComponent.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="MenuComponent.cpp" />
     <ClCompile Include="Minigin.cpp" />
     <ClCompile Include="Observer.h" />
     <ClCompile Include="Renderer.cpp" />

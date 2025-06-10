@@ -1,6 +1,9 @@
 #include "GameCommands.h"
 #include "LivesComponent.h"
 #include "PointsComponent.h"
+#include <GameManager.h>
+#include "GalagaGame.h"
+
 
 
 void LooseLiveCommand::Execute() 
@@ -41,7 +44,11 @@ void MoveCommand::Execute()
 
 void SkipLevelCommand::Execute()
 {
-
+	auto* game = dae::GameManager::GetInstance().GetActiveGame();
+	if (!game) return; // check nullptr
+	GalagaGame* galaga = dynamic_cast<GalagaGame*>(game);
+	if (!galaga) return; // cast failed
+	galaga->SkipStage();
 }
 
 void MuteGameCommand::Execute()

@@ -27,12 +27,14 @@ namespace dae
 			}
 			else
 			{
-				m_currentItem = m_menuItems.size() - 1;
+				m_currentItem = static_cast<int>(m_menuItems.size()) - 1;
 			}
 		}
 
 		m_dirtyFlag = true;
+#if _DEBUG
 		std::cout << "Menu item: "  + std::to_string(m_currentItem) << std::endl;
+#endif
 	};
 
 
@@ -86,7 +88,10 @@ namespace dae
 	{
 		//load appropriate scene
 		m_menuItems[m_currentItem]->GetComponent<ActionComponent>()->Excecute();
+
+#if _DEBUG
 		std::cout << "Entered: " << std::to_string(m_currentItem) << std::endl;
+#endif
 
 		//reset input
 		//deactivate cuurent scene

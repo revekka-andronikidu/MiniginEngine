@@ -147,29 +147,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Minigin\LivesDisplay.cpp" />
-    <ClCompile Include="..\Minigin\Main.cpp" />
-    <ClCompile Include="..\Minigin\PointsComponent.cpp" />
-    <ClCompile Include="..\Minigin\PointsDisplay.cpp" />
+    <ClCompile Include="GalagaGame.cpp" />
     <ClCompile Include="GameCommands.cpp" />
-    <ClCompile Include="GameManager.cpp" />
-    <ClCompile Include="MenuComponent.cpp" />
-    <ClCompile Include="MenuItemComponent.cpp" />
+    <ClCompile Include="LivesDisplay.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PointsComponent.cpp" />
+    <ClCompile Include="PointsDisplay.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Minigin\GameCommands.h" />
-    <ClInclude Include="..\Minigin\GameEvents.h" />
-    <ClInclude Include="..\Minigin\LivesComponent.h" />
-    <ClInclude Include="..\Minigin\LivesDisplay.h" />
-    <ClInclude Include="..\Minigin\PointsComponent.h" />
-    <ClInclude Include="..\Minigin\PointsDisplay.h" />
-    <ClInclude Include="ActionComponent.h" />
-    <ClInclude Include="GameManager.h" />
-    <ClInclude Include="MenuComponent.h" />
-    <ClInclude Include="MenuItemComponent.h" />
+    <ClInclude Include="GalagaGame.h" />
+    <ClInclude Include="GameCommands.h" />
+    <ClInclude Include="GameEvents.h" />
+    <ClInclude Include="LivesComponent.h" />
+    <ClInclude Include="LivesDisplay.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PointsComponent.h" />
+    <ClInclude Include="PointsDisplay.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

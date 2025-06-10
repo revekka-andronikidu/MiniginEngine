@@ -26,6 +26,9 @@
     <Filter Include="Engine\Services">
       <UniqueIdentifier>{5a1798c7-fbb3-4ce0-b30c-33b0e0c80290}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\GameManager">
+      <UniqueIdentifier>{a304ea6f-6c1f-4e58-9f99-b54b0aa1c077}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Minigin.h">
@@ -91,11 +94,23 @@
     <ClInclude Include="Singleton.h">
       <Filter>Engine\Services</Filter>
     </ClInclude>
-    <ClInclude Include="TimeManager.h">
-      <Filter>Engine\Services</Filter>
-    </ClInclude>
     <ClInclude Include="SoundHandle.h">
       <Filter>Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="ActionComponent.h">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuComponent.h">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Engine\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Engine\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>Engine\GameManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -141,20 +156,26 @@
     <ClCompile Include="XboxController.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Command.h">
-      <Filter>Engine\Input</Filter>
-    </ClCompile>
     <ClCompile Include="Observer.h">
       <Filter>Engine\Events</Filter>
     </ClCompile>
     <ClCompile Include="ServiceLocator.cpp">
       <Filter>Engine\Services</Filter>
     </ClCompile>
-    <ClCompile Include="TimeManager.cpp">
-      <Filter>Engine\Services</Filter>
-    </ClCompile>
     <ClCompile Include="Audio.cpp">
       <Filter>Engine\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuComponent.cpp">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Engine\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>Engine\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.h">
+      <Filter>Engine\Events</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

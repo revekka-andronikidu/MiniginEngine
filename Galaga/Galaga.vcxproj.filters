@@ -5,83 +5,67 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Game Specific">
       <UniqueIdentifier>{a9b90ce7-8f78-49e2-9c5a-00548e8aea28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components">
+      <UniqueIdentifier>{b6714dfc-df1e-4d37-9364-85cb963cdabe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Characters">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Minigin\LivesDisplay.cpp">
-      <Filter>Game Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Minigin\PointsComponent.cpp">
-      <Filter>Game Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Minigin\PointsDisplay.cpp">
-      <Filter>Game Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Minigin\Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameCommands.cpp">
       <Filter>Game Specific</Filter>
     </ClCompile>
-    <ClCompile Include="MenuComponent.cpp">
-      <Filter>Game Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="GameManager.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MenuItemComponent.cpp">
+    <ClCompile Include="PointsDisplay.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PointsComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="LivesDisplay.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="GalagaGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Minigin\GameCommands.h">
-      <Filter>Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Minigin\GameEvents.h">
-      <Filter>Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Minigin\LivesComponent.h">
-      <Filter>Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Minigin\LivesDisplay.h">
-      <Filter>Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Minigin\PointsComponent.h">
-      <Filter>Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Minigin\PointsDisplay.h">
-      <Filter>Game Specific</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
+      <Filter>Characters</Filter>
     </ClInclude>
-    <ClInclude Include="MenuComponent.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="PointsComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="PointsDisplay.h">
+      <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="MenuItemComponent.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="LivesComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
-    <ClInclude Include="ActionComponent.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="LivesDisplay.h">
+      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="ObjectFactory.h">
-      <Filter>Header Files</Filter>
+      <Filter>Game Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommands.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEvents.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="GalagaGame.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
