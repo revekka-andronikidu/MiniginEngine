@@ -6,52 +6,63 @@ namespace dae
 
 	bool InputManager::ProcessInput()
 	{
+		for (auto& controller : m_Controllers)
 		{
-			HandleControllerInput();
-			HandleKeyboardInput();
-
-
-			SDL_Event e;
-			while (SDL_PollEvent(&e))
-			{
-				if (e.key.keysym.sym == SDLK_ESCAPE)
-				{
-					SDL_Quit();
-					return false;
-				}
-				if (e.type == SDL_QUIT) {
-					return false;
-				}
-			}
-
-
-			return true;
+			controller->Update();
 		}
+
+		ProcessContext(m_GlobalContext);
+
+		//HandleControllerInput();
+		//HandleKeyboardInput();
+
+		SDL_Event e;
+		while (SDL_PollEvent(&e))
+		{
+			if (e.key.keysym.sym == SDLK_ESCAPE)
+			{
+				SDL_Quit();
+				return false;
+			}
+			if (e.type == SDL_QUIT) {
+				return false;
+			}
+		}
+		return true;
 	}
 
-	void InputManager::BindInput(ControllerInput input, std::unique_ptr<Command> command)
+	void InputManager::SetSceneContext(std::unique_ptr<InputContext> context)
 	{
+		m_SceneContext = std::move(context);
+	}
 
+	void InputManager::ClearSceneContext()
+	{
+		m_SceneContext.reset();
+	}
+
+	// Global bindings (available in all scenes)
+	void InputManager::BindGlobalInput(KeyboardInput input, std::unique_ptr<Command> command)
+	{
 		const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
+		
+		const auto it = m_GlobalContext.keyboardBindings.find(actionID);
+		if (it != m_GlobalContext.keyboardBindings.end())
+			return; //action already exists
 
-		const auto it = m_ControllerInputs.find(actionID);
-		if (it != m_ControllerInputs.end())
-			return;
-
-		m_ControllerInputs[actionID] = input;
+		m_GlobalContext.keyboardBindings[actionID] = input;
 		m_Commands[actionID] = std::move(command);
 	}
 
-	void InputManager::BindInput(KeyboardInput input, std::unique_ptr<Command> command)
+	void InputManager::BindGlobalInput(ControllerInput input, std::unique_ptr<Command> command)
 	{
 		const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
-		//auto actionID = input.inputID;
 
-		const auto it = m_KeyboardInputs.find(actionID);
-		if (it != m_KeyboardInputs.end())
-			return; //action already exists
+		const auto it = m_GlobalContext.controllerBindings.find(actionID);
+		if (it != m_GlobalContext.controllerBindings.end())
+			return;
 
-		m_KeyboardInputs[actionID] = input;
+		m_GlobalContext.controllerBindings[actionID] = input;
 		m_Commands[actionID] = std::move(command);
 	}
 
@@ -60,7 +71,91 @@ namespace dae
 		m_Controllers.push_back(std::make_unique<XboxController>(controllerIndex));
 	}
 
-	bool InputManager::HandleControllerInput()
+	void InputManager::ProcessContext(InputContext& context)
+	{
+		// Process keyboard bindings
+		for (auto& [actionID, input] : context.keyboardBindings)
+		{
+			if (IsKeyboardTriggered(input)) 
+			{
+				auto command = m_Commands.find(actionID);
+				if (command == m_Commands.end())
+				{
+					assert(false && "Command not found for input action ID");
+				}
+
+				command->second->Execute();
+			}
+		}
+
+		// Process controller bindings
+		for (auto& [actionID, input] : context.controllerBindings)
+		{
+			if (IsControllerTriggered(input)) 
+			{
+				auto command = m_Commands.find(actionID);
+				if (command == m_Commands.end())
+				{
+					assert(false && "Command not found for input action ID");
+				}
+		
+				command->second->Execute();
+			}
+		}
+
+		// Update keyboard state history
+		const Uint8* currentState = SDL_GetKeyboardState(nullptr);
+		std::memcpy(m_PreviousKeyboardState, currentState, SDL_NUM_SCANCODES);
+
+	}
+
+	bool InputManager::IsControllerTriggered(const ControllerInput& input) const
+	{
+		
+			const unsigned index = input.controllerIndex;
+			const ButtonState buttonState = input.state;
+			const XboxController::ControllerButton button = input.button;
+
+			switch (buttonState)
+			{
+			case ButtonState::KeyUp:
+				return m_Controllers[index]->IsUp(button);
+				break;
+			case ButtonState::KeyDown:
+				return m_Controllers[index]->IsDown(button);
+				break;
+			case ButtonState::KeyPressed:
+				return m_Controllers[index]->IsPressed(button);
+				break;
+			default:
+				return false;
+			}
+	}
+
+	bool InputManager::IsKeyboardTriggered(const KeyboardInput& input) const
+	{
+		const Uint8* state = SDL_GetKeyboardState(nullptr);
+		const bool isPressed = state[input.key];
+		const bool wasPressed = m_PreviousKeyboardState[input.key];
+
+		switch (input.state) 
+		{
+		case ButtonState::KeyDown: 
+			return isPressed && !wasPressed;
+			break;
+		case ButtonState::KeyUp: 
+			return !isPressed && wasPressed;
+			break;
+		case ButtonState::KeyPressed: 
+			return isPressed;
+			break;
+		default: 
+			return false;
+			break;
+		}
+	}
+
+	/*bool InputManager::HandleControllerInput()
 	{
 		for (auto& controller : m_Controllers)
 		{
@@ -99,74 +194,72 @@ namespace dae
 		}
 		return true;
 
-	}
+	}*/
 
-	bool InputManager::HandleKeyboardInput()
-	{
-		const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
-
-		for (auto& input : m_KeyboardInputs)
-		{
-			const auto scancode = input.second.key;
-			bool keyPressed = keyboardState[scancode];
-			bool keyPreviouslyPressed = m_PreviousKeyboardState[scancode];
-
-			const ButtonState buttonState = input.second.state;
-			auto it = m_Commands.find(input.first);
-			if (it == m_Commands.end())
-			{
-				assert(false && "Command not found for input action ID");
-			}
-			auto command = it->second.get();
-
-			switch (buttonState)
-			{
-			case ButtonState::KeyUp:
-				if (!keyPressed && keyPreviouslyPressed)
-				{
-					command->Execute();
-				}
-				break;
-			case ButtonState::KeyDown:
-				if (keyPressed && !keyPreviouslyPressed)
-				{
-					command->Execute();
-				}
-				/*if (e.key.type == SDL_KEYDOWN)
-				{
-					if (e.key.repeat == 0)
-					{
-						if (scancode == e.key.keysym.scancode)
-							command->Execute();
-					}
-				}*/
-				break;
-			case ButtonState::KeyPressed:
-				if (keyPressed)
-				{
-					command->Execute();
-				}
-				/*if (e.key.type == SDL_KEYDOWN)
-				{
-					if (scancode == e.key.keysym.scancode)
-						command->Execute();
-				}*/
-				/*if (e.key.keysym.sym == SDLK_ESCAPE)
-				{
-					SDL_Quit();
-					return false;
-				}
-				if (e.type == SDL_QUIT) {
-					return false;
-				}*/
-				break;
-			}
-		}
-
-		// Update previous keyboard states
-		std::memcpy(m_PreviousKeyboardState, keyboardState, SDL_NUM_SCANCODES);
-		return true;
-
-	}
+	//bool InputManager::HandleKeyboardInput()
+	//{
+	//	const Uint8* keyboardState = SDL_GetKeyboardState(NULL);
+	//
+	//	for (auto& input : m_KeyboardInputs)
+	//	{
+	//		const auto scancode = input.second.key;
+	//		bool keyPressed = keyboardState[scancode];
+	//		bool keyPreviouslyPressed = m_PreviousKeyboardState[scancode];
+	//
+	//		const ButtonState buttonState = input.second.state;
+	//		auto it = m_Commands.find(input.first);
+	//		if (it == m_Commands.end())
+	//		{
+	//			assert(false && "Command not found for input action ID");
+	//		}
+	//		auto command = it->second.get();
+	//
+	//		switch (buttonState)
+	//		{
+	//		case ButtonState::KeyUp:
+	//			if (!keyPressed && keyPreviouslyPressed)
+	//			{
+	//				command->Execute();
+	//			}
+	//			break;
+	//		case ButtonState::KeyDown:
+	//			if (keyPressed && !keyPreviouslyPressed)
+	//			{
+	//				command->Execute();
+	//			}
+	//			/*if (e.key.type == SDL_KEYDOWN)
+	//			{
+	//				if (e.key.repeat == 0)
+	//				{
+	//					if (scancode == e.key.keysym.scancode)
+	//						command->Execute();
+	//				}
+	//			}*/
+	//			break;
+	//		case ButtonState::KeyPressed:
+	//			if (keyPressed)
+	//			{
+	//				command->Execute();
+	//			}
+	//			/*if (e.key.type == SDL_KEYDOWN)
+	//			{
+	//				if (scancode == e.key.keysym.scancode)
+	//					command->Execute();
+	//			}*/
+	//			/*if (e.key.keysym.sym == SDLK_ESCAPE)
+	//			{
+	//				SDL_Quit();
+	//				return false;
+	//			}
+	//			if (e.type == SDL_QUIT) {
+	//				return false;
+	//			}*/
+	//			break;
+	//		}
+	//	}
+	//	// Update previous keyboard states
+	//	std::memcpy(m_PreviousKeyboardState, keyboardState, SDL_NUM_SCANCODES);
+	//	return true;
+	//}
 
 }
