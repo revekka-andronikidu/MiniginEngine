@@ -24,9 +24,9 @@ void GalagaGame::SetDebugCommands()
 	auto& input = dae::InputManager::GetInstance();
 
 	auto skipLevel = std::make_unique<SkipLevelCommand>();
-	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F1 }, std::move(skipLevel));
+	//input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F1 }, std::move(skipLevel));
 	auto muteGame = std::make_unique<MuteGameCommand>();
-	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F2 }, std::move(muteGame));
+	//input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F2 }, std::move(muteGame));
 
 	
 
@@ -106,16 +106,16 @@ void GalagaGame::CreateMainMenu()
 	auto menuDownS = std::make_unique<MenuMoveCommand>(mainMenu.get(), MenuComponent::Direction::Down);
 	auto menuEnter = std::make_unique<MenuEnterCommand>(mainMenu.get());
 
-	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_W }, std::move(menuUpW));
-	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_S }, std::move(menuDownS));
-	//input.BindInput(KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_UP }, std::move(menuUp));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_W }, std::move(menuUpW));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_S }, std::move(menuDownS));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_UP }, std::move(menuUp));
 	//input.BindInput(KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_DOWN }, std::move(menuDown));
-	//input.BindGlobalInput(KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(menuEnter));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(menuEnter));
 
 	input.AddController(0);
-	input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadUp, 0 }, std::move(menuUp));
+	//input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadUp, 0 }, std::move(menuUp));
 	//input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadDown, 0 }, std::move(menuDown));
-	input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA, 0 }, std::move(menuEnter));
+	//input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA, 0 }, std::move(menuEnter));
 
 }
 

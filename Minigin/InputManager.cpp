@@ -1,5 +1,7 @@
 #include <SDL.h>
 #include "InputManager.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
 namespace dae
 {
@@ -10,11 +12,6 @@ namespace dae
 		{
 			controller->Update();
 		}
-
-		ProcessContext(m_GlobalContext);
-
-		//HandleControllerInput();
-		//HandleKeyboardInput();
 
 		SDL_Event e;
 		while (SDL_PollEvent(&e))
@@ -28,42 +25,84 @@ namespace dae
 				return false;
 			}
 		}
+		//process global context
+		ProcessContext(m_GlobalContext);
+
+		// Process current scene context
+		auto& activeScene = SceneManager::GetInstance().GetActiveScene();
+		if (m_SceneContexts.find(&activeScene) != m_SceneContexts.end()) {
+			ProcessContext(m_SceneContexts[&activeScene]);
+		}
+
+
+		// Update keyboard state history ONCE per frame
+		const Uint8* currentState = SDL_GetKeyboardState(nullptr);
+		std::memcpy(m_PreviousKeyboardState, currentState, SDL_NUM_SCANCODES);
+
+
+		//HandleControllerInput();
+		//HandleKeyboardInput();
+	
 		return true;
 	}
 
-	void InputManager::SetSceneContext(std::unique_ptr<InputContext> context)
+	void InputManager::BindSceneInput(Scene* scene, KeyboardInput input, std::unique_ptr<Command> command)
 	{
-		m_SceneContext = std::move(context);
-	}
+		auto& context = m_SceneContexts[scene];
+		context.keyboardBindings[input] = std::move(command);
 
-	void InputManager::ClearSceneContext()
+		/*const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
+
+		auto& context = m_SceneContexts[scene];
+		if (context.keyboardBindings.find(actionID) != context.keyboardBindings.end())
+			return;
+
+		context.keyboardBindings[actionID] = input;
+		m_Commands[actionID] = std::move(command);*/
+
+	}
+	void InputManager::BindSceneInput(Scene* scene, ControllerInput input, std::unique_ptr<Command> command)
 	{
-		m_SceneContext.reset();
+
+		auto& context = m_SceneContexts[scene];
+		context.controllerBindings[input] = std::move(command);
+
+		//const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
+		//
+		//auto& context = m_SceneContexts[scene];
+		//if (context.controllerBindings.find(actionID) != context.controllerBindings.end())
+		//	return;
+		//
+		//context.controllerBindings[actionID] = input;
+		//m_Commands[actionID] = std::move(command);
 	}
 
 	// Global bindings (available in all scenes)
 	void InputManager::BindGlobalInput(KeyboardInput input, std::unique_ptr<Command> command)
 	{
-		const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
-		
-		const auto it = m_GlobalContext.keyboardBindings.find(actionID);
-		if (it != m_GlobalContext.keyboardBindings.end())
-			return; //action already exists
+		m_GlobalContext.keyboardBindings[input] = std::move(command);
 
-		m_GlobalContext.keyboardBindings[actionID] = input;
-		m_Commands[actionID] = std::move(command);
+		//const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
+		//
+		//const auto it = m_GlobalContext.keyboardBindings.find(actionID);
+		//if (it != m_GlobalContext.keyboardBindings.end())
+		//	return; //action already exists
+		//
+		//m_GlobalContext.keyboardBindings[actionID] = input;
+		//m_Commands[actionID] = std::move(command);
 	}
 
 	void InputManager::BindGlobalInput(ControllerInput input, std::unique_ptr<Command> command)
 	{
-		const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
+		m_GlobalContext.controllerBindings[input] = std::move(command);
+		/*const unsigned int actionID = static_cast<unsigned int>(m_Commands.size());
 
 		const auto it = m_GlobalContext.controllerBindings.find(actionID);
 		if (it != m_GlobalContext.controllerBindings.end())
 			return;
 
 		m_GlobalContext.controllerBindings[actionID] = input;
-		m_Commands[actionID] = std::move(command);
+		m_Commands[actionID] = std::move(command);*/
 	}
 
 	void InputManager::AddController(unsigned int controllerIndex)
@@ -73,39 +112,57 @@ namespace dae
 
 	void InputManager::ProcessContext(InputContext& context)
 	{
-		// Process keyboard bindings
-		for (auto& [actionID, input] : context.keyboardBindings)
+		// Process keyboard bindings - direct command access
+		for (auto& [input, command] : context.keyboardBindings)
 		{
-			if (IsKeyboardTriggered(input)) 
+			if (IsKeyboardTriggered(input))
 			{
-				auto command = m_Commands.find(actionID);
-				if (command == m_Commands.end())
-				{
-					assert(false && "Command not found for input action ID");
-				}
-
-				command->second->Execute();
+				command->Execute();
 			}
 		}
 
-		// Process controller bindings
-		for (auto& [actionID, input] : context.controllerBindings)
+		// Process controller bindings - direct command access
+		for (auto& [input, command] : context.controllerBindings)
 		{
-			if (IsControllerTriggered(input)) 
+			if (IsControllerTriggered(input))
 			{
-				auto command = m_Commands.find(actionID);
-				if (command == m_Commands.end())
-				{
-					assert(false && "Command not found for input action ID");
-				}
-		
-				command->second->Execute();
+				command->Execute();
 			}
 		}
 
-		// Update keyboard state history
-		const Uint8* currentState = SDL_GetKeyboardState(nullptr);
-		std::memcpy(m_PreviousKeyboardState, currentState, SDL_NUM_SCANCODES);
+		//// Process keyboard bindings
+		//for (auto& [actionID, input] : context.keyboardBindings)
+		//{
+		//	if (IsKeyboardTriggered(input)) 
+		//	{
+		//		auto command = m_Commands.find(actionID);
+		//		if (command == m_Commands.end())
+		//		{
+		//			assert(false && "Command not found for input action ID");
+		//		}
+		//
+		//		command->second->Execute();
+		//	}
+		//}
+		//
+		//// Process controller bindings
+		//for (auto& [actionID, input] : context.controllerBindings)
+		//{
+		//	if (IsControllerTriggered(input)) 
+		//	{
+		//		auto command = m_Commands.find(actionID);
+		//		if (command == m_Commands.end())
+		//		{
+		//			assert(false && "Command not found for input action ID");
+		//		}
+		//
+		//		command->second->Execute();
+		//	}
+		//}
+		//
+		//// Update keyboard state history
+		//const Uint8* currentState = SDL_GetKeyboardState(nullptr);
+		//std::memcpy(m_PreviousKeyboardState, currentState, SDL_NUM_SCANCODES);
 
 	}
 
