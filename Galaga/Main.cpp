@@ -7,13 +7,10 @@
 #endif
 #endif
 
-
 //#define USE_STEAMWORKS
 
 #ifdef USE_STEAMWORKS
-
 #include <steam_api.h>
-
 #endif
 
 #include <windows.h>
@@ -179,14 +176,6 @@ void LoadGame()
 
 }
 
-void load()
-{
-
-
-
-
-}
-
 std::string GetExeDirectory() {
 	char buffer[MAX_PATH];
 	GetModuleFileNameA(nullptr, buffer, MAX_PATH);
@@ -205,7 +194,6 @@ int main(int, char* [])
 	}
 	else
 		std::cout << "Successfully initialized steam." << std::endl;
-
 #endif
 
 	auto datapath = GetExeDirectory() + "/Data/";
@@ -217,6 +205,7 @@ int main(int, char* [])
 	dae::Minigin engine(datapath);
 
 	auto& game = dae::GameManager::GetInstance().CreateGame<dae::GalagaGame>();
+	dae::GameManager::GetInstance().SetActiveGame(&game);
 
 	engine.Run();
 

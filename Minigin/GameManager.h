@@ -4,10 +4,8 @@
 #include <vector>
 #include <memory>
 
-
 namespace dae
 {
-
 	class Game;
 	class GameManager final : public Singleton<GameManager>
 	{
@@ -15,11 +13,7 @@ namespace dae
 		template <typename T, typename std::enable_if<std::is_base_of<Game, T>::value>::type* = nullptr>
 		Game& CreateGame();
 
-		void SetActiveGame(Game* game) 
-		{
-			//TODO: deactivate the previous game safely
-			m_ActiveGame = game;
-		};
+		void SetActiveGame(Game* game);
 		Game* GetActiveGame() const { return m_ActiveGame; }
 
 		//void Update(float elapsed);
@@ -32,7 +26,7 @@ namespace dae
 		GameManager() = default;
 
 		std::vector<std::shared_ptr<Game>> m_Games;
-		Game* m_ActiveGame;
+		Game* m_ActiveGame{nullptr};
 	};
 
 
@@ -40,9 +34,10 @@ namespace dae
 	Game& GameManager::CreateGame()
 	{
 		auto game = std::make_shared<T>();
-		m_ActiveGame = game.get();
-		m_Games.push_back(std::move(game));
-		return *m_ActiveGame;
+		//m_ActiveGame = game.get();
+		//auto tempCopy = game;
+		m_Games.push_back(game);
+		return *game;
 	}
 
 };

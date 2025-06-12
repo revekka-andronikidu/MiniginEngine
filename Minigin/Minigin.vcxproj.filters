@@ -112,6 +112,12 @@
     <ClInclude Include="TimeManager.h">
       <Filter>Engine\GameManager</Filter>
     </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Engine\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>Engine\Services</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
@@ -168,14 +174,17 @@
     <ClCompile Include="MenuComponent.cpp">
       <Filter>Engine\Objects\Components</Filter>
     </ClCompile>
-    <ClCompile Include="GameManager.cpp">
-      <Filter>Engine\GameManager</Filter>
-    </ClCompile>
     <ClCompile Include="TimeManager.cpp">
       <Filter>Engine\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="Command.h">
       <Filter>Engine\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="StateMachine.cpp">
+      <Filter>Engine\Services</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

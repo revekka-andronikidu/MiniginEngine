@@ -19,8 +19,10 @@ namespace dae
 	public:
 		void Init(const std::filesystem::path& data);
 		std::shared_ptr<Texture2D> LoadTexture(const std::string& file);
+		std::shared_ptr<Texture2D> GetTexture(const std::string& file);
 		std::shared_ptr<Font> LoadFont(const std::string& file, uint8_t size);
-
+		std::shared_ptr<dae::Font> GetFont(const std::string& file, uint8_t size);
+		std::shared_ptr<dae::Font> GetFont(const std::string& file);
 		//std::shared_ptr<ISoundHandle> LoadMusic(const std::string& file);
 
 		std::shared_ptr<ISoundHandle> LoadSound(const std::string& file);

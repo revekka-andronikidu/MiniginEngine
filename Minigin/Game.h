@@ -1,5 +1,6 @@
 #pragma once
 #include "GameManager.h"
+
 namespace dae
 {
 	class Game 
@@ -12,6 +13,9 @@ namespace dae
 
 		Game() = default;
 		virtual ~Game() = default;
+
+		virtual void Initialize() = 0;
+
 		Game(const Game&) = delete;
 		Game(Game&&) = delete;
 		Game& operator= (const Game&) = delete;

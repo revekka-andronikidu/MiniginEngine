@@ -39,6 +39,44 @@ std::shared_ptr<dae::Font> dae::ResourceManager::LoadFont(const std::string& fil
 	return m_loadedFonts.at(key);
 }
 
+std::shared_ptr<dae::Font> dae::ResourceManager::GetFont(const std::string& file, uint8_t size)
+{
+	const auto filename = fs::path(file).filename().string();
+	const auto key = std::pair<std::string, uint8_t>(filename, size);
+
+	auto it = m_loadedFonts.find(key);
+	if (it != m_loadedFonts.end())
+	{
+		return it->second;
+	}
+
+	throw std::runtime_error("Font not loaded: " + filename + " (size " + std::to_string(size) + ")");
+}
+
+std::shared_ptr<dae::Font> dae::ResourceManager::GetFont(const std::string& file)
+{
+	const auto filename = fs::path(file).filename().string();
+
+	for (const auto& [key, font] : m_loadedFonts)
+	{
+		if (key.first == filename)
+			return font;
+	}
+
+	throw std::runtime_error("Font not loaded (any size): " + filename);
+}
+
+std::shared_ptr<dae::Texture2D> dae::ResourceManager::GetTexture(const std::string& file)
+{
+	auto it = m_loadedTextures.find(file);
+
+	if (it != m_loadedTextures.end())
+	{
+		return it->second;
+	}
+	throw std::runtime_error("Texture not loaded: " + file);
+}
+
 void dae::ResourceManager::UnloadUnusedResources()
 {
 	for (auto it = m_loadedTextures.begin(); it != m_loadedTextures.end();)

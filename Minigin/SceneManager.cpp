@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "Scene.h"
+#include <iostream>
 
 void dae::SceneManager::Update()
 {
@@ -34,6 +35,9 @@ void dae::SceneManager::SetActiveScene(const std::string& name)
 		if (scene->GetSceneName() == name)
 		{
 			m_pActiveScene = scene.get();
+#if _DEBUG
+			std::cout << "Active scene: " << m_pActiveScene->GetSceneName() << std::endl;
+#endif
 		}
 	}
 }
@@ -55,3 +59,14 @@ dae::Scene& dae::SceneManager::GetScene(const std::string& name) const
 	throw std::exception("Scene not found");
 }
 
+void dae::SceneManager::DestroyScene(const std::string& name) 
+{
+	for (const auto& scene : m_scenes)
+	{
+		if (scene->GetSceneName() == name)
+		{
+			scene.get()->~Scene();
+		}
+	}
+	//throw std::exception("Scene not found");
+}

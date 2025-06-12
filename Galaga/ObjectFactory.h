@@ -1,4 +1,5 @@
 #pragma once
+#include <Singleton.h>
 #include <memory>
 #include <GameObject.h>
 #include <TextComponent.h>
@@ -6,58 +7,31 @@
 #include <Scene.h>
 #include <ActionComponent.h>
 #include <TextureComponent.h>
+#include <functional>
+
 
 
 namespace dae
 {
-    std::shared_ptr<dae::GameObject> MakeMenuItem(
-        const std::string& text,
-        std::shared_ptr<Font> font,
-        const glm::vec3& position,
-        dae::MenuComponent* menu,
-        //dae::Scene& scene,
-        std::function<void()> action)
+    class GalagaGame;
+    class ObjectFactory final : public Singleton<ObjectFactory>
     {
-        auto item = std::make_shared<dae::GameObject>();
-        item->AddComponent<dae::TextComponent>(text, font);
-        item->GetTransform().SetPosition(position);
-        item->SetParent(menu->GetOwner(), false);
-        item->AddComponent<ActionComponent>(action);
-        menu->AddMenuItem(item);
-        //scene.Add(item);
-        return item;
-    };
+    private:
+        friend class Singleton<ObjectFactory>;
+        ObjectFactory();
 
-    std::shared_ptr<dae::GameObject> MakeMenuArrow(
-        const std::string& textureName,
-        dae::MenuComponent* menu,
-        const float scale = 1.f
-        // dae::Scene& scene
-    )
-    {
-        //menu pointer item
-        auto item = std::make_shared<dae::GameObject>();
-        item->SetParent(menu->GetOwner(), false);
-        item->AddComponent<dae::TextureComponent>(textureName);
-        item->GetTransform().SetScale(glm::vec3(scale, scale, scale));
-        menu->AddMenuArrow(item);
-        return item;
-    };
+    public:
 
 
-    std::shared_ptr<dae::GameObject> MakeTexture(
-        const std::string& fileName,
-        const glm::vec3& position = glm::vec3(0,0,0),
-        const float scale = 1.f
-       // dae::Scene& scene
-       )
-    {
-        auto item = std::make_shared<dae::GameObject>();
-        auto texture = item->AddComponent<dae::TextureComponent>(fileName);
-        auto logoSize = texture->GetTextureSize();
-        item->GetTransform().SetPosition(position);
-        item->GetTransform().SetScale(glm::vec3(scale, scale, scale));
-        //scene.Add(item);
-        return item;
+        std::shared_ptr<dae::GameObject> CreateMainMenu();
+        std::shared_ptr<dae::GameObject> CreateMenuItem(const std::string& text, std::shared_ptr<Font> font, const glm::vec3& position, dae::MenuComponent* menu, std::function<void()> action);
+        std::shared_ptr<dae::GameObject> CreateMenuArrow(const std::string& textureName, dae::MenuComponent* menu, const float scale = 1.f);
+        std::shared_ptr<dae::GameObject> CreatePlayer();
+        std::shared_ptr<dae::GameObject> CreateLivesDisplay();
+        std::shared_ptr<dae::GameObject> CreatePointsDisplay();
+        std::shared_ptr<dae::GameObject> CreateTexture(const std::string& fileName, const glm::vec3& position = glm::vec3(0, 0, 0), const float scale = 1.f);
+        
+        GalagaGame* m_Galaga; 
+
     };
 }

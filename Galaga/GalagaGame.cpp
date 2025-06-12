@@ -5,17 +5,30 @@
 #include <InputManager.h>
 #include "ObjectFactory.h"
 #include "GameCommands.h"
+#include "SceneNames.h"
+#include "Scene.h"
 
 using namespace dae;
 
 GalagaGame::GalagaGame()
 {
-	//load game info (high scores, level details)
-	//
-	//load audio
-	//load resources (fonts, audio, textures)
+	//TODO:
+	//init resources (textures, sounds, fonts)
+	//init high scores
+	//init game/level info
 
-	CreateMainMenu();
+
+	//create all scenes in object factory
+	//create all game states and keep reffence to them?? or create them when mode is entered
+
+	
+}
+
+void GalagaGame::Initialize() //initialize after construction otherwise conflict in GameManager
+{
+	CreateScenes();
+	m_StateMachine.EnterState<MainMenuState>();
+	//EnterState(std::make_unique<MainMenuState>());
 	SetDebugCommands();
 }
 
@@ -24,128 +37,206 @@ void GalagaGame::SetDebugCommands()
 	auto& input = dae::InputManager::GetInstance();
 
 	auto skipLevel = std::make_unique<SkipLevelCommand>();
-	//input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F1 }, std::move(skipLevel));
+	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F1 }, std::move(skipLevel));
 	auto muteGame = std::make_unique<MuteGameCommand>();
-	//input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F2 }, std::move(muteGame));
-
-	
-
+	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F2 }, std::move(muteGame));
 }
 
-void GalagaGame::CreateMainMenu()
+void GalagaGame::SkipToNextStage()
 {
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("MainMenu");
-	dae::SceneManager::GetInstance().SetActiveScene(scene);
+	//check if the state is in game(not main menu)
+	if (dynamic_cast<InGameState*>(m_StateMachine.GetCurrentState()))
+	{
+		m_CurrentStage = (m_CurrentStage + 1) % (m_NumberOfStages + 1);
 
-	auto font = ResourceManager::GetInstance().LoadFont("emulogic.ttf", 16);
-
-	//background
-	auto background = std::make_shared<dae::GameObject>();
-	background->AddComponent<dae::TextureComponent>("bg_back2.png");
-	scene.Add(background);
-
-	auto mainMenu = std::make_shared<dae::GameObject>();
-	auto menu = mainMenu->AddComponent<dae::MenuComponent>();
-
-	int windowWidth{ 480 };
-	int windowHeight{ 512 };
-	int gap{ 30 };
-
-
-	//logo
-	auto logo = std::make_shared<dae::GameObject>();
-	auto texture = logo->AddComponent<dae::TextureComponent>("Galaga_logo.png");
-	auto logoSize = texture->GetTextureSize();
-	float scale{ 0.25f };
-	logo->GetTransform().SetPosition(glm::vec3(windowWidth / 2 - ((logoSize.x * scale) / 2), 70.f, 0));
-	logo->GetTransform().SetScale(glm::vec3(scale, scale, scale));
-	logo->SetParent(mainMenu.get(), false);
-	scene.Add(logo);
-
-	
-	auto onePlayerMenuItem = MakeMenuItem("1 PLAYER", font, glm::vec3(windowWidth / 2 - 60.f, windowHeight / 2, 0.f), menu, [this]()
+		
+		if (m_CurrentStage == 0)
 		{
-			//dae::SceneManager::GetInstance().SetActiveScene("OnePlayer");
-			EnterSinglePlayer();
-		});
+			m_StateMachine.EnterState<MainMenuState>();
+		}
+		
+		//Eneter correct state
+		//init new state
+		//state on enter should open the right scene
 
-	auto twoPlayersMenuItem = MakeMenuItem("2 PLAYERS", font, glm::vec3(windowWidth / 2 - 60.f, windowHeight / 2 + gap, 0.f), menu, []()
-		{
-			dae::SceneManager::GetInstance().SetActiveScene("Coop");
-		});
+		//TEMP TEST
+		//EnterScene();
+		//SceneManager::GetInstance().SetActiveScene(GetSceneForCurrentState());
+		//TEMP TEST
+		//
 
-	auto versusMenuItem = MakeMenuItem("VERSUS", font, glm::vec3(windowWidth / 2 - 60.f, windowHeight / 2 + gap*2, 0.f), menu, []()
-		{
-			dae::SceneManager::GetInstance().SetActiveScene("Versus");
-		});
-
-	auto highScoresMenuItem = MakeMenuItem("HIGH SCORES", font, glm::vec3(windowWidth / 2 - 60.f, windowHeight / 2 + gap * 3, 0.f), menu, []()
-		{
-			dae::SceneManager::GetInstance().SetActiveScene("HighScores");
-		});
-
-	auto menuPointerItem = MakeMenuArrow("arrow.png", menu, 0.1f);
-
-
-
-	scene.Add(onePlayerMenuItem);
-	scene.Add(twoPlayersMenuItem);
-	scene.Add(versusMenuItem);
-	scene.Add(highScoresMenuItem);
-	scene.Add(menuPointerItem);
-
-	scene.Add(mainMenu);
-
-
-	//inputs
-	auto& input = dae::InputManager::GetInstance();
-
-	auto menuUp = std::make_unique<MenuMoveCommand>(mainMenu.get(), MenuComponent::Direction::Up);
-	auto menuDown = std::make_unique<MenuMoveCommand>(mainMenu.get(), MenuComponent::Direction::Down);
-	auto menuUpW = std::make_unique<MenuMoveCommand>(mainMenu.get(), MenuComponent::Direction::Up);
-	auto menuDownS = std::make_unique<MenuMoveCommand>(mainMenu.get(), MenuComponent::Direction::Down);
-	auto menuEnter = std::make_unique<MenuEnterCommand>(mainMenu.get());
-
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_W }, std::move(menuUpW));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_S }, std::move(menuDownS));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_UP }, std::move(menuUp));
-	//input.BindInput(KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_DOWN }, std::move(menuDown));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(menuEnter));
-
-	input.AddController(0);
-	//input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadUp, 0 }, std::move(menuUp));
-	//input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadDown, 0 }, std::move(menuDown));
-	//input.BindGlobalInput(ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA, 0 }, std::move(menuEnter));
-
-}
-
-void GalagaGame::SkipStage()
-{
-
-	//check if in stage and not a menu 
-
-	//skip
 
 #if _DEBUG
-	std::cout << "Stage Skipped. Current stage: " << std::to_string(m_CurrentStage) << std::endl;
+		std::cout << "Stage Skipped. Current stage: " << std::to_string(m_CurrentStage) << std::endl;
 #endif
+	}
+	else
+	{
+#if _DEBUG
+		std::cout << "Stage cannor be skipped, not in game mode" << std::endl;
+#endif
+	}
 }
 
-void GalagaGame::EnterSinglePlayer()
+void GalagaGame::EnterGameMode(std::unique_ptr<GameMode> state)
 {
-	//create all scenes for mode
-	auto& scenePlayer = dae::SceneManager::GetInstance().CreateScene("OnePlayer");
-	dae::SceneManager::GetInstance().SetActiveScene("OnePlayer");
-	CreateSinglePlayerScene();
+	//enter the state by name? keep vector of game states?
+	//if doest exist create
+	if (state)
+	{
+		m_currentGameMode->OnExit();
+		m_currentGameMode = std::move(state);
+		m_currentGameMode->OnEnter();
+	}
+}
+
+std::string GalagaGame::GetSceneForCurrentState()
+{
+	switch (m_currentGameMode->GetModeType())
+	{
+	case GameMode::GameModeType::Solo:
+		switch (m_CurrentStage)
+		{
+		case 1:
+			return SceneNames::SoloStage1;
+			break;
+		case 2:
+			return SceneNames::SoloStage2;
+			break;
+		case 3:
+			return SceneNames::SoloStage3;
+			break;
+		default: 
+			//handle error
+			return SceneNames::MainMenu;
+			break;
+		}
+		break;
+	case GameMode::GameModeType::Coop:
+		switch (m_CurrentStage)
+		{
+		case 1:
+			return SceneNames::CoopStage1;
+			break;
+		case 2:
+			return SceneNames::CoopStage2;
+			break;
+		case 3:
+			return SceneNames::CoopStage3;
+			break;
+		default:
+			//handle error
+			return SceneNames::MainMenu;
+			break;
+		}
+		break;
+
+		break;
+	case GameMode::GameModeType::Versus:
+		switch (m_CurrentStage)
+		{
+		case 1:
+			return SceneNames::VersusStage1;
+			break;
+		case 2:
+			return SceneNames::VersusStage2;
+			break;
+		case 3:
+			return SceneNames::VersusStage3;
+			break;
+		default:
+			//handle error
+			return SceneNames::MainMenu;
+			break;
+		}
+		break;
+	default:
+		//handle error
+		return SceneNames::MainMenu;
+		break;
+	}
+	//create player/s
+
+	//create hud, high score display, point display, lives display
+	
+}
+
+//void GalagaGame::EnterStage()
+//{
+//	switch (m_CurrentStage)
+//	{
+//	case 1:
+//		EnterState(std::make_unique<StageOneState>());
+//		break;
+//	case 2:
+//		EnterState(std::make_unique<StageTwoState>());
+//		break;
+//	case 3:
+//		EnterState(std::make_unique<StageThreeState>());
+//		break;
+//	default:
+//		//handle error
+//		EnterState(std::make_unique<MainMenuState>());
+//		break;
+//	}
+//}
+
+void GalagaGame::CreatePlayers(Scene& scene)
+{
+	
+	if (m_PlayerOneLives > 0)
+	{
+		auto playerOne = ObjectFactory::GetInstance().CreatePlayer();
+		//m_pPlayers.push_back(&playerOne);
+		scene.Add(playerOne);
+	}
+	
+	if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Coop)
+	{
+		if (m_PlayerTwoLives > 0)
+		{
+			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
+			//m_pPlayers.push_back(&playerTwo);
+		}
+	}
+	else if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Versus)
+	{
+		
+			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
+			//m_pPlayers.push_back(&playerTwo);
+		
+	}
 
 }
 
-void GalagaGame::CreateSinglePlayerScene()
+void GalagaGame::EnterScene()
 {
-	auto text = std::make_shared<dae::GameObject>();
-	auto font = dae::ResourceManager::GetInstance().LoadFont("Lingua.otf", 36);
-	text->AddComponent<dae::TextComponent>("Stage 1 WIP", font);
-	text->GetTransform().SetPosition(glm::vec3(80.f, 50.f, 0.f));
-	auto& scene = dae::SceneManager::GetInstance().GetScene("OnePlayer");
-	scene.Add(text);
+
+	auto& scene = SceneManager::GetInstance().GetScene(GetSceneForCurrentState());
+	
+	
+	/*m_CurrentGameInfo = m_pGameInfoLoader->GetGameInfo(sceneName);
+	auto& grid = GameObjectFactory::GetInstance().CreateGrid(scene, m_CurrentGameInfo);
+	m_pGrid = grid.GetComponent<TriangularGrid>();
+
+	GameObjectFactory::GetInstance().CreateHighScoreHUD(scene, m_HighScore);
+	GameObjectFactory::GetInstance().CreateHUDLevel(scene, m_CurrentGameInfo.level);
+
+	m_pEnemyManager->SetNewData(m_CurrentGameInfo);
+	m_pEnemyManager->SetTriangularGrid(*m_pGrid);
+	m_pEnemyManager->SetCurrentScene(&scene);
+
+	m_pEnemyListener = std::make_shared<EnemyListener>(m_pEnemyManager.get());
+	EventDispatcher::GetInstance().SubscribeListener(m_pEnemyListener);*/
+
+	//CreatePlayers(scene);
+
+
+	SceneManager::GetInstance().SetActiveScene(scene);
+}
+
+void GalagaGame::CreateScenes()
+{
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::MainMenu);
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::HighScores);
 }

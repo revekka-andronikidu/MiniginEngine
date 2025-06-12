@@ -15,6 +15,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{700acfbc-cbad-47e8-b5ce-1f9e38998029}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameCommands.cpp">
@@ -35,8 +38,23 @@
     <ClCompile Include="Player.cpp">
       <Filter>Characters</Filter>
     </ClCompile>
+    <ClCompile Include="HighScoreDisplay.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectFactory.cpp">
+      <Filter>Game Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="GameStates.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMode.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
     <ClCompile Include="GalagaGame.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneFactory.cpp">
+      <Filter>Game Specific</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,8 +82,23 @@
     <ClInclude Include="GameEvents.h">
       <Filter>Characters</Filter>
     </ClInclude>
+    <ClInclude Include="HighScoreDisplay.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneNames.h">
+      <Filter>Characters</Filter>
+    </ClInclude>
     <ClInclude Include="GalagaGame.h">
-      <Filter>Source Files</Filter>
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMode.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStates.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneFactory.h">
+      <Filter>Game Specific</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

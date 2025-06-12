@@ -48,7 +48,7 @@ void SkipLevelCommand::Execute()
 	if (!game) return; // check nullptr
 	GalagaGame* galaga = dynamic_cast<GalagaGame*>(game);
 	if (!galaga) return; // cast failed
-	galaga->SkipStage();
+	galaga->SkipToNextStage();
 }
 
 void MuteGameCommand::Execute()
