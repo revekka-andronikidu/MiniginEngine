@@ -28,6 +28,9 @@ namespace dae
 			return objects;
 		};
 
+		std::vector<GameObject*> GetObjectsWithTag(std::string tag) const; //copy of game objects in the scene 
+		
+
 		~Scene();
 		Scene(const Scene& other) = delete;
 		Scene(Scene&& other) = delete;

@@ -33,6 +33,10 @@ namespace dae
 		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; }
 		bool IsChild(GameObject* parent);
 		void Destroy();
+
+		void SetTag(const std::string& tag);
+		const std::string& GetTag() const;
+		bool HasTag(const std::string& tag) const;
 			
 
 		#pragma region Component system
@@ -107,6 +111,7 @@ namespace dae
 	private:
 
 		Transform m_transform{this};
+		std::string m_Tag{};
 		std::vector<std::unique_ptr<BaseComponent>> m_pComponents;
 		GameObject* m_pParent = nullptr;
 		std::vector<GameObject*> m_pChildren;

@@ -21,6 +21,17 @@ void Scene::Remove(std::shared_ptr<GameObject> object)
 	m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), object), m_objects.end());
 }
 
+std::vector<GameObject*> Scene::GetObjectsWithTag(std::string tag) const
+{
+	std::vector<GameObject*> objects{};
+	objects.reserve(m_objects.size());
+	for (const auto& object : m_objects)
+	{
+		if (object.get()->HasTag(tag))
+			objects.emplace_back(object.get());
+	}
+	return objects;
+};
 void Scene::RemoveAll()
 {
 	m_objects.clear();

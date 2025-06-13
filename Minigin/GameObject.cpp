@@ -162,6 +162,21 @@ bool dae::GameObject::IsChild(GameObject* parent)
 	else return true;
 }
 
+void dae::GameObject::SetTag(const std::string& tag)
+{
+	m_Tag = tag;
+}
+
+const std::string& dae::GameObject::GetTag() const
+{
+	return m_Tag;
+}
+
+bool dae::GameObject::HasTag(const std::string& tag) const
+{
+	return m_Tag == tag;
+}
+
 
 
 

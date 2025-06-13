@@ -18,6 +18,18 @@
     <Filter Include="Game">
       <UniqueIdentifier>{700acfbc-cbad-47e8-b5ce-1f9e38998029}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Components\Display">
+      <UniqueIdentifier>{8ea1ee49-a54e-4ef4-8a16-08b8a09f8cca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Characters">
+      <UniqueIdentifier>{82332f4d-b057-45be-ba03-3958f3dd6ea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Characters\Player">
+      <UniqueIdentifier>{530d9779-26b4-4397-90b6-33de3d8b4dff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Characters\Enemy">
+      <UniqueIdentifier>{7e6af711-f121-4c53-be3b-412fadec5b6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameCommands.cpp">
@@ -25,21 +37,6 @@
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PointsDisplay.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="PointsComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="LivesDisplay.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="HighScoreDisplay.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="ObjectFactory.cpp">
       <Filter>Game Specific</Filter>
@@ -56,23 +53,32 @@
     <ClCompile Include="SceneFactory.cpp">
       <Filter>Game Specific</Filter>
     </ClCompile>
+    <ClCompile Include="BulletComponent.cpp">
+      <Filter>Components\Characters\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PointsComponent.cpp">
+      <Filter>Components\Characters\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ShootingComponent.cpp">
+      <Filter>Components\Characters\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="HighScoreDisplay.cpp">
+      <Filter>Components\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="PointsDisplay.cpp">
+      <Filter>Components\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="LivesDisplay.cpp">
+      <Filter>Components\Display</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyComponent.cpp">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyAttackComponent.cpp">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Player.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="PointsComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PointsDisplay.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="LivesComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="LivesDisplay.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectFactory.h">
       <Filter>Game Specific</Filter>
     </ClInclude>
@@ -81,9 +87,6 @@
     </ClInclude>
     <ClInclude Include="GameEvents.h">
       <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="HighScoreDisplay.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="SceneNames.h">
       <Filter>Characters</Filter>
@@ -99,6 +102,33 @@
     </ClInclude>
     <ClInclude Include="SceneFactory.h">
       <Filter>Game Specific</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletComponent.h">
+      <Filter>Components\Characters\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PointsComponent.h">
+      <Filter>Components\Characters\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ShootingComponent.h">
+      <Filter>Components\Characters\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="HighScoreDisplay.h">
+      <Filter>Components\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="PointsDisplay.h">
+      <Filter>Components\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="LivesDisplay.h">
+      <Filter>Components\Display</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyComponent.h">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="LivesComponent.h">
+      <Filter>Components\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyAttackComponent.h">
+      <Filter>Components\Characters\Enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

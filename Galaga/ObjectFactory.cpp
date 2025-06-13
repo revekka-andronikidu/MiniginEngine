@@ -11,6 +11,8 @@
 #include "ShootingComponent.h"
 #include "ColliderComponent.h"
 #include "SpriteComponent.h"
+#include "EnemyComponent.h"
+#include "EnemyAttackComponent.h"
 
 using namespace dae;
 
@@ -78,6 +80,7 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 std::shared_ptr<dae::GameObject> ObjectFactory::CreatePlayer(std::string texture, glm::vec3 startPos, glm::vec3 scale)
 {
 	auto player = std::make_shared<dae::GameObject>();
+	player->SetTag("player");
 	auto textureComp = player->AddComponent<dae::TextureComponent>(texture);
 	player->GetTransform().SetPosition(startPos);
 	player->GetTransform().SetScale(scale);
@@ -133,6 +136,7 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateBullet(glm::vec3 position)
 {
 	float scale{ 2.0f };
 	auto bullet = std::make_shared<dae::GameObject>();
+	bullet->SetTag("bullet");
 	bullet->AddComponent<BulletComponent>(400.f, 1.5f);
 	auto texture = bullet->AddComponent<TextureComponent>("fighter-bullet.png");
 
@@ -158,12 +162,21 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
 
 	auto bee = std::make_shared<dae::GameObject>();
 	//replace texture component with sprite component
+	auto lives = bee->AddComponent<LivesComponent>(1);
 	auto texture = bee->AddComponent<SpriteComponent>("galaga-bee-idle.png", 1, 2, 10);
 	bee->GetTransform().SetPosition(position);
 	bee->GetTransform().SetScale(scale);
+	bee->SetTag("enemy");
+
 
 	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, texture->GetTextureSize().y * scale.y, 0 * scale.z };
-	bee->AddComponent<ColliderComponent>(colliderSize);
+	auto collider = bee->AddComponent<ColliderComponent>(colliderSize);
+	auto enemyComp = bee->AddComponent<EnemyComponent>();
+	bee->AddComponent<EnemyAttackComponent>();
+		collider->AddObserver(enemyComp);
+		lives->AddObserver(enemyComp);
+	
+	//bee->GetComponent<LivesComponent>()->OnDeath.AddListener(this, &WaveManager::OnEnemyKilled);
 	
 	return bee;
 }
@@ -179,3 +192,28 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga()
 	auto galaga = std::make_shared<dae::GameObject>();
 	return galaga;
 }
+
+
+std::shared_ptr<dae::GameObject> ObjectFactory::CreateEnemyBullet(glm::vec3 position, glm::vec3 targetPosition)
+{
+	float scale{ 2.0f };
+	auto bullet = std::make_shared<dae::GameObject>();
+	glm::vec2 direction = glm::normalize(glm::vec2(targetPosition.x - position.x, targetPosition.y - position.y));
+
+	bullet->SetTag("enemyBullet");
+	bullet->AddComponent<BulletComponent>(300.f, 3.f, direction);
+	auto texture = bullet->AddComponent<TextureComponent>("enemy-bullet.png");
+
+	glm::vec3 bulletPos = { position.x - (texture->GetTextureSize().x / 2) * scale, position.y - (texture->GetTextureSize().y / 2 * scale) , position.z };
+	bullet->GetTransform().SetPosition(bulletPos);
+	bullet->GetTransform().SetScale({ scale,scale,scale });
+	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale, texture->GetTextureSize().y * scale, 0 * scale };
+	bullet->AddComponent<ColliderComponent>(colliderSize);
+
+	return bullet;
+
+}
+
+
+
+

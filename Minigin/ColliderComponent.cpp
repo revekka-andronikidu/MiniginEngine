@@ -1,49 +1,89 @@
+#pragma once
 #include "ColliderComponent.h"
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "EngineEvents.h"
+#include "Subject.h"
+
 
 using namespace dae;
 void ColliderComponent::UpdateOverlaps()
 { 
     if (!m_IsActive) return;
+    m_CurrentOverlaps.clear();
 
 	auto objects = SceneManager::GetInstance().GetActiveScene().GetObjectsInScene();
 
-	for (auto* other : objects)
-	{
-		if (other == GetOwner() || other->IsMarkedForDestroy() || !other) //check if object is valid
-			continue;
+    for (auto* other : objects)
+    {
+        if (other == GetOwner() || other->IsMarkedForDestroy() || !other) //check if object is valid
+            continue;
 
-		const auto otherCollider = other->GetComponent<ColliderComponent>(); 
-		if (!otherCollider)  //check if object has collider
-			continue;  
+        const auto otherCollider = other->GetComponent<ColliderComponent>();
+        if (!otherCollider)  //check if object has collider
+            continue;
 
         if (!otherCollider->m_IsActive) //check if collider is active
-            continue;  
+            continue;
+
 
         if (IsOverlapping(otherCollider))
         {
-            std::cout << "OVERLAP DETECTED" << std::endl;
+            m_CurrentOverlaps.insert(other);
 
-
-            /*currentOverlaps.insert(other);
-            auto overlapPair = std::minmax(GetGameObject(), other);
-
-            if (!m_CurrentOverlaps.contains(other) && !active_overlaps.contains(overlapPair))
+            if (!m_PreviousOverlaps.contains(other) && GetOwner() < other)
             {
-                OnTriggerEnterEvent.Invoke(GetGameObject(), other);
-                if (const auto otherColliderComponent = other->GetComponent<ColliderComponent>())
-                    otherColliderComponent->OnTriggerEnterEvent.Invoke(other, GetGameObject());
+                std::cout << "OVERLAP STARTED" << std::endl;
 
-                active_overlaps.insert(overlapPair);
-            }*/
+                // Create event
+                auto hitEvent = std::make_shared<TypedEvent<EngineEvents::Hit>>(EngineEvents::Hit{ GetOwner(), other });
+
+                Notify(*GetOwner(), hitEvent);                  // This collider’s observers
+                otherCollider->Notify(*other, hitEvent);
+                // Notify both objects — assuming they are Subjects
+                //GetOwner()->GetComponent<Subject>()->Notify(*GetOwner(), hitEvent); // e.g. bullet notifies it's hitting
+                //other->GetComponent<Subject>()->Notify(*other, hitEvent);          // e.g. player notifies it's hit
+
+                // New overlap began
+               // OnTriggerEnterEvent.Invoke(GetOwner(), other);
+                
+                //if (otherCollider)
+                    //otherCollider->OnTriggerEnterEvent.Invoke(other, GetOwner());
+            }
+        }
+    }
+
+        // Check for overlaps that ended
+        for (auto* previous : m_PreviousOverlaps)
+        {
+            if (!m_CurrentOverlaps.contains(previous) && GetOwner() < previous)
+            {
+                std::cout << "OVERLAP ENDED" << std::endl;
+
+
+                // Overlap ended
+               // OnTriggerExitEvent.Invoke(GetOwner(), previous);
+                //if (auto* otherCollider = previous->GetComponent<ColliderComponent>())
+                    //otherCollider->OnTriggerExitEvent.Invoke(previous, GetOwner());
+            }
         }
 
+        // Save current as previous for next frame
+        m_PreviousOverlaps = m_CurrentOverlaps;
 
-
-	}
+	
 }
+
+//auto overlapPair = std::minmax(GetGameObject(), other);
+//
+//if (!m_CurrentOverlaps.contains(other) && !active_overlaps.contains(overlapPair))
+//{
+//    OnTriggerEnterEvent.Invoke(GetGameObject(), other);
+//    if (const auto otherColliderComponent = other->GetComponent<ColliderComponent>())
+//        otherColliderComponent->OnTriggerEnterEvent.Invoke(other, GetGameObject());
+//
+//    active_overlaps.insert(overlapPair);
 
 
 bool ColliderComponent::IsOverlapping(const ColliderComponent* other)
