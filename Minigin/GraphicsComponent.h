@@ -37,7 +37,7 @@ namespace dae
 			}
 		};
 
-		glm::ivec2 GetTextureSize() const
+		virtual glm::ivec2 GetTextureSize() const
 		{
 			return m_pTexture->GetSize();
 		}

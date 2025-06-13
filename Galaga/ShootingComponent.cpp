@@ -17,13 +17,14 @@ void ShootingComponent::Update()
 
 void ShootingComponent::Shoot()
 {
-   // if (m_TimeSinceLastShot >= m_FireRate && dae::SceneManager::GetInstance().GetActiveScene()->GetGameObjectsWithTag("bullet").size() < 2)
-   // {
+    //TODO: Limit bullets in scene
+    if (m_TimeSinceLastShot >= m_FireRate)
+    {
         SpawnBullet();
-       // dae::ServiceLocator::GetService<ISoundService>()->PlaySoundEffect("Fighter-Shot.wav");
-        //GameMaster::GetInstance().IncrementPlayerShots();
+       //PLAY SOUND
+        //INCREMENT SHOOT COUNT;
         m_TimeSinceLastShot = 0.0f;
-  //  }
+    }
 }
 
 void ShootingComponent::SetFireRate(float rpm)

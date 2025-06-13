@@ -32,6 +32,9 @@ namespace dae
         std::shared_ptr<dae::GameObject> CreateTexture(const std::string& fileName, const glm::vec3& position = glm::vec3(0, 0, 0), const float scale = 1.f);
         std::shared_ptr<dae::GameObject> CreateTextObject(std::shared_ptr<dae::Font> font, std::string text = {""}, glm::vec3 position = {0,0,0}, SDL_Color color = { 255,255,255,255 });
         std::shared_ptr<dae::GameObject> CreateBullet(glm::vec3 position = {0,0,0});
+        std::shared_ptr<dae::GameObject> CreateBee(glm::vec3 position);
+        std::shared_ptr<dae::GameObject> CreateButterfly();
+        std::shared_ptr<dae::GameObject> CreateBossGalaga();
         GalagaGame* m_Galaga; 
 
     };

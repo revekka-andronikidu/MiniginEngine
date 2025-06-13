@@ -136,7 +136,9 @@ void SceneFactory::CreateStageScene(std::string sceneName)
 	// 4. Create enemies from level data
 	//for (const auto& enemySpawn : data.enemies) {
 	//	scene.Add(CreateEnemy(enemySpawn.type, enemySpawn.position));
-	//}
+	auto bee = ObjectFactory::GetInstance().CreateBee(glm::vec3{ 200, 80, 0 });
+
+	scene.Add(bee);
 
 	//// 5. Create HUD elements
 	//scene.Add(CreateLivesDisplay());

@@ -115,8 +115,14 @@
     <ClInclude Include="State.h">
       <Filter>Engine\Services</Filter>
     </ClInclude>
+    <ClInclude Include="ColliderComponent.h">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClInclude>
     <ClInclude Include="StateMachine.h">
-      <Filter>Engine\Services</Filter>
+      <Filter>Engine\GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteComponent.h">
+      <Filter>Engine\Objects\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -180,11 +186,17 @@
     <ClCompile Include="Command.h">
       <Filter>Engine\Events</Filter>
     </ClCompile>
+    <ClCompile Include="ColliderComponent.cpp">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClCompile>
     <ClCompile Include="GameManager.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="StateMachine.cpp">
-      <Filter>Engine\Services</Filter>
+      <Filter>Engine\GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Engine\Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
