@@ -11,6 +11,8 @@
 #include "ResourceManager.h"
 #include "TimeManager.h"
 #include <thread>
+#include "GameManager.h"
+#include "Game.h"
 
 //#define  USE_STEAMWORKS
 #ifdef USE_STEAMWORKS
@@ -124,6 +126,7 @@ void dae::Minigin::Run(/*const std::function<void()>& load*/)
 			lag -= m_fixed_time_step;
 		}		
 
+		GameManager::GetInstance().GetActiveGame()->Update();
 		sceneManager.Update();
 		sceneManager.LateUpdate();
 		renderer.Render();

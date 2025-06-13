@@ -2,6 +2,8 @@
 #include "TimeManager.h"
 #include "ObjectFactory.h"
 #include "SceneManager.h"
+#include "GalagaGame.h"
+#include "GameManager.h"
 
 using namespace dae;
 ShootingComponent::ShootingComponent(dae::GameObject* gameObject, float fireRate) 
@@ -22,7 +24,8 @@ void ShootingComponent::Shoot()
     {
         SpawnBullet();
        //PLAY SOUND
-        //INCREMENT SHOOT COUNT;
+        auto* galaga = dynamic_cast<GalagaGame*>(GameManager::GetInstance().GetActiveGame());
+        galaga->IncrementShotsFired();
         m_TimeSinceLastShot = 0.0f;
     }
 }
@@ -43,5 +46,5 @@ void ShootingComponent::SpawnBullet() const
 
     auto bullet = ObjectFactory::GetInstance().CreateBullet(spawnPosition);
 
-    SceneManager::GetInstance().GetActiveScene().Add(bullet);
+    SceneManager::GetInstance().GetActiveScene().Add(std::move(bullet));
 }

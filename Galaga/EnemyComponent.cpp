@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "LivesComponent.h"
 #include "ColliderComponent.h"
+#include "GalagaGame.h"
+
 
 using namespace dae;
 
@@ -36,7 +38,9 @@ void dae::EnemyComponent::OnNotify(const GameObject& entity, const Event& event)
 
 void dae::EnemyComponent::OnHit()
 {
-    //register hit for statistics
+
+    auto * galaga = dynamic_cast<GalagaGame*>(GameManager::GetInstance().GetActiveGame());
+    galaga->IncrementEnemiesHit();
     GetOwner()->GetComponent<LivesComponent>()->RemoveLive();
 }
 void dae::EnemyComponent::OnLooseLife()
@@ -46,6 +50,13 @@ void dae::EnemyComponent::OnLooseLife()
 void dae::EnemyComponent::OnDeath()
 {
     //register points to player
+    //Create enemy explosion
+    AddPoints();
+       
+
+        
+        // Add to killed enemies counter
+       // GameMaster::GetInstance().IncrementKilledEnemies();
     
     GetOwner()->GetComponent<ColliderComponent>()->m_IsActive = false;
     //play animation then destroy

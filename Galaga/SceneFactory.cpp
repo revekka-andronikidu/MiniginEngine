@@ -67,8 +67,8 @@ void SceneFactory::CreateMainMenu()
 	auto menuPointerItem = objFactory.CreateMenuArrow("arrow.png", menuComp, 0.1f);
 
 
-	scene.Add(background);
-	scene.Add(logo);
+	scene.Add(std::move(background));
+	scene.Add(std::move(logo));
 	scene.Add(onePlayerMenuItem);
 	scene.Add(twoPlayersMenuItem);
 	scene.Add(versusMenuItem);
@@ -94,9 +94,9 @@ void SceneFactory::CreateMainMenu()
 
 	input.AddController(0);
 
-	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadUp }, std::move(menuUp));
-	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadDown }, std::move(menuDown));
-	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA }, std::move(menuEnter));
+	//input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadUp }, std::move(menuUp));
+	//input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadDown }, std::move(menuDown));
+	//input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA }, std::move(menuEnter));
 	
 	//m_MenuCreated = true;
 }
@@ -116,7 +116,7 @@ void SceneFactory::CreateStageScene(std::string sceneName)
 
 	// 2. Create background
 	auto background = objFactory.CreateTexture("bg_back2.png");
-	scene.Add(background);
+	scene.Add(std::move(background));
 
 	
 
@@ -138,7 +138,7 @@ void SceneFactory::CreateStageScene(std::string sceneName)
 	//	scene.Add(CreateEnemy(enemySpawn.type, enemySpawn.position));
 	auto bee = ObjectFactory::GetInstance().CreateBee(glm::vec3{ 200, 80, 0 });
 
-	scene.Add(bee);
+	scene.Add(std::move(bee));
 
 	//// 5. Create HUD elements
 	//scene.Add(CreateLivesDisplay());
@@ -179,23 +179,24 @@ void SceneFactory::CreatePlayer(std::string sceneName, int playerNumber)
 
 	//PLAYER
 	auto player = objFactory.CreatePlayer(texture, startPos, scale);
+
 	
 	//LIVES DISPLAY
-	std::shared_ptr<GameObject> livesDisplay;
+	std::unique_ptr<GameObject> livesDisplay;
 	glm::vec3 position;
 	glm::ivec2 logoSize;
 	int padding{ 10 };
 
 	if (playerNumber == 2)
 	{
-		livesDisplay = objFactory.CreateLivesDisplay(texture, player, lives, { 0,0,0 }, scale, true);
+		livesDisplay = objFactory.CreateLivesDisplay(texture, player.get(), lives, {0,0,0}, scale, true);
 		logoSize = livesDisplay.get()->GetComponent<LivesDisplay>()->GetTextureSize();
 
 		position = { width - (logoSize.x * scale.x)- padding, height - (logoSize.y * scale.y), 0 };
 	}
 	else
 	{
-		livesDisplay = objFactory.CreateLivesDisplay(texture, player, lives, { 0,0,0 }, scale);
+		livesDisplay = objFactory.CreateLivesDisplay(texture, player.get(), lives, {0,0,0}, scale);
 		logoSize = livesDisplay.get()->GetComponent<LivesDisplay>()->GetTextureSize();
 
 		position = { padding, height - (logoSize.y * scale.y), 0 };
@@ -207,14 +208,8 @@ void SceneFactory::CreatePlayer(std::string sceneName, int playerNumber)
 	auto font = ResourceManager::GetInstance().LoadFont("emulogic.ttf", 16);
 	auto textPoints = objFactory.CreateTextObject(font, "1UP", { 0,0,0 }, { 255,0,0,255 });
 	glm::vec3 pos{0, 20, 0};
-	auto pointsDisplay = objFactory.CreatePointsDisplay(player, pos);
 
-
-	//Add to scene
-	scene.Add(player);
-	scene.Add(livesDisplay);
-	scene.Add(pointsDisplay);
-	scene.Add(textPoints);
+	auto pointsDisplay = objFactory.CreatePointsDisplay(player.get(), pos);
 
 
 	//INPUT
@@ -236,14 +231,37 @@ void SceneFactory::CreatePlayer(std::string sceneName, int playerNumber)
 
 	}
 
-
-
-
 #if _DEBUG
 	auto removeLive = std::make_unique<LooseLiveCommand>(player.get());
 	input.BindSceneInput(&scene,KeyboardInput{ ButtonState::KeyUp,SDL_SCANCODE_X }, std::move(removeLive));
 	auto increasePoints = std::make_unique<AddScoreCommand>(player.get(), 100);
 	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyUp,SDL_SCANCODE_C }, std::move(increasePoints));
 #endif
+
+	scene.Add(std::move(livesDisplay));
+	scene.Add(std::move(pointsDisplay));
+	scene.Add(std::move(textPoints));
+	scene.Add(std::move(player));
+
 }
 
+void SceneFactory::CreateGameOverScene()
+{
+
+	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::GameOver);
+
+	auto font = ResourceManager::GetInstance().LoadFont("emulogic.ttf", 50); //TODO: GET INTEAD OF LOAD
+
+	
+	auto text = ObjectFactory::GetInstance().CreateTextObject(font, "GAME OVER");
+
+	text->Update(); //otherwise no texture?
+	auto textSize = text->GetComponent<TextComponent>()->GetTextureSize();;
+
+	glm::vec3 position{ m_Galaga->m_GameWindowWidth / 2 - textSize.x/2, m_Galaga->m_GameWidnowHeight / 2 - textSize.y  , 0 };
+
+	text->GetTransform().SetPosition(position);
+
+	scene.Add(std::move(text));
+
+}

@@ -34,7 +34,7 @@ void ColliderComponent::UpdateOverlaps()
 
             if (!m_PreviousOverlaps.contains(other) && GetOwner() < other)
             {
-                std::cout << "OVERLAP STARTED" << std::endl;
+                //std::cout << "OVERLAP STARTED" << std::endl;
 
                 // Create event
                 auto hitEvent = std::make_shared<TypedEvent<EngineEvents::Hit>>(EngineEvents::Hit{ GetOwner(), other });
@@ -59,7 +59,7 @@ void ColliderComponent::UpdateOverlaps()
         {
             if (!m_CurrentOverlaps.contains(previous) && GetOwner() < previous)
             {
-                std::cout << "OVERLAP ENDED" << std::endl;
+                //std::cout << "OVERLAP ENDED" << std::endl;
 
 
                 // Overlap ended

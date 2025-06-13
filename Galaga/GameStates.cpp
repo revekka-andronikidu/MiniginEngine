@@ -22,8 +22,8 @@ void MainMenuState::OnEnter()
 		m_menuCreated = true;
 	}
 
-	galaga->EnterScene();
-	//sceneManager.SetActiveScene(SceneNames::MainMenu);
+	//galaga->EnterScene();
+	sceneManager.SetActiveScene(SceneNames::MainMenu);
 	
 }
 void MainMenuState::OnExit()
@@ -52,7 +52,7 @@ void HighScoresState::OnEnter()
 
 }
 
-void StageOneState::OnEnter()
+void WaveOneState::OnEnter()
 {
 	auto game = GameManager::GetInstance().GetActiveGame();
 	auto galaga = dynamic_cast<GalagaGame*>(game);
@@ -60,59 +60,27 @@ void StageOneState::OnEnter()
 
 
 	// Get scene name based on game mode
-	const std::string sceneName = galaga->GetSceneForCurrentState();
-	SceneFactory::GetInstance().CreateStageScene(sceneName); 
 	
+	SceneFactory::GetInstance().CreateStageScene(SceneNames::Solo);
+	dae::SceneManager::GetInstance().SetActiveScene(SceneNames::Solo);
 
-	galaga->EnterScene(); // Sets active scene
+	//galaga->EnterScene(); // Sets active scene
 	//ResetStage(sceneName); // Reset enemies/players if needed
 
 }
-void StageOneState::CreateScene()
-{
-	//auto game = GameManager::GetInstance().GetActiveGame();
-	//auto galaga = dynamic_cast<GalagaGame*>(game);
 
 
-	//SceneManager::CreateScene()
-}
 
-void StageTwoState::OnEnter()
+
+void GameOverState::OnEnter()
 {
 	auto game = GameManager::GetInstance().GetActiveGame();
 	auto galaga = dynamic_cast<GalagaGame*>(game);
 
-	galaga->m_CurrentStage = 2;
-	galaga->EnterScene();
-
-	//Enter / Create Scene
+	SceneFactory::GetInstance().CreateGameOverScene();
+	SceneManager::GetInstance().SetActiveScene(SceneNames::GameOver);
 
 
 }
 
-void StageThreeState::OnEnter()
-{
-	auto game = GameManager::GetInstance().GetActiveGame();
-	auto galaga = dynamic_cast<GalagaGame*>(game);
-
-	galaga->m_CurrentStage = 3;
-	galaga->EnterScene();
-
-	//Enter / Create Scene
-
-
-}
-
-//void StageScreenState::OnEnter()
-//{
-//	auto game = GameManager::GetInstance().GetActiveGame();
-//	auto galaga = dynamic_cast<GalagaGame*>(game);
-//
-//	//get game stage
-//
-//	//get game mode 
-//
-//
-//}
-//
 

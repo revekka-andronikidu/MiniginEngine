@@ -6,27 +6,28 @@
 
 dae::GameObject::~GameObject()
 {
-	//// Remove from parent's children
-	//if (m_pParent)
-	//{
-	//	m_pParent->m_pChildren.erase(
-	//		std::remove(m_pParent->m_pChildren.begin(), m_pParent->m_pChildren.end(), this),
-	//		m_pParent->m_pChildren.end()
-	//	);
-	//}
+	// Remove from parent's children
+	if (m_pParent)
+	{
+		m_pParent->m_pChildren.erase(
+			std::remove(m_pParent->m_pChildren.begin(), m_pParent->m_pChildren.end(), this),
+			m_pParent->m_pChildren.end()
+		);
+	}
 
-	//// Orphan all children and update their transforms
-	//for (auto* child : m_pChildren)
-	//{
-	//	child->m_pParent = nullptr;
-	//}
-
+	// Orphan all children and update their transforms
+	for (auto* child : m_pChildren)
+	{
+		child->m_pParent = nullptr;
+	}
+	//std::cout << "DESTRUCTOR" << std::endl;
 }
 
 void dae::GameObject::Update()
 {
 	for (auto&  component : m_pComponents)
 	{
+		//if(!m_IsMarkedForDestroy && !component->IsMarkedForRemoval())
 		component->Update();
 	}
 }

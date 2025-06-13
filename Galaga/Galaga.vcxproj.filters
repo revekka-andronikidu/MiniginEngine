@@ -77,6 +77,12 @@
     <ClCompile Include="EnemyAttackComponent.cpp">
       <Filter>Components\Characters\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="PlayerComponent.cpp">
+      <Filter>Components\Characters\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="BeeComponent.cpp">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectFactory.h">
@@ -128,6 +134,12 @@
       <Filter>Components\Characters</Filter>
     </ClInclude>
     <ClInclude Include="EnemyAttackComponent.h">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerComponent.h">
+      <Filter>Components\Characters\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="BeeComponent.h">
       <Filter>Components\Characters\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

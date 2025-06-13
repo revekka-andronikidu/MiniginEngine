@@ -19,6 +19,7 @@ namespace dae
 		void CreateMainMenu();
 		void CreateStageScene(std::string sceneName);
 		void CreatePlayer(std::string sceneName, int playerNumber);
+		void CreateGameOverScene();
 	};
 
 }

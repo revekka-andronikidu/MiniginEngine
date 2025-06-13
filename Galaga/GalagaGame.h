@@ -3,22 +3,22 @@
 #include "GameMode.h"
 #include "GameStates.h"
 #include <StateMachine.h> 
+#include <iostream>
+#include "Observer.h"
 
 
 namespace dae
 {
 	class Scene;
-	class GalagaGame final : public Game
+	class GalagaGame final : public Game , public Observer
 	{
 	public:
 		GalagaGame();
 		virtual ~GalagaGame() = default;
 		
 		void Initialize() override;
+		void Update() override;
 
-
-		
-		std::string GetSceneForCurrentState();
 
 		void SkipToNextStage();
 		void EnterScene();
@@ -31,6 +31,12 @@ namespace dae
 		StateMachine<GameState> m_StateMachine;
 		StateMachine<GameMode> m_GameModeMachine;
 
+		void OnNotify(const GameObject& entity, const Event& event) override;
+
+		void IncrementShotsFired() { m_ShotsFired++;  };
+		void IncrementEnemiesHit() { m_Hits++; std::cout << std::to_string(m_Hits) << std::endl;
+		};
+
 	private:
 		void CreateScenes();
 		void SetDebugCommands();
@@ -40,14 +46,12 @@ namespace dae
 		
 	
 		int m_HighScore{ 0 };
+		int m_Hits{0};
+		int m_ShotsFired{0};
 		
 		
 
-		//GameMode m_currentGameMode{ GameMode::Single };
 		
-
-		//std::unique_ptr<GameState> m_currentGameState{std::make_unique<GameState>()};
-		//std::unique_ptr<GameMode> m_currentGameMode{ std::make_unique<GameModeNull>() };
 	};
 
 }

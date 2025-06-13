@@ -16,6 +16,7 @@ namespace dae
 
 		void SetText(const std::string& text);
 		void SetColor(const SDL_Color color);
+		glm::ivec2 GetTextureSize() const override;
 
 		TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, SDL_Color color = {255,255,255,255});
 		virtual ~TextComponent() = default;

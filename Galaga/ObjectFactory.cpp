@@ -13,6 +13,8 @@
 #include "SpriteComponent.h"
 #include "EnemyComponent.h"
 #include "EnemyAttackComponent.h"
+#include "PlayerComponent.h"
+#include "BeeComponent.h"
 
 using namespace dae;
 
@@ -63,13 +65,13 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateMainMenu()
 	return mainMenu;
 }
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateTexture(
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 	const std::string& fileName,
 	const glm::vec3& position, 
 	const float scale
 )
 {
-	auto item = std::make_shared<dae::GameObject>();
+	auto item = std::make_unique<dae::GameObject>();
 	auto texture = item->AddComponent<dae::TextureComponent>(fileName);
 	auto logoSize = texture->GetTextureSize();
 	item->GetTransform().SetPosition(position);
@@ -77,28 +79,31 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 	return item;
 };
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreatePlayer(std::string texture, glm::vec3 startPos, glm::vec3 scale)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreatePlayer(std::string texture, glm::vec3 startPos, glm::vec3 scale)
 {
-	auto player = std::make_shared<dae::GameObject>();
+	auto player = std::make_unique<dae::GameObject>();
 	player->SetTag("player");
 	auto textureComp = player->AddComponent<dae::TextureComponent>(texture);
 	player->GetTransform().SetPosition(startPos);
 	player->GetTransform().SetScale(scale);
 
-	/*auto livesComp = */player->AddComponent<dae::LivesComponent>();
-	/*auto pointsComp = */player->AddComponent<dae::PointsComponent>();
+	auto livesComp = player->AddComponent<dae::LivesComponent>();
+	auto pointsComp = player->AddComponent<dae::PointsComponent>();
 	/*auto shootingComponent =*/ player->AddComponent<ShootingComponent>(0.2f);
 
 	//player texture size
 	auto colliderSize = glm::vec3{textureComp->GetTextureSize().x * scale.x, textureComp->GetTextureSize().y * scale.y, 0 * scale.z};
-	player->AddComponent<ColliderComponent>(colliderSize);
+	auto collider = player->AddComponent<ColliderComponent>(colliderSize);
+	auto playerComp = player->AddComponent<PlayerComponent>();
+	collider->AddObserver(playerComp);
+	livesComp->AddObserver(m_Galaga);
 
 	return player;
 }
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateLivesDisplay(std::string texture, std::shared_ptr<dae::GameObject> player, int lives, glm::vec3 position, glm::vec3 scale, bool mirror)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateLivesDisplay(std::string texture, GameObject* player, int lives, glm::vec3 position, glm::vec3 scale, bool mirror)
 {
-	auto livesDisplay = std::make_shared<dae::GameObject>();
+	auto livesDisplay = std::make_unique<dae::GameObject>();
 	livesDisplay->AddComponent<dae::LivesDisplay>(texture, scale, mirror);
 	livesDisplay->GetTransform().SetPosition(glm::vec3(position));
 
@@ -110,9 +115,9 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateLivesDisplay(std::string t
 	return livesDisplay;
 }
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreatePointsDisplay(std::shared_ptr<dae::GameObject> player, glm::vec3 position)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreatePointsDisplay(GameObject* player, glm::vec3 position)
 {
-	auto pointsDisplay = std::make_shared<dae::GameObject>();
+	auto pointsDisplay = std::make_unique<dae::GameObject>();
 	pointsDisplay->AddComponent<dae::PointsDisplay>(); //add custom font to points display
 	pointsDisplay->GetTransform().SetPosition(position);
 
@@ -122,9 +127,9 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreatePointsDisplay(std::shared_
 	return pointsDisplay;
 }
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateTextObject(std::shared_ptr<dae::Font> font, std::string text, glm::vec3 position, SDL_Color color )
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateTextObject(std::shared_ptr<dae::Font> font, std::string text, glm::vec3 position, SDL_Color color )
 {
-	auto item = std::make_shared<dae::GameObject>();
+	auto item = std::make_unique<dae::GameObject>();
 	auto textComp = item->AddComponent<dae::TextComponent>(text, font, color);
 	item->GetTransform().SetPosition(position);
 
@@ -132,10 +137,10 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateTextObject(std::shared_ptr
 }
 
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateBullet(glm::vec3 position)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateBullet(glm::vec3 position)
 {
 	float scale{ 2.0f };
-	auto bullet = std::make_shared<dae::GameObject>();
+	auto bullet = std::make_unique<dae::GameObject>();
 	bullet->SetTag("bullet");
 	bullet->AddComponent<BulletComponent>(400.f, 1.5f);
 	auto texture = bullet->AddComponent<TextureComponent>("fighter-bullet.png");
@@ -156,11 +161,11 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateBullet(glm::vec3 position)
 
 }
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
 {
 	glm::vec3 scale{2,2,2};
 
-	auto bee = std::make_shared<dae::GameObject>();
+	auto bee = std::make_unique<dae::GameObject>();
 	//replace texture component with sprite component
 	auto lives = bee->AddComponent<LivesComponent>(1);
 	auto texture = bee->AddComponent<SpriteComponent>("galaga-bee-idle.png", 1, 2, 10);
@@ -171,7 +176,7 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
 
 	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, texture->GetTextureSize().y * scale.y, 0 * scale.z };
 	auto collider = bee->AddComponent<ColliderComponent>(colliderSize);
-	auto enemyComp = bee->AddComponent<EnemyComponent>();
+	auto enemyComp = bee->AddComponent<BeeComponent>();
 	bee->AddComponent<EnemyAttackComponent>();
 		collider->AddObserver(enemyComp);
 		lives->AddObserver(enemyComp);
@@ -180,24 +185,24 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
 	
 	return bee;
 }
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateButterfly()
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateButterfly()
 {
-	auto butterfly = std::make_shared<dae::GameObject>();
+	auto butterfly = std::make_unique<dae::GameObject>();
 
 	return butterfly;
 
 }
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga()
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga()
 {
-	auto galaga = std::make_shared<dae::GameObject>();
+	auto galaga = std::make_unique<dae::GameObject>();
 	return galaga;
 }
 
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateEnemyBullet(glm::vec3 position, glm::vec3 targetPosition)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateEnemyBullet(glm::vec3 position, glm::vec3 targetPosition)
 {
 	float scale{ 2.0f };
-	auto bullet = std::make_shared<dae::GameObject>();
+	auto bullet = std::make_unique<dae::GameObject>();
 	glm::vec2 direction = glm::normalize(glm::vec2(targetPosition.x - position.x, targetPosition.y - position.y));
 
 	bullet->SetTag("enemyBullet");
@@ -212,6 +217,22 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateEnemyBullet(glm::vec3 posi
 
 	return bullet;
 
+}
+
+std::unique_ptr<dae::GameObject> ObjectFactory::CreatePlayerExplosion(glm::vec3 position)
+{
+	// Create a new GameObject for the bullet GameObject
+	float scale{ 2 };
+	auto explosion = std::make_unique<dae::GameObject>();
+	explosion->AddComponent<SpriteComponent>("galaga-ship-explosion.png", 1, 4, 20.f);
+	//center
+	explosion->GetTransform().SetPosition(position);
+	explosion->GetTransform().SetScale({ scale,scale,scale });
+
+	// lifeTime
+	//explosionObject->AddComponent<LifeTime>(explosionObject.get(), 0.57f);
+
+	return explosion;
 }
 
 

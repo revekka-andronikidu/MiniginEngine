@@ -8,13 +8,18 @@ using namespace dae;
 
 void EnemyAttackComponent::Update()
 {
-	m_ShootTimer += dae::TimeManager::GetInstance().GetDeltaTime();
+	
 
-	if (m_ShootTimer >= m_ShootInterval)
+	if (m_IsAttacking && m_ShotsFired < m_ShotsPerAttack)
 	{
-		Shoot();
-		m_ShootTimer = 0;
-		std::cout << "Shots fired" << std::endl;
+		m_ShootTimer += dae::TimeManager::GetInstance().GetDeltaTime();
+		if (m_ShootTimer >= m_ShootInterval)
+		{
+			Shoot();
+			m_ShotsFired++;
+			m_ShootTimer = 0;
+			//std::cout << "Shots fired" << std::endl;
+		}
 	}
 }
 
@@ -34,5 +39,19 @@ void EnemyAttackComponent::Shoot()
 
 	auto bullet = ObjectFactory::GetInstance().CreateEnemyBullet(bulletSpawnPosition, playerPos);
 
-	SceneManager::GetInstance().GetActiveScene().Add(bullet);
+	SceneManager::GetInstance().GetActiveScene().Add(std::move(bullet));
 }
+
+void EnemyAttackComponent::StartAttack()
+{
+	if (m_IsAttacking) return;
+	m_IsAttacking = true;
+	m_ShootTimer = 0.0f;
+	m_ShotsFired = 0;
+
+}
+void EnemyAttackComponent::StopAttack()
+{
+	m_IsAttacking = false;
+}
+

@@ -16,12 +16,17 @@ dae::TextComponent::TextComponent(GameObject* pOwner, const std::string& text, s
 	
 }
 
+glm::ivec2 dae::TextComponent::GetTextureSize() const
+{
+	return m_pTexture->GetSize();
+}
+
 void dae::TextComponent::Update()
 
 {
 	if (m_needsUpdate)
 	{
-		const SDL_Color color = m_color; // only white text is supported now
+		const SDL_Color color = m_color; 
 		const auto surf = TTF_RenderText_Blended(m_font->GetFont(), m_text.c_str(), color);
 		if (surf == nullptr)
 		{

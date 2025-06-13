@@ -16,7 +16,7 @@ namespace dae
         {
         };
 
-        ~ColliderComponent() = default;
+        virtual ~ColliderComponent() = default;
 
        
         void Update() override { UpdateOverlaps(); };

@@ -19,10 +19,16 @@ namespace dae
 
         void OnNotify(const GameObject& entity, const Event& event) override;
 
-    private:
+    protected:
         void OnHit();
         void OnLooseLife();
         void OnDeath();
+        virtual void AddPoints() {};
+
+
+        bool m_IsAttacking{ false };
+
+
         
     };
 

@@ -21,37 +21,27 @@ void GameMode::OnEnter()
 
 	//reset to start from the start, init enemies or reset
 
-	galaga->m_StateMachine.EnterState<StageOneState>();
-	
+	galaga->m_StateMachine.EnterState<WaveOneState>();	
 }
 
 void SinglePlayerMode::CreateScenes()
 {
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::SoloStage1);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::SoloStage2);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::SoloStage3);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::GameOver);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::StageX);
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::Solo);
 	dae::SceneManager::GetInstance().CreateScene(SceneNames::StageScore);
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::GameOver);
 }
 
 
 void CoopMode::CreateScenes()
 {
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::CoopStage1);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::CoopStage2);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::CoopStage3);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::GameOver);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::StageX);
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::Coop);;
 	dae::SceneManager::GetInstance().CreateScene(SceneNames::StageScore);
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::GameOver);
 }
 
 void VersusMode::CreateScenes()
 {
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::VersusStage1);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::VersusStage2);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::VersusStage3);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::GameOver);
-	dae::SceneManager::GetInstance().CreateScene(SceneNames::StageX);
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::Versus);
 	dae::SceneManager::GetInstance().CreateScene(SceneNames::StageScore);
+	dae::SceneManager::GetInstance().CreateScene(SceneNames::GameOver);
 }

@@ -55,31 +55,15 @@ namespace dae
       void CreateScene();
    };*/
 
-    class StageOneState : public InGameState
+    class WaveOneState : public InGameState
     {
     public:
         virtual void OnEnter();
         virtual void Update() {};
         virtual void OnExit() {};
-    private:
-        void CreateScene();
+   
     };
 
-    class StageTwoState : public InGameState
-    {
-
-        virtual void OnEnter() ;
-        virtual void Update() {};
-        virtual void OnExit() {};
-    };
-
-    class StageThreeState : public InGameState
-    {
-
-        virtual void OnEnter() ;
-        virtual void Update() {};
-        virtual void OnExit() {};
-    };
 
 
 
@@ -87,7 +71,7 @@ namespace dae
     class GameOverState : public GameState
     {
 
-        virtual void OnEnter() {};
+        virtual void OnEnter();
         virtual void Update() {};
         virtual void OnExit() {};
     };

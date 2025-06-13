@@ -16,7 +16,7 @@ namespace dae
 		void SetActiveGame(Game* game);
 		Game* GetActiveGame() const { return m_ActiveGame; }
 
-		//void Update(float elapsed);
+		
 		//bool IsGameRunning();
 
 

@@ -6,11 +6,12 @@
 #include "ObjectFactory.h"
 #include "GameCommands.h"
 #include "SceneNames.h"
+#include "GameEvents.h"
 #include "Scene.h"
 
 using namespace dae;
 
-GalagaGame::GalagaGame()
+GalagaGame::GalagaGame() 
 {
 	//TODO:
 	//init resources (textures, sounds, fonts)
@@ -22,6 +23,20 @@ GalagaGame::GalagaGame()
 	//create all game states and keep reffence to them?? or create them when mode is entered
 
 	
+}
+void GalagaGame::Update()
+{
+
+}
+
+void GalagaGame::OnNotify(const GameObject& entity, const Event& event)
+{
+	if (event == OBJECT_DEATH_EVENT && entity.HasTag("player"))
+	{
+		m_StateMachine.EnterState<GameOverState>();
+		m_GameModeMachine.EnterState<GameModeNull>();
+	}
+
 }
 
 void GalagaGame::Initialize() //initialize after construction otherwise conflict in GameManager
@@ -58,22 +73,7 @@ void GalagaGame::SkipToNextStage()
 		}
 		else
 		{
-			// Enter the correct stage state
-			switch (m_CurrentStage)
-			{
-			case 1:
-				m_StateMachine.EnterState<StageOneState>();
-				break;
-			case 2:
-				m_StateMachine.EnterState<StageTwoState>();
-				break;
-			case 3:
-				m_StateMachine.EnterState<StageThreeState>();
-				break;
-				// Add more if needed
-			default:
-				break;
-			}
+			//next wave
 		}
 
 #if _DEBUG
@@ -88,117 +88,12 @@ void GalagaGame::SkipToNextStage()
 	}
 }
 
-//void GalagaGame::EnterGameMode(std::unique_ptr<GameMode> state)
-//{
-//	if (state)
-//	{
-//		m_currentGameMode->OnExit();
-//		m_currentGameMode = std::move(state);
-//		m_currentGameMode->OnEnter();
-//	}
-//}
-
-std::string GalagaGame::GetSceneForCurrentState()
-{
-	switch (m_GameModeMachine.GetCurrentState()->GetModeType())
-	{
-	case GameMode::GameModeType::Solo:
-		switch (m_CurrentStage)
-		{
-		case 1:
-			return SceneNames::SoloStage1;
-			break;
-		case 2:
-			return SceneNames::SoloStage2;
-			break;
-		case 3:
-			return SceneNames::SoloStage3;
-			break;
-		default: 
-			//handle error
-			return SceneNames::MainMenu;
-			break;
-		}
-		break;
-	case GameMode::GameModeType::Coop:
-		switch (m_CurrentStage)
-		{
-		case 1:
-			return SceneNames::CoopStage1;
-			break;
-		case 2:
-			return SceneNames::CoopStage2;
-			break;
-		case 3:
-			return SceneNames::CoopStage3;
-			break;
-		default:
-			//handle error
-			return SceneNames::MainMenu;
-			break;
-		}
-		break;
-
-		break;
-	case GameMode::GameModeType::Versus:
-		switch (m_CurrentStage)
-		{
-		case 1:
-			return SceneNames::VersusStage1;
-			break;
-		case 2:
-			return SceneNames::VersusStage2;
-			break;
-		case 3:
-			return SceneNames::VersusStage3;
-			break;
-		default:
-			//handle error
-			return SceneNames::MainMenu;
-			break;
-		}
-		break;
-	case GameMode::GameModeType::Unknown:
-	default:
-		//handle error
-		return SceneNames::MainMenu;
-		break;
-	}	
-}
-
-
-//void GalagaGame::CreatePlayers(Scene& scene)
-//{
-//	
-//	if (m_PlayerOneLives > 0)
-//	{
-//		auto playerOne = ObjectFactory::GetInstance().CreatePlayer();
-//		//m_pPlayers.push_back(&playerOne);
-//		scene.Add(playerOne);
-//	}
-//	
-//	if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Coop)
-//	{
-//		if (m_PlayerTwoLives > 0)
-//		{
-//			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
-//			//m_pPlayers.push_back(&playerTwo);
-//		}
-//	}
-//	else if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Versus)
-//	{
-//		
-//			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
-//			//m_pPlayers.push_back(&playerTwo);
-//		
-//	}
-//
-//}
 
 void GalagaGame::EnterScene()
 {
-	auto& scene = SceneManager::GetInstance().GetScene(GetSceneForCurrentState());
-	SceneManager::GetInstance().SetActiveScene(scene);
+
+	
+	
 }
 
 void GalagaGame::CreateScenes()
