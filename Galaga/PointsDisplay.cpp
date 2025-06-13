@@ -3,14 +3,15 @@
 #include "ResourceManager.h"
 #include "GameEvents.h"
 
-dae::PointsDisplay::PointsDisplay(GameObject* owner)
+dae::PointsDisplay::PointsDisplay(GameObject* owner, std::string text)
     : GraphicsComponent(owner)
     , m_CurrentPoints{}
+    , m_textString{text}
 {
     if (owner->GetComponent<TextComponent>() == nullptr)
     {
         auto font = ResourceManager::GetInstance().LoadFont("emulogic.ttf", 16);
-        std::string text{ "Points: " + std::to_string(m_CurrentPoints) };
+        std::string text{ m_textString + std::to_string(m_CurrentPoints) };
         owner->AddComponent<TextComponent>(text, font);
 
     }
@@ -31,7 +32,7 @@ void dae::PointsDisplay::OnNotify(const GameObject& entity, const Event& event)
 
 void dae::PointsDisplay::Render() const
 {
-    m_pText->SetText("Points: " + std::to_string(m_CurrentPoints));
+    m_pText->SetText(m_textString + std::to_string(m_CurrentPoints));
     auto pos = GetOwner()->GetTransform().GetLocalPosition();
 
     m_pText->Render();

@@ -1,5 +1,6 @@
 #pragma once
 #include "Singleton.h"
+#include <string>
 
 namespace dae
 {
@@ -16,8 +17,8 @@ namespace dae
 
 	public:
 		void CreateMainMenu();
-		void CreateLevel();
-
+		void CreateStageScene(std::string sceneName);
+		void CreatePlayer(std::string sceneName, int playerNumber);
 	};
 
 }

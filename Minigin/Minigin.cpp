@@ -125,6 +125,7 @@ void dae::Minigin::Run(/*const std::function<void()>& load*/)
 		}		
 
 		sceneManager.Update();
+		sceneManager.LateUpdate();
 		renderer.Render();
 
 #ifdef USE_STEAMWORKS

@@ -31,6 +31,7 @@ namespace dae
     class GameModeNull final : public GameMode
     {
     public:
+        virtual void OnEnter() override {};
         virtual GameModeType GetModeType() const { return GameModeType::Unknown; }
     protected:
         void CreateScenes() override {};

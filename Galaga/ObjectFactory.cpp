@@ -7,6 +7,8 @@
 #include "LivesComponent.h"
 #include "PointsComponent.h"
 #include "PointsDisplay.h"
+#include "BulletComponent.h"
+#include "ShootingComponent.h"
 
 
 using namespace dae;
@@ -25,7 +27,6 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateMenuItem(
     std::shared_ptr<Font> font,
     const glm::vec3& position,
     dae::MenuComponent* menu,
-    //dae::Scene& scene,
     std::function<void()> action)
 {
     auto item = std::make_shared<dae::GameObject>();
@@ -34,7 +35,6 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateMenuItem(
     item->SetParent(menu->GetOwner(), false);
     item->AddComponent<ActionComponent>(action);
     menu->AddMenuItem(item);
-    //scene.Add(item);
     return item;
 };
 
@@ -42,10 +42,8 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateMenuArrow(
     const std::string& textureName,
     dae::MenuComponent* menu,
     const float scale
-    // dae::Scene& scene
 )
 {
-    //menu pointer item
     auto item = std::make_shared<dae::GameObject>();
     item->SetParent(menu->GetOwner(), false);
     item->AddComponent<dae::TextureComponent>(textureName);
@@ -66,7 +64,6 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 	const std::string& fileName,
 	const glm::vec3& position, 
 	const float scale
-	// dae::Scene& scene
 )
 {
 	auto item = std::make_shared<dae::GameObject>();
@@ -77,69 +74,36 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 	return item;
 };
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreatePlayer()
+std::shared_ptr<dae::GameObject> ObjectFactory::CreatePlayer(std::string texture, glm::vec3 startPos, glm::vec3 scale)
 {
-	//from init list
-	//start position ? from initialor list
-	//player number
-	glm::vec3 startPos{ glm::vec3(256.f, 300.f, 0) };
-	std::string texture{"galaga.png"};
-	glm::vec3 scale{ 0.5f, 0.5f, 0.5f };
-	//pass game info
-	int lives{ 3 };
-
-
-
-
 	auto player = std::make_shared<dae::GameObject>();
 	player->AddComponent<dae::TextureComponent>(texture);
 	player->GetTransform().SetPosition(startPos);
 	player->GetTransform().SetScale(scale);	
 
-	auto livesComp = player->AddComponent<dae::LivesComponent>(lives);
-	auto pointsComp = player->AddComponent<dae::PointsComponent>();
-
-	
-	
+	/*auto livesComp = */player->AddComponent<dae::LivesComponent>();
+	/*auto pointsComp = */player->AddComponent<dae::PointsComponent>();
+	/*auto shootingComponent =*/ player->AddComponent<ShootingComponent>();
 
 	return player;
-
 }
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreateLivesDisplay()
+std::shared_ptr<dae::GameObject> ObjectFactory::CreateLivesDisplay(std::string texture, std::shared_ptr<dae::GameObject> player, int lives, glm::vec3 position, glm::vec3 scale, bool mirror)
 {
-	//make from initiliyer list
-	std::string texture{ "galaga.png" };
-	glm::vec3 scale{ 0.5f, 0.5f, 0.5f };
-	glm::vec3 position{ 0, 440, 0 };
-	std::shared_ptr<dae::GameObject> player{};
-	int lives = 3;
-	////////
-
 	auto livesDisplay = std::make_shared<dae::GameObject>();
-	livesDisplay->AddComponent<dae::LivesDisplay>(texture, scale);
-	livesDisplay->GetTransform().SetPosition(glm::vec3(0, 440, 0));
+	livesDisplay->AddComponent<dae::LivesDisplay>(texture, scale, mirror);
+	livesDisplay->GetTransform().SetPosition(glm::vec3(position));
 
 	auto livesComp = player->GetComponent<LivesComponent>(); //catch if no component detected
 	livesComp->AddObserver(livesDisplay->GetComponent<LivesDisplay>());
 
 	livesComp->SetLives(lives); //again so the display registers the change
-	
-	//later elsewhere 
-	auto& scene = SceneManager::GetInstance().GetScene("SoloStage1");
 
 	return livesDisplay;
 }
 
-std::shared_ptr<dae::GameObject> ObjectFactory::CreatePointsDisplay()
+std::shared_ptr<dae::GameObject> ObjectFactory::CreatePointsDisplay(std::shared_ptr<dae::GameObject> player, glm::vec3 position)
 {
-	//make from initiliyer list
-	//std::string texture{ "galaga.png" };
-	//glm::vec3 scale{ 0.5f, 0.5f, 0.5f };
-	glm::vec3 position{200, 300, 0 };
-	std::shared_ptr<dae::GameObject> player{};
-	
-	////////
 	auto pointsDisplay = std::make_shared<dae::GameObject>();
 	pointsDisplay->AddComponent<dae::PointsDisplay>(); //add custom font to points display
 	pointsDisplay->GetTransform().SetPosition(position);
@@ -147,10 +111,35 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreatePointsDisplay()
 	auto pointsComp = player->GetComponent<PointsComponent>(); //catch if no component detected
 	pointsComp->AddObserver(pointsDisplay->GetComponent<PointsDisplay>());
 
-
-	//later elsewhere 
-	auto& scene = SceneManager::GetInstance().GetScene("SoloStage1");
-
 	return pointsDisplay;
 }
 
+std::shared_ptr<dae::GameObject> ObjectFactory::CreateTextObject(std::shared_ptr<dae::Font> font, std::string text, glm::vec3 position, SDL_Color color )
+{
+	auto item = std::make_shared<dae::GameObject>();
+	auto textComp = item->AddComponent<dae::TextComponent>(text, font, color);
+	item->GetTransform().SetPosition(position);
+
+	return item;
+}
+
+
+std::shared_ptr<dae::GameObject> ObjectFactory::CreateBullet(glm::vec3 position)
+{
+	float scale{ 2.0f };
+	auto bullet = std::make_shared<dae::GameObject>();
+	bullet->AddComponent<BulletComponent>(50.f, 1.5f);
+	auto texture = bullet->AddComponent<TextureComponent>("fighter-bullet.png");
+
+	glm::vec3 bulletPos = { position.x - (texture->GetTextureSize().x / 2) * scale, position.y - (texture->GetTextureSize().y/2 * scale) , position.z };
+	bullet->GetTransform().SetPosition(bulletPos);
+
+	
+	bullet->GetTransform().SetScale({ scale,scale,scale });
+	//TODO collider
+		// Add Collider to game Object
+		//bulletObject->AddComponent<dae::ColliderComponent>(bulletObject.get(), glm::vec2(6.f, 14.f));
+
+	return bullet;
+
+}

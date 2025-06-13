@@ -17,6 +17,7 @@ namespace dae
 
 		virtual void Update() = 0;
 		virtual void FixedUpdate(const float fixedTimeStep) = 0;
+
 		//virtual void Render() const = 0; //not every component needs to be rendered
 		//virtual void LateUpdate() = 0; //implement later
 

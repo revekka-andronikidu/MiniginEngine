@@ -6,20 +6,21 @@
 
 dae::GameObject::~GameObject()
 {
-	// Remove from parent's children
-	if (m_pParent)
-	{
-		m_pParent->m_pChildren.erase(
-			std::remove(m_pParent->m_pChildren.begin(), m_pParent->m_pChildren.end(), this),
-			m_pParent->m_pChildren.end()
-		);
-	}
+	//// Remove from parent's children
+	//if (m_pParent)
+	//{
+	//	m_pParent->m_pChildren.erase(
+	//		std::remove(m_pParent->m_pChildren.begin(), m_pParent->m_pChildren.end(), this),
+	//		m_pParent->m_pChildren.end()
+	//	);
+	//}
 
-	// Orphan all children and update their transforms
-	for (auto* child : m_pChildren)
-	{
-		child->m_pParent = nullptr;
-	}
+	//// Orphan all children and update their transforms
+	//for (auto* child : m_pChildren)
+	//{
+	//	child->m_pParent = nullptr;
+	//}
+
 }
 
 void dae::GameObject::Update()
@@ -28,8 +29,6 @@ void dae::GameObject::Update()
 	{
 		component->Update();
 	}
-
-
 }
 void dae::GameObject::FixedUpdate([[maybe_unused]] const float fixed_time_step)
 {
@@ -52,12 +51,40 @@ void dae::GameObject::Render() const
 	}
 }
 
+void dae::GameObject::Destroy()
+{
+	//SetParent(nullptr);
+	m_IsMarkedForDestroy = true;
+	RemoveAllComponents();
+	// Copy the children to avoid modifying the container while iterating
+	const auto childrenCopy = m_pChildren;
+	for (auto& child : childrenCopy)
+	{
+		if (child) child->Destroy();
+	}
+
+	// Clear children after destroying
+	m_pChildren.clear();
+}
+
+void dae::GameObject::RemoveAllComponents()
+{
+	for (auto& component : m_pComponents)
+	{
+		component->MarkForRemoval();
+	}
+}
 
 void dae::GameObject::RemoveDeadComponents()
 {
 	auto removeIfMarkedForRemoval = [](const std::unique_ptr<BaseComponent>& comp)
 		{
-			return comp->IsMarkedForRemoval();
+			if (comp->IsMarkedForRemoval())
+			{
+				//comp->~BaseComponent();  // Optional: if your BaseComponent has cleanup logic
+				return true;
+			}
+			return false;
 		};
 
 	const auto [first, last] = std::ranges::remove_if(m_pComponents, removeIfMarkedForRemoval);

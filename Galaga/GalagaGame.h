@@ -21,35 +21,24 @@ namespace dae
 		std::string GetSceneForCurrentState();
 
 		void SkipToNextStage();
-		void EnterState(std::unique_ptr<GameState> state);
-		void EnterGameMode(std::unique_ptr<GameMode> state);
-		GameMode* GetCurrentGameMode() { return m_currentGameMode.get(); };
 		void EnterScene();
 
-		const static int m_GameWindowWidth{ 480 };
-		const static int m_GameWidnowHeight{ 512 };
+		const static int m_GameWindowWidth{ 600 };
+		const static int m_GameWidnowHeight{ 600 };
 		int m_CurrentStage{ 0 };
 		const int m_NumberOfStages{ 3 };
 
-		dae::StateMachine<GameState> m_StateMachine;
+		StateMachine<GameState> m_StateMachine;
+		StateMachine<GameMode> m_GameModeMachine;
 
 	private:
 		void CreateScenes();
 		void SetDebugCommands();
-		void CreatePlayers(Scene& scene);
-		//void EnterStage();
-		//void LoadHighScores();
-		// int GetHighestScore();
+		//void CreatePlayers(Scene& scene);
 
-		//void EnterHighScores();
 		//void Restet();
 		
-		
-		
-		int m_PlayerOneLives{ 3 };
-		int m_PlayerOnePoints{ 0 };
-		int m_PlayerTwoLives{ 3 };
-		int m_PlayerTwoPoints{ 0 };
+	
 		int m_HighScore{ 0 };
 		
 		
@@ -58,7 +47,7 @@ namespace dae
 		
 
 		//std::unique_ptr<GameState> m_currentGameState{std::make_unique<GameState>()};
-		std::unique_ptr<GameMode> m_currentGameMode{ std::make_unique<GameModeNull>() };
+		//std::unique_ptr<GameMode> m_currentGameMode{ std::make_unique<GameModeNull>() };
 	};
 
 }

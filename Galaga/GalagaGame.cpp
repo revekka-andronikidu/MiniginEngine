@@ -27,8 +27,9 @@ GalagaGame::GalagaGame()
 void GalagaGame::Initialize() //initialize after construction otherwise conflict in GameManager
 {
 	CreateScenes();
+	m_GameModeMachine.EnterState<GameModeNull>();
 	m_StateMachine.EnterState<MainMenuState>();
-	//EnterState(std::make_unique<MainMenuState>());
+	
 	SetDebugCommands();
 }
 
@@ -53,18 +54,27 @@ void GalagaGame::SkipToNextStage()
 		if (m_CurrentStage == 0)
 		{
 			m_StateMachine.EnterState<MainMenuState>();
+			m_GameModeMachine.EnterState<GameModeNull>();
 		}
-		
-		//Eneter correct state
-		//init new state
-		//state on enter should open the right scene
-
-		//TEMP TEST
-		//EnterScene();
-		//SceneManager::GetInstance().SetActiveScene(GetSceneForCurrentState());
-		//TEMP TEST
-		//
-
+		else
+		{
+			// Enter the correct stage state
+			switch (m_CurrentStage)
+			{
+			case 1:
+				m_StateMachine.EnterState<StageOneState>();
+				break;
+			case 2:
+				m_StateMachine.EnterState<StageTwoState>();
+				break;
+			case 3:
+				m_StateMachine.EnterState<StageThreeState>();
+				break;
+				// Add more if needed
+			default:
+				break;
+			}
+		}
 
 #if _DEBUG
 		std::cout << "Stage Skipped. Current stage: " << std::to_string(m_CurrentStage) << std::endl;
@@ -78,21 +88,19 @@ void GalagaGame::SkipToNextStage()
 	}
 }
 
-void GalagaGame::EnterGameMode(std::unique_ptr<GameMode> state)
-{
-	//enter the state by name? keep vector of game states?
-	//if doest exist create
-	if (state)
-	{
-		m_currentGameMode->OnExit();
-		m_currentGameMode = std::move(state);
-		m_currentGameMode->OnEnter();
-	}
-}
+//void GalagaGame::EnterGameMode(std::unique_ptr<GameMode> state)
+//{
+//	if (state)
+//	{
+//		m_currentGameMode->OnExit();
+//		m_currentGameMode = std::move(state);
+//		m_currentGameMode->OnEnter();
+//	}
+//}
 
 std::string GalagaGame::GetSceneForCurrentState()
 {
-	switch (m_currentGameMode->GetModeType())
+	switch (m_GameModeMachine.GetCurrentState()->GetModeType())
 	{
 	case GameMode::GameModeType::Solo:
 		switch (m_CurrentStage)
@@ -150,88 +158,46 @@ std::string GalagaGame::GetSceneForCurrentState()
 			break;
 		}
 		break;
+	case GameMode::GameModeType::Unknown:
 	default:
 		//handle error
 		return SceneNames::MainMenu;
 		break;
-	}
-	//create player/s
-
-	//create hud, high score display, point display, lives display
-	
+	}	
 }
 
-//void GalagaGame::EnterStage()
+
+//void GalagaGame::CreatePlayers(Scene& scene)
 //{
-//	switch (m_CurrentStage)
+//	
+//	if (m_PlayerOneLives > 0)
 //	{
-//	case 1:
-//		EnterState(std::make_unique<StageOneState>());
-//		break;
-//	case 2:
-//		EnterState(std::make_unique<StageTwoState>());
-//		break;
-//	case 3:
-//		EnterState(std::make_unique<StageThreeState>());
-//		break;
-//	default:
-//		//handle error
-//		EnterState(std::make_unique<MainMenuState>());
-//		break;
+//		auto playerOne = ObjectFactory::GetInstance().CreatePlayer();
+//		//m_pPlayers.push_back(&playerOne);
+//		scene.Add(playerOne);
 //	}
+//	
+//	if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Coop)
+//	{
+//		if (m_PlayerTwoLives > 0)
+//		{
+//			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
+//			//m_pPlayers.push_back(&playerTwo);
+//		}
+//	}
+//	else if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Versus)
+//	{
+//		
+//			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
+//			//m_pPlayers.push_back(&playerTwo);
+//		
+//	}
+//
 //}
-
-void GalagaGame::CreatePlayers(Scene& scene)
-{
-	
-	if (m_PlayerOneLives > 0)
-	{
-		auto playerOne = ObjectFactory::GetInstance().CreatePlayer();
-		//m_pPlayers.push_back(&playerOne);
-		scene.Add(playerOne);
-	}
-	
-	if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Coop)
-	{
-		if (m_PlayerTwoLives > 0)
-		{
-			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
-			//m_pPlayers.push_back(&playerTwo);
-		}
-	}
-	else if (m_currentGameMode->GetModeType() == GameMode::GameModeType::Versus)
-	{
-		
-			auto playerTwo = ObjectFactory::GetInstance().CreatePlayer();
-			//m_pPlayers.push_back(&playerTwo);
-		
-	}
-
-}
 
 void GalagaGame::EnterScene()
 {
-
 	auto& scene = SceneManager::GetInstance().GetScene(GetSceneForCurrentState());
-	
-	
-	/*m_CurrentGameInfo = m_pGameInfoLoader->GetGameInfo(sceneName);
-	auto& grid = GameObjectFactory::GetInstance().CreateGrid(scene, m_CurrentGameInfo);
-	m_pGrid = grid.GetComponent<TriangularGrid>();
-
-	GameObjectFactory::GetInstance().CreateHighScoreHUD(scene, m_HighScore);
-	GameObjectFactory::GetInstance().CreateHUDLevel(scene, m_CurrentGameInfo.level);
-
-	m_pEnemyManager->SetNewData(m_CurrentGameInfo);
-	m_pEnemyManager->SetTriangularGrid(*m_pGrid);
-	m_pEnemyManager->SetCurrentScene(&scene);
-
-	m_pEnemyListener = std::make_shared<EnemyListener>(m_pEnemyManager.get());
-	EventDispatcher::GetInstance().SubscribeListener(m_pEnemyListener);*/
-
-	//CreatePlayers(scene);
-
-
 	SceneManager::GetInstance().SetActiveScene(scene);
 }
 

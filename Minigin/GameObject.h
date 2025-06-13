@@ -32,7 +32,8 @@ namespace dae
 		GameObject* GetParent() const { return m_pParent; }
 		const std::vector<GameObject*>& GetChildren() const { return m_pChildren; }
 		bool IsChild(GameObject* parent);
-		
+		void Destroy();
+			
 
 		#pragma region Component system
 		
@@ -98,6 +99,8 @@ namespace dae
 				}
 
 				void RemoveDeadComponents();
+				bool IsMarkedForDestroy() { return m_IsMarkedForDestroy; };
+				
 		
 		#pragma endregion
 
@@ -107,8 +110,9 @@ namespace dae
 		std::vector<std::unique_ptr<BaseComponent>> m_pComponents;
 		GameObject* m_pParent = nullptr;
 		std::vector<GameObject*> m_pChildren;
-
+		bool m_IsMarkedForDestroy{false};
 		bool IsValidParent(GameObject* newParent);
+		void RemoveAllComponents();
 		
 	};
 

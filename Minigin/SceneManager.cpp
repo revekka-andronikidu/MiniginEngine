@@ -15,6 +15,13 @@ void dae::SceneManager::FixedUpdate(const float fixed_time_step)
 
 }
 
+void dae::SceneManager::LateUpdate()
+{
+	if (m_pActiveScene)
+		m_pActiveScene->LateUpdate();
+}
+
+
 void dae::SceneManager::Render()
 {
 	if (m_pActiveScene)
@@ -45,6 +52,10 @@ void dae::SceneManager::SetActiveScene(const std::string& name)
 void dae::SceneManager::SetActiveScene(const dae::Scene& scene)
 {
 	m_pActiveScene = const_cast<Scene*>(&scene);
+
+#if _DEBUG
+	std::cout << "Active scene: " << m_pActiveScene->GetSceneName() << std::endl;
+#endif
 }
 
 dae::Scene& dae::SceneManager::GetScene(const std::string& name) const

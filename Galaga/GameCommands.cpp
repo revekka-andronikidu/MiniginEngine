@@ -3,6 +3,8 @@
 #include "PointsComponent.h"
 #include <GameManager.h>
 #include "GalagaGame.h"
+#include "ShootingComponent.h"
+#include <algorithm>
 
 
 
@@ -30,16 +32,21 @@ void MoveCommand::Execute()
 {
 	auto transform = GetGameObject()->GetTransform();
 	auto translation = m_Direction * m_MoveSpeed * TimeManager::GetInstance().GetDeltaTime() + transform.GetLocalPosition();
+
+	//Clamp X within borders
+	translation.x = std::clamp(translation.x, static_cast<float>(m_LeftBorder), static_cast<float>(m_RightBorder));
+
 	GetGameObject()->GetTransform().SetPosition(translation);
-
-	/*	glm::vec3 pos = translation;
-		std::cout << "Moved to: ("
-			+ std::to_string(pos.x) + ", "
-			+ std::to_string(pos.y) + ", "
-			+ std::to_string(pos.z) + ")"
-			<< std::endl;*/
-
 };
+
+void ShootCommand::Execute()
+{
+	auto shootingComp = GetGameObject()->GetComponent<ShootingComponent>();
+	if (!shootingComp) return;
+
+	shootingComp->Shoot();
+};
+
 
 
 void SkipLevelCommand::Execute()

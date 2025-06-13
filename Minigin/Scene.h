@@ -14,6 +14,7 @@ namespace dae
 
 		void Update();
 		void FixedUpdate(const float fixed_time_step);
+		void LateUpdate();
 		void Render() const;
 		std::string GetSceneName() { return m_name; };
 
@@ -25,7 +26,7 @@ namespace dae
 
 	private: 
 		explicit Scene(const std::string& name);
-
+		void DestroyObjects();
 		std::string m_name;
 		std::vector < std::shared_ptr<GameObject>> m_objects{};
 

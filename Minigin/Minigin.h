@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <functional>
+#include "TimeManager.h"
 
 
 namespace dae
@@ -19,9 +20,9 @@ namespace dae
 		Minigin& operator=(Minigin&& other) = delete;
 
 	private:
-		const int m_fixedUpdateFramerate{ 60 };
+		const int m_fixedUpdateFramerate{TimeManager::GetInstance().GetFixedFrameRate()};
 		const float m_fixed_time_step{ 1.f / m_fixedUpdateFramerate };
-		int m_WindowWidth = 480;
-		int m_WindowHeight = 512;
+		int m_WindowWidth = 600;
+		int m_WindowHeight = 600;
 	};
 }

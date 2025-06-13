@@ -9,7 +9,7 @@ using namespace dae;
 class MoveCommand : public GameObjectCommand
 {
 public:
-	MoveCommand(GameObject* gameObject, glm::vec3 direction, float speed = 10.f) : GameObjectCommand(gameObject), m_Direction{ direction }, m_MoveSpeed{ speed } {};
+	MoveCommand(GameObject* gameObject, glm::vec3 direction, int leftBorder = 0, int rifgtBorder = 500, float speed = 10.f) : GameObjectCommand(gameObject), m_Direction{ direction }, m_MoveSpeed{ speed }, m_LeftBorder{ leftBorder }, m_RightBorder{ rifgtBorder } {};
 
 	void Execute() override;
 
@@ -17,8 +17,10 @@ public:
 	void SetSpeed(float speed) { m_MoveSpeed = speed; };
 
 private:
-	glm::vec3 m_Direction{};
+	int m_LeftBorder;
+	int m_RightBorder;
 	float m_MoveSpeed{};
+	glm::vec3 m_Direction{};
 };
 
 class MenuMoveCommand : public GameObjectCommand
@@ -70,6 +72,16 @@ public:
 
 private:
 	int m_Points;
+};
+
+class ShootCommand : public GameObjectCommand
+{
+public:
+
+	ShootCommand(GameObject* gameObject) : GameObjectCommand(gameObject) {};
+
+	void Execute() override;
+
 };
 
 class SkipLevelCommand : public Command

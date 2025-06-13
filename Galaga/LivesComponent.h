@@ -14,6 +14,12 @@ namespace dae
 		{
 		};
 
+		LivesComponent(GameObject* owner) : BaseComponent(owner)
+			, Subject()
+			, m_CurrentLives{}
+		{
+		};
+
 		~LivesComponent() = default;
 		void Update() override {};
 		void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};

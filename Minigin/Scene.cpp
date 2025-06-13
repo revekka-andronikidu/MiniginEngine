@@ -34,6 +34,26 @@ void Scene::Update()
 	}
 }
 
+void Scene::LateUpdate()
+{
+	DestroyObjects();
+}
+
+void Scene::DestroyObjects()
+{
+	for (const auto& object : m_objects)
+	{
+		object->RemoveDeadComponents();
+	}
+
+	std::erase_if(m_objects,
+		[&](const std::shared_ptr<GameObject>& object)
+		{
+			return object->IsMarkedForDestroy();
+		}
+	);
+}
+
 void Scene::FixedUpdate(const float fixed_time_step)
 {
 	for (auto& object : m_objects)

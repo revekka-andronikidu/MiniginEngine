@@ -24,6 +24,18 @@ namespace dae
        
     };
 
+    class HighScoresState final : public GameState
+    {
+    public:
+        void OnEnter() override;
+        void Update() override {};
+        void OnExit() override {};
+
+    private:
+        bool m_menuCreated{ false };
+
+    };
+
    class InGameState : public GameState
     {
 

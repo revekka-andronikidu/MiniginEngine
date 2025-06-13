@@ -9,7 +9,7 @@ namespace dae
     class PointsDisplay final : public GraphicsComponent, public Observer
     {
     public:
-        explicit PointsDisplay(GameObject* pOwner);
+        explicit PointsDisplay(GameObject* pOwner, std::string text = {""});
         ~PointsDisplay() {};
 
         void Render() const override;
@@ -20,6 +20,7 @@ namespace dae
 
     private:
         int m_CurrentPoints;
+        std::string m_textString;
         TextComponent* m_pText;
 
 
