@@ -44,7 +44,12 @@ GalagaGame::GalagaGame()
 }
 void GalagaGame::Update()
 {
-
+	m_EnemyManager->Update();
+}
+void GalagaGame::Reset()
+{
+	m_ShotsFired = 0;
+	m_Hits = 0;
 }
 
 void GalagaGame::OnNotify(const GameObject& entity, const Event& event)
@@ -84,7 +89,7 @@ void GalagaGame::SkipToNextStage()
 
 
 #if _DEBUG
-		std::cout << "Stage Skipped. Current stage: " << std::to_string(m_CurrentStage) << std::endl;
+		std::cout << "Stage Skipped. Current stage: " << std::to_string(0) << std::endl;
 #endif
 	}
 	else

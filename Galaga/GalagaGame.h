@@ -27,7 +27,6 @@ namespace dae
 
 		const static int m_GameWindowWidth{ 600 };
 		const static int m_GameWidnowHeight{ 600 };
-		int m_CurrentStage{ 0 };
 		const int m_NumberOfStages{ 3 };
 
 		
@@ -48,7 +47,7 @@ namespace dae
 		void SetDebugCommands();
 		//void CreatePlayers(Scene& scene);
 
-		//void Restet();
+		void Reset();
 		
 	
 		int m_HighScore{ 0 };
