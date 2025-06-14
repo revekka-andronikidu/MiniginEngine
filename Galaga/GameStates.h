@@ -1,5 +1,7 @@
 #pragma once
 #include <State.h>
+#include <string>
+
 
 namespace dae
 {
@@ -12,29 +14,7 @@ namespace dae
     };
 
 
-    class MainMenuState final : public GameState
-    {
-    public: 
-        void OnEnter() override;
-        void Update() override {};
-        void OnExit() override;
-
-    private:
-        bool m_menuCreated{ false };
-       
-    };
-
-    class HighScoresState final : public GameState
-    {
-    public:
-        void OnEnter() override;
-        void Update() override {};
-        void OnExit() override {};
-
-    private:
-        bool m_menuCreated{ false };
-
-    };
+    
 
    class InGameState : public GameState
     {
@@ -61,6 +41,10 @@ namespace dae
         virtual void OnEnter();
         virtual void Update() {};
         virtual void OnExit() {};
+
+    private:
+        void CreateScene(std::string name);
+        bool m_Created{ false };
    
     };
 
@@ -68,13 +52,7 @@ namespace dae
 
 
 
-    class GameOverState : public GameState
-    {
-
-        virtual void OnEnter();
-        virtual void Update() {};
-        virtual void OnExit() {};
-    };
+ 
 
     
 

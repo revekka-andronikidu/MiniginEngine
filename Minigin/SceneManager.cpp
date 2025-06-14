@@ -30,6 +30,17 @@ void dae::SceneManager::Render()
 
 dae::Scene& dae::SceneManager::CreateScene(const std::string& name)
 {
+	// Check if a scene with this name already exists
+	for (const auto& existingScene : m_scenes)
+	{
+		if (existingScene && existingScene->GetSceneName() == name)
+		{
+			std::cerr << "Warning: Scene \"" << name << "\" already exists. Returning existing scene.\n";
+			return *existingScene;
+		}
+	}
+
+
 	const auto& scene = std::shared_ptr<Scene>(new Scene(name));
 	m_scenes.push_back(scene);
 	return *scene;

@@ -5,6 +5,7 @@
 #include "GalagaGame.h"
 #include "ShootingComponent.h"
 #include <algorithm>
+#include "ServiceLocator.h"
 
 
 
@@ -60,5 +61,14 @@ void SkipLevelCommand::Execute()
 
 void MuteGameCommand::Execute()
 {
+	ServiceLocator::GetAudioService().Mute();
+}
 
+void BackToMainMenuCommand::Execute()
+{
+	auto* game = dae::GameManager::GetInstance().GetActiveGame();
+	if (!game) return; // check nullptr
+	GalagaGame* galaga = dynamic_cast<GalagaGame*>(game);
+	if (!galaga) return; // cast failed
+	galaga->m_GameModeMachine.EnterState<MainMenuState>();
 }

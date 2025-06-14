@@ -5,15 +5,8 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Game Specific">
-      <UniqueIdentifier>{a9b90ce7-8f78-49e2-9c5a-00548e8aea28}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Components">
       <UniqueIdentifier>{b6714dfc-df1e-4d37-9364-85cb963cdabe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Characters">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{700acfbc-cbad-47e8-b5ce-1f9e38998029}</UniqueIdentifier>
@@ -30,19 +23,19 @@
     <Filter Include="Components\Characters\Enemy">
       <UniqueIdentifier>{7e6af711-f121-4c53-be3b-412fadec5b6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Helpers">
+      <UniqueIdentifier>{a9b90ce7-8f78-49e2-9c5a-00548e8aea28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameCommands.cpp">
-      <Filter>Game Specific</Filter>
+      <Filter>Game Helpers</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectFactory.cpp">
-      <Filter>Game Specific</Filter>
-    </ClCompile>
-    <ClCompile Include="GameStates.cpp">
-      <Filter>Game</Filter>
+      <Filter>Game Helpers</Filter>
     </ClCompile>
     <ClCompile Include="GameMode.cpp">
       <Filter>Game</Filter>
@@ -51,7 +44,7 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="SceneFactory.cpp">
-      <Filter>Game Specific</Filter>
+      <Filter>Game Helpers</Filter>
     </ClCompile>
     <ClCompile Include="BulletComponent.cpp">
       <Filter>Components\Characters\Player</Filter>
@@ -83,19 +76,22 @@
     <ClCompile Include="BeeComponent.cpp">
       <Filter>Components\Characters\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="ButterflyComponent.cpp">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="BossGalagaComponent.cpp">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="PathMovement.cpp">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectFactory.h">
-      <Filter>Game Specific</Filter>
-    </ClInclude>
-    <ClInclude Include="GameCommands.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="GameEvents.h">
-      <Filter>Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneNames.h">
-      <Filter>Characters</Filter>
+      <Filter>Game Helpers</Filter>
     </ClInclude>
     <ClInclude Include="GalagaGame.h">
       <Filter>Game</Filter>
@@ -103,11 +99,8 @@
     <ClInclude Include="GameMode.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="GameStates.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="SceneFactory.h">
-      <Filter>Game Specific</Filter>
+      <Filter>Game Helpers</Filter>
     </ClInclude>
     <ClInclude Include="BulletComponent.h">
       <Filter>Components\Characters\Player</Filter>
@@ -140,6 +133,27 @@
       <Filter>Components\Characters\Player</Filter>
     </ClInclude>
     <ClInclude Include="BeeComponent.h">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="BossGalagaComponent.h">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="ButterflyComponent.h">
+      <Filter>Components\Characters\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommands.h">
+      <Filter>Game Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEvents.h">
+      <Filter>Game Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneNames.h">
+      <Filter>Game Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="PathMovement.h">
       <Filter>Components\Characters\Enemy</Filter>
     </ClInclude>
   </ItemGroup>

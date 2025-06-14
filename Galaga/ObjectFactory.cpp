@@ -15,7 +15,9 @@
 #include "EnemyAttackComponent.h"
 #include "PlayerComponent.h"
 #include "BeeComponent.h"
-
+#include "ButterflyComponent.h"
+#include "BossGalagaComponent.h"
+#include "PathMovement.h"
 using namespace dae;
 
 ObjectFactory::ObjectFactory()
@@ -161,7 +163,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateBullet(glm::vec3 position)
 
 }
 
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position, const std::vector<glm::vec2>& path)
 {
 	glm::vec3 scale{2,2,2};
 
@@ -169,9 +171,14 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
 	//replace texture component with sprite component
 	auto lives = bee->AddComponent<LivesComponent>(1);
 	auto texture = bee->AddComponent<SpriteComponent>("galaga-bee-idle.png", 1, 2, 10);
-	bee->GetTransform().SetPosition(position);
+	//bee->GetTransform().SetPosition(position);
 	bee->GetTransform().SetScale(scale);
 	bee->SetTag("enemy");
+
+	bee->AddComponent<PathMovement>(path, 355.f);
+	const auto pathFollow = bee->GetComponent<PathMovement>();
+	pathFollow->AddWorldSpacePoint({ position.x, position.y });
+	pathFollow->StartAtFirstPoint();
 
 
 	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, texture->GetTextureSize().y * scale.y, 0 * scale.z };
@@ -185,16 +192,50 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position)
 	
 	return bee;
 }
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateButterfly()
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateButterfly(glm::vec3 position)
 {
 	auto butterfly = std::make_unique<dae::GameObject>();
+	glm::vec3 scale{ 2,2,2 };
+
+	//replace texture component with sprite component
+	auto lives = butterfly->AddComponent<LivesComponent>(1);
+	auto texture = butterfly->AddComponent<SpriteComponent>("galaga-butterfly-idle.png", 1, 2, 10.f);
+	butterfly->GetTransform().SetPosition(position);
+	butterfly->GetTransform().SetScale(scale);
+	butterfly->SetTag("enemy");
+
+
+	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, texture->GetTextureSize().y * scale.y, 0 * scale.z };
+	auto collider = butterfly->AddComponent<ColliderComponent>(colliderSize);
+	auto enemyComp = butterfly->AddComponent<ButterflyComponent>();
+	butterfly->AddComponent<EnemyAttackComponent>();
+	collider->AddObserver(enemyComp);
+	lives->AddObserver(enemyComp);
 
 	return butterfly;
 
 }
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga()
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga(glm::vec3 position)
 {
 	auto galaga = std::make_unique<dae::GameObject>();
+
+	glm::vec3 scale{ 2,2,2 };
+
+	//replace texture component with sprite component
+	auto lives = galaga->AddComponent<LivesComponent>(2);
+	auto texture = galaga->AddComponent<SpriteComponent>("galaga-boss-idle.png", 2, 2, 10.f);
+	galaga->GetTransform().SetPosition(position);
+	galaga->GetTransform().SetScale(scale);
+	galaga->SetTag("enemy");
+
+
+	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, texture->GetTextureSize().y * scale.y, 0 * scale.z };
+	auto collider = galaga->AddComponent<ColliderComponent>(colliderSize);
+	auto enemyComp = galaga->AddComponent<BossGalagaComponent>();
+	galaga->AddComponent<EnemyAttackComponent>();
+	collider->AddObserver(enemyComp);
+	lives->AddObserver(enemyComp);
+
 	return galaga;
 }
 

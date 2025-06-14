@@ -148,17 +148,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BeeComponent.cpp" />
+    <ClCompile Include="BossGalagaComponent.cpp" />
     <ClCompile Include="BulletComponent.cpp" />
+    <ClCompile Include="ButterflyComponent.cpp" />
     <ClCompile Include="EnemyAttackComponent.cpp" />
     <ClCompile Include="EnemyComponent.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="GalagaGame.cpp" />
     <ClCompile Include="GameCommands.cpp" />
     <ClCompile Include="GameMode.cpp" />
-    <ClCompile Include="GameStates.cpp" />
     <ClCompile Include="HighScoreDisplay.cpp" />
     <ClCompile Include="LivesDisplay.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="PathMovement.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PointsComponent.cpp" />
     <ClCompile Include="PointsDisplay.cpp" />
@@ -167,18 +170,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BeeComponent.h" />
+    <ClInclude Include="BossGalagaComponent.h" />
     <ClInclude Include="BulletComponent.h" />
+    <ClInclude Include="ButterflyComponent.h" />
     <ClInclude Include="EnemyAttackComponent.h" />
     <ClInclude Include="EnemyComponent.h" />
+    <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="GalagaGame.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameEvents.h" />
     <ClInclude Include="GameMode.h" />
-    <ClInclude Include="GameStates.h" />
     <ClInclude Include="HighScoreDisplay.h" />
     <ClInclude Include="LivesComponent.h" />
     <ClInclude Include="LivesDisplay.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="PathMovement.h" />
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PointsComponent.h" />
     <ClInclude Include="PointsDisplay.h" />

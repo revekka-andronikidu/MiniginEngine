@@ -1,15 +1,18 @@
 #pragma once
 #include <Game.h>
 #include "GameMode.h"
-#include "GameStates.h"
 #include <StateMachine.h> 
 #include <iostream>
 #include "Observer.h"
+#include "EnemyManager.h"
+
 
 
 namespace dae
 {
 	class Scene;
+
+
 	class GalagaGame final : public Game , public Observer
 	{
 	public:
@@ -21,21 +24,24 @@ namespace dae
 
 
 		void SkipToNextStage();
-		void EnterScene();
 
 		const static int m_GameWindowWidth{ 600 };
 		const static int m_GameWidnowHeight{ 600 };
 		int m_CurrentStage{ 0 };
 		const int m_NumberOfStages{ 3 };
 
-		StateMachine<GameState> m_StateMachine;
+		
 		StateMachine<GameMode> m_GameModeMachine;
+		std::unique_ptr<EnemyManager> m_EnemyManager;
 
 		void OnNotify(const GameObject& entity, const Event& event) override;
 
 		void IncrementShotsFired() { m_ShotsFired++;  };
-		void IncrementEnemiesHit() { m_Hits++; std::cout << std::to_string(m_Hits) << std::endl;
-		};
+		void IncrementEnemiesHit() { m_Hits++; };
+
+		int GetShotsFired() const { return m_ShotsFired; };
+		int GetEnemiesHit() const { return m_Hits; };
+
 
 	private:
 		void CreateScenes();
@@ -48,6 +54,8 @@ namespace dae
 		int m_HighScore{ 0 };
 		int m_Hits{0};
 		int m_ShotsFired{0};
+
+		
 		
 		
 

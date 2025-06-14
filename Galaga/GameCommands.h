@@ -91,6 +91,14 @@ public:
 	void Execute() override;
 };
 
+class BackToMainMenuCommand : public Command
+{
+public:
+	BackToMainMenuCommand() = default;
+	void Execute() override;
+};
+
+
 class MuteGameCommand final : public Command
 {
 public:

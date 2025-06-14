@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "SoundHandle.h"
 #include "ResourceManager.h"
+#include <vld.h>
 
 namespace dae
 {
@@ -16,10 +17,10 @@ namespace dae
 	public:
 		SDL_AudioImpl()
 		{
-			if (SDL_Init(SDL_INIT_AUDIO) < 0)
+			/*if (SDL_Init(SDL_INIT_AUDIO) < 0)
 			{
 				throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
-			}
+			}*/
 
 			if (Mix_Init(MIX_INIT_MP3) != MIX_INIT_MP3) //to enable MP3 format
 			{
@@ -32,12 +33,16 @@ namespace dae
 				Mix_Quit();  // Cleanup mixer before throwing
 				throw std::runtime_error(std::string("Mix_OpenAudio Error: ") + Mix_GetError());
 			}
+			VLDMarkAllLeaksAsReported();
 		}
 
 		~SDL_AudioImpl()
 		{
+			
 			Mix_CloseAudio();
 			Mix_Quit();
+			SDL_QuitSubSystem(SDL_INIT_AUDIO);
+			std::cout << "Destroying SDL_AudioImpl\n";
 		}
 
 		std::shared_ptr<ISoundHandle>LoadSound(const std::string& file)
@@ -93,14 +98,25 @@ namespace dae
 		{
 			std::lock_guard<std::mutex> lock(mutex);
 
-			auto vol = std::clamp(volume, 0.0f, 1.0f);
-			Mix_MasterVolume(static_cast<int>(vol * MIX_MAX_VOLUME));
+			m_volume = std::clamp(volume, 0.0f, 1.0f);
+			Mix_MasterVolume(static_cast<int>(m_volume * MIX_MAX_VOLUME));
 		}
 
 		void StopAllSounds()
 		{
 			std::lock_guard<std::mutex> lock(mutex);
 			Mix_HaltChannel(-1);
+
+
+		}
+
+		void Mute()
+		{
+			std::lock_guard<std::mutex> lock(mutex);
+			
+				m_Muted = !m_Muted;
+				Mix_Volume(-1, static_cast<int>( m_Muted * MIX_MAX_VOLUME));
+			
 
 
 		}
@@ -189,6 +205,9 @@ namespace dae
 			}
 			m_SoundQueue = std::move(temp);
 		}
+
+		bool m_Muted{ false };
+		float m_volume{0};
 	};
 
 	SDLAudio::SDLAudio()
@@ -244,6 +263,11 @@ namespace dae
 		m_pImpl->StopSound(soundId);
 	}
 
+	void SDLAudio::Mute()
+	{
+		m_pImpl->Mute();
+	}
+
 
 	LoggerAudio::LoggerAudio(std::unique_ptr<IAudio>&& pAudio)
 		: m_pAudio(std::move(pAudio))
@@ -294,6 +318,11 @@ namespace dae
 		std::cout << "Sound volume set to: " << volume << std::endl;
 	}*/
 
+	void LoggerAudio::Mute()
+	{
+		m_pAudio->Mute();
+		std::cout << "Sound mute state changed." << std::endl;
+	}
 
 	void LoggerAudio::StopSound(sound_id soundId)
 	{

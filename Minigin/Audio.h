@@ -21,6 +21,7 @@ namespace dae
 		virtual void SetMasterVolume(const float volume) = 0;
 		virtual void StopAllSounds() = 0;
 		virtual void StopSound(sound_id soundId) = 0;
+		virtual void Mute() = 0;
 
 		//virtual void SetMusicVolume(const float volume) = 0;
 		//virtual void SetSoundVolume(const float volume) = 0;
@@ -50,6 +51,7 @@ namespace dae
 		void SetMasterVolume(const float volume) override;
 		void StopAllSounds() override;
 		void StopSound(sound_id soundId) override;
+		void Mute() override;
 
 		//void SetMusicVolume(const float volume);
 		//void SetSoundVolume(const float volume);
@@ -68,6 +70,7 @@ namespace dae
 		void StopAllSounds() override {};
 		void StopSound([[maybe_unused]] sound_id soundId) override {  };
 		std::shared_ptr<ISoundHandle> LoadSound([[maybe_unused]] const std::string& file) override { return nullptr; };
+		void Mute() override {};
 
 		//void SetMusicVolume([[maybe_unused]] const float volume)override {};
 		//void SetSoundVolume([[maybe_unused]] const float volume) override {};
@@ -85,6 +88,7 @@ namespace dae
 		void SetMasterVolume(const float volume) override;
 		void StopAllSounds() override;
 		void StopSound(sound_id soundId) override;
+		void Mute() override;
 
 		//void SetMusicVolume(const float volume)override;
 		//void SetSoundVolume(const float volume) override;

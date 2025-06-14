@@ -4,6 +4,7 @@
 #include "ObjectFactory.h"
 #include "SceneManager.h"
 #include "LivesComponent.h"
+#include "ServiceLocator.h"
 
 
 using namespace dae;
@@ -47,6 +48,7 @@ void dae::PlayerComponent::OnNotify(const GameObject& entity, const Event& event
 
 void PlayerComponent::OnHit()
 {
+    ServiceLocator::GetAudioService().PlayEffect(2, 0.8, true);
     //animation
     //deactivate and respawn
     GetOwner()->GetComponent<LivesComponent>()->RemoveLive();

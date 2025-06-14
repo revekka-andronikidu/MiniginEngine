@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "GalagaGame.h"
 #include "GameManager.h"
+#include "ServiceLocator.h"
 
 using namespace dae;
 ShootingComponent::ShootingComponent(dae::GameObject* gameObject, float fireRate) 
@@ -23,7 +24,7 @@ void ShootingComponent::Shoot()
     if (m_TimeSinceLastShot >= m_FireRate)
     {
         SpawnBullet();
-       //PLAY SOUND
+        ServiceLocator::GetAudioService().PlayEffect(1, 0.8f, false);
         auto* galaga = dynamic_cast<GalagaGame*>(GameManager::GetInstance().GetActiveGame());
         galaga->IncrementShotsFired();
         m_TimeSinceLastShot = 0.0f;

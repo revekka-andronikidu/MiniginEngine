@@ -26,7 +26,7 @@ namespace dae
         virtual void AddPoints() {};
 
 
-        bool m_IsAttacking{ false };
+        bool m_IsAttacking{ false }; //get from enemy attack component
 
 
         

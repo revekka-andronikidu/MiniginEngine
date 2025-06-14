@@ -5,6 +5,7 @@
 #include "GalagaGame.h"
 #include "InputManager.h"
 #include "GameCommands.h"
+#include "EnemyManager.h"
 #include "LivesDisplay.h"
 
 
@@ -59,8 +60,7 @@ void SceneFactory::CreateMainMenu()
 	auto highScoresMenuItem = objFactory.CreateMenuItem("HIGH SCORES", font, glm::vec3(GalagaGame::m_GameWindowWidth / 2 - 60.f, GalagaGame::m_GameWidnowHeight / 2 + gap * 3, 0.f), menuComp, [this]()
 		{
 			//EnterScene
-			m_Galaga->m_GameModeMachine.EnterState<GameModeNull>();
-			m_Galaga->m_StateMachine.EnterState<HighScoresState>();
+			m_Galaga->m_GameModeMachine.EnterState<HighScoresState>();
 			dae::SceneManager::GetInstance().SetActiveScene("HighScores");
 		});
 
@@ -106,6 +106,7 @@ void SceneFactory::CreateStageScene(std::string sceneName)
 	auto& scene = SceneManager::GetInstance().GetScene(sceneName);
 	auto& objFactory = ObjectFactory::GetInstance();
 
+	m_Galaga->m_EnemyManager.get()->StartStage(1);
 	// 1. Load level data from file (pseudo-code)
 	//LevelData data = LevelLoader::Load(sceneName + ".txt");
 	
@@ -136,9 +137,7 @@ void SceneFactory::CreateStageScene(std::string sceneName)
 	// 4. Create enemies from level data
 	//for (const auto& enemySpawn : data.enemies) {
 	//	scene.Add(CreateEnemy(enemySpawn.type, enemySpawn.position));
-	auto bee = ObjectFactory::GetInstance().CreateBee(glm::vec3{ 200, 80, 0 });
-
-	scene.Add(std::move(bee));
+	
 
 	//// 5. Create HUD elements
 	//scene.Add(CreateLivesDisplay());
@@ -247,21 +246,51 @@ void SceneFactory::CreatePlayer(std::string sceneName, int playerNumber)
 
 void SceneFactory::CreateGameOverScene()
 {
-
 	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::GameOver);
-
-	auto font = ResourceManager::GetInstance().LoadFont("emulogic.ttf", 50); //TODO: GET INTEAD OF LOAD
-
+	auto font = ResourceManager::GetInstance().LoadFont("emulogic.ttf", 40); //TODO: GET INTEAD OF LOAD
+	auto fontSmall = ResourceManager::GetInstance().LoadFont("emulogic.ttf", 15);
 	
-	auto text = ObjectFactory::GetInstance().CreateTextObject(font, "GAME OVER");
-
+	auto text = ObjectFactory::GetInstance().CreateTextObject(font, "GAME OVER", {0,0,0}, {255, 0,0,255});
 	text->Update(); //otherwise no texture?
 	auto textSize = text->GetComponent<TextComponent>()->GetTextureSize();;
-
-	glm::vec3 position{ m_Galaga->m_GameWindowWidth / 2 - textSize.x/2, m_Galaga->m_GameWidnowHeight / 2 - textSize.y  , 0 };
-
+	glm::vec3 position{ m_Galaga->m_GameWindowWidth / 2 - textSize.x/2, m_Galaga->m_GameWidnowHeight / 2 - textSize.y *4 , 0 };
 	text->GetTransform().SetPosition(position);
 
-	scene.Add(std::move(text));
 
+	std::string shotsText{ "SHOTS FIRED: " + std::to_string(m_Galaga->GetShotsFired()) };
+	auto textShots = ObjectFactory::GetInstance().CreateTextObject(fontSmall, shotsText);
+	textShots->Update(); //otherwise no texture?
+	textSize = textShots->GetComponent<TextComponent>()->GetTextureSize();;
+	position = { m_Galaga->m_GameWindowWidth / 2 - textSize.x / 2, m_Galaga->m_GameWidnowHeight / 2 - textSize.y * 4 , 0 };
+	textShots->GetTransform().SetPosition(position);
+
+	shotsText = { "NUMBER OF HITS: " + std::to_string(m_Galaga->GetEnemiesHit()) };
+	auto textHits = ObjectFactory::GetInstance().CreateTextObject(fontSmall, shotsText);
+	textHits->Update(); //otherwise no texture?
+	textSize = textHits->GetComponent<TextComponent>()->GetTextureSize();;
+	position = { m_Galaga->m_GameWindowWidth / 2 - textSize.x / 2, m_Galaga->m_GameWidnowHeight / 2 - textSize.y * 2 , 0 };
+	textHits->GetTransform().SetPosition(position);
+
+	float hitmiss{0};
+	if (m_Galaga->GetShotsFired() > 0)
+	hitmiss = { static_cast<float>(m_Galaga->GetEnemiesHit()) /	static_cast<float>(m_Galaga->GetShotsFired()) * 100 };
+
+	shotsText = { "HIT-MISS RATIO: " + std::to_string(static_cast<int>(hitmiss)) + "%"};
+	auto hitmisstxt = ObjectFactory::GetInstance().CreateTextObject(fontSmall, shotsText, { 0,0,0 }, { 255, 255,0,255 });
+	hitmisstxt->Update(); //otherwise no texture?
+	textSize = hitmisstxt->GetComponent<TextComponent>()->GetTextureSize();;
+	position = { m_Galaga->m_GameWindowWidth / 2 - textSize.x / 2, m_Galaga->m_GameWidnowHeight / 2 + textSize.y , 0 };
+	hitmisstxt->GetTransform().SetPosition(position);
+
+
+
+	auto& input = dae::InputManager::GetInstance();
+	
+	auto back = std::make_unique<BackToMainMenuCommand>();
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(back));
+
+	scene.Add(std::move(text));
+	scene.Add(std::move(textShots));
+	scene.Add(std::move(textHits));
+	scene.Add(std::move(hitmisstxt));
 }

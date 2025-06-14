@@ -41,6 +41,7 @@ namespace dae
 			{
 				m_CurrentLives = lives;
 				Notify(*GetOwner(), LIVES_UPDATED_EVENT);
+
 			}
 		};
 		

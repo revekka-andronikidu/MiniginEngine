@@ -103,7 +103,7 @@ namespace dae
 				}
 
 				void RemoveDeadComponents();
-				bool IsMarkedForDestroy() { return m_IsMarkedForDestroy; };
+				bool IsMarkedForDestroy() const { return m_IsMarkedForDestroy; };
 				
 		
 		#pragma endregion

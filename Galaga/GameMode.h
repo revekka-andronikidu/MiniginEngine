@@ -14,17 +14,33 @@ namespace dae
             Unknown
         };
 
-        virtual void OnEnter() override;
+        virtual void OnEnter() override {};
         virtual void Update() override {};
         virtual void OnExit() override {};
         virtual GameModeType GetModeType() const { return GameModeType::Unknown; }
+    };
 
-    protected:
-        virtual void CreateScenes() = 0;
-        bool m_ScenesCreated{ false };
+    class MainMenuState final : public GameMode
+    {
+    public:
+        void OnEnter() override;
+        void Update() override {};
+        void OnExit() override;
+        GameModeType GetModeType() const { return GameModeType::Unknown; }
+    private:
+        bool m_menuCreated{ false };
 
-        //hold state?
-        //on exit delete states? and scenes
+    };
+
+    class HighScoresState final : public GameMode
+    {
+    public:
+        void OnEnter() override;
+        void Update() override {};
+        void OnExit() override {};
+        GameModeType GetModeType() const { return GameModeType::Unknown; }
+    private:
+        bool m_menuCreated{ false };
 
     };
 
@@ -33,35 +49,55 @@ namespace dae
     public:
         virtual void OnEnter() override {};
         virtual GameModeType GetModeType() const { return GameModeType::Unknown; }
-    protected:
-        void CreateScenes() override {};
-
+    private:
+        void CreateScenes() {};
+        bool m_ScenesCreated{ false };
     };
 
     class SinglePlayerMode final : public GameMode
     {
     public:
+        virtual void OnEnter() override;
+        virtual void Update() override {};
+        virtual void OnExit() override {};
         virtual GameModeType GetModeType() const { return GameModeType::Solo; }
-    protected:
-        void CreateScenes() override;
+    private:
+        void CreateScenes();
+        bool m_ScenesCreated{ false };
       
     };
 
    class CoopMode final : public GameMode
     {
     public:
+        virtual void OnEnter() override;
+        virtual void Update() override {};
+        virtual void OnExit() override {};
         virtual GameModeType GetModeType() const { return GameModeType::Coop; }
-    protected:
-        void CreateScenes() override;
+    private:
+        void CreateScenes();
+        bool m_ScenesCreated{ false };
     };
 
     class VersusMode final : public GameMode
     {
     public:
+        virtual void OnEnter() override;
+        virtual void Update() override {};
+        virtual void OnExit() override {};
         virtual GameModeType GetModeType() const { return GameModeType::Versus; }
 
-    protected:
-        void CreateScenes() override;
+    private:
+        void CreateScenes();
+        bool m_ScenesCreated{ false };
+    };
+
+    class GameOverState : public GameMode
+    {
+
+        virtual void OnEnter();
+        virtual void Update() {};
+        virtual void OnExit() {};
     };
 
 }

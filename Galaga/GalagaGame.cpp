@@ -8,20 +8,38 @@
 #include "SceneNames.h"
 #include "GameEvents.h"
 #include "Scene.h"
+#include "EnemyManager.h"
+#include "ServiceLocator.h"
+#include "Audio.h"
+#include "SceneFactory.h"
 
 using namespace dae;
 
 GalagaGame::GalagaGame() 
 {
+	//Load audio
+	std::unique_ptr<IAudio> audio = std::make_unique<SDLAudio>();
+
+#if _DEBUG
+	std::unique_ptr<LoggerAudio> LogAudio = std::make_unique<LoggerAudio>(std::move(audio));
+	ServiceLocator::RegisterAudioService(std::move(LogAudio));
+#else
+	ServiceLocator::RegisterAudioService(std::move(audio));
+#endif
+
+	//Enemy Manager
+	m_EnemyManager = std::make_unique<EnemyManager>();
+
+
 	//TODO:
-	//init resources (textures, sounds, fonts)
+	//init ALL resources (textures, sounds, fonts)
+	
+	ResourceManager::GetInstance().LoadSound("GalagaTheme.wav"); //0
+	ResourceManager::GetInstance().LoadSound("Fighter-Shot.wav"); //1
+	ResourceManager::GetInstance().LoadSound("Galaga-explosion.wav"); //2
+	ResourceManager::GetInstance().LoadSound("Galaga-kill.wav"); //3
+
 	//init high scores
-	//init game/level info
-
-
-	//create all scenes in object factory
-	//create all game states and keep reffence to them?? or create them when mode is entered
-
 	
 }
 void GalagaGame::Update()
@@ -33,8 +51,7 @@ void GalagaGame::OnNotify(const GameObject& entity, const Event& event)
 {
 	if (event == OBJECT_DEATH_EVENT && entity.HasTag("player"))
 	{
-		m_StateMachine.EnterState<GameOverState>();
-		m_GameModeMachine.EnterState<GameModeNull>();
+		m_GameModeMachine.EnterState<GameOverState>();
 	}
 
 }
@@ -42,8 +59,7 @@ void GalagaGame::OnNotify(const GameObject& entity, const Event& event)
 void GalagaGame::Initialize() //initialize after construction otherwise conflict in GameManager
 {
 	CreateScenes();
-	m_GameModeMachine.EnterState<GameModeNull>();
-	m_StateMachine.EnterState<MainMenuState>();
+	m_GameModeMachine.EnterState<MainMenuState>();
 	
 	SetDebugCommands();
 }
@@ -61,20 +77,11 @@ void GalagaGame::SetDebugCommands()
 void GalagaGame::SkipToNextStage()
 {
 	//check if the state is in game(not main menu)
-	if (dynamic_cast<InGameState*>(m_StateMachine.GetCurrentState()))
+	if (m_GameModeMachine.GetCurrentState()->GetModeType() != GameMode::GameModeType::Unknown)
 	{
-		m_CurrentStage = (m_CurrentStage + 1) % (m_NumberOfStages + 1);
-
 		
-		if (m_CurrentStage == 0)
-		{
-			m_StateMachine.EnterState<MainMenuState>();
-			m_GameModeMachine.EnterState<GameModeNull>();
-		}
-		else
-		{
-			//next wave
-		}
+
+
 
 #if _DEBUG
 		std::cout << "Stage Skipped. Current stage: " << std::to_string(m_CurrentStage) << std::endl;
@@ -89,12 +96,7 @@ void GalagaGame::SkipToNextStage()
 }
 
 
-void GalagaGame::EnterScene()
-{
 
-	
-	
-}
 
 void GalagaGame::CreateScenes()
 {

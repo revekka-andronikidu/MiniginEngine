@@ -5,6 +5,7 @@
 #include "LivesComponent.h"
 #include "ColliderComponent.h"
 #include "GalagaGame.h"
+#include "ServiceLocator.h"
 
 
 using namespace dae;
@@ -53,7 +54,7 @@ void dae::EnemyComponent::OnDeath()
     //Create enemy explosion
     AddPoints();
        
-
+    ServiceLocator::GetAudioService().PlayEffect(3, 0.8f, false);
         
         // Add to killed enemies counter
        // GameMaster::GetInstance().IncrementKilledEnemies();

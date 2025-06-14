@@ -11,10 +11,16 @@ namespace dae
 		virtual void Update() override;
 		void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
 
+		void StartAttack();
+		void StopAttack();
 
 	protected:
-		float m_ShootInterval{ 1.15f };
+		bool m_IsAttacking{ false };
+		int m_ShotsPerAttack{ 2 };
+		int m_ShotsFired{ 0 };
+		float m_ShootInterval{ 0.25f };
 		float m_ShootTimer{ 0 };
+
 		void Shoot();
 
 	};
