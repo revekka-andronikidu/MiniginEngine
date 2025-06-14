@@ -17,10 +17,17 @@ void dae::EnemyComponent::OnNotify(const GameObject& entity, const Event& event)
     {
         const auto& data = static_cast<const TypedEvent<EngineEvents::Hit>&>(*event).GetData();
 
-        if (data.source->HasTag("bullet") || data.target->HasTag("bullet"))
-        {
+        if (data.source->HasTag("bullet"))
+        { 
+            data.source->Destroy(); // Destroy the bullet
             OnHit();
         }
+        else if (data.target->HasTag("bullet"))
+        {
+            data.target->Destroy(); // Destroy the bullet
+            OnHit();
+        }
+        
     }
 
     if (event == LIVES_UPDATED_EVENT)

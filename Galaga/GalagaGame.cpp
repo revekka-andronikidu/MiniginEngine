@@ -27,10 +27,6 @@ GalagaGame::GalagaGame()
 	ServiceLocator::RegisterAudioService(std::move(audio));
 #endif
 
-	//Enemy Manager
-	m_EnemyManager = std::make_unique<EnemyManager>();
-
-
 	//TODO:
 	//init ALL resources (textures, sounds, fonts)
 	
@@ -65,7 +61,7 @@ void GalagaGame::Initialize() //initialize after construction otherwise conflict
 {
 	CreateScenes();
 	m_GameModeMachine.EnterState<MainMenuState>();
-	
+	m_EnemyManager = std::make_unique<EnemyManager>();
 	SetDebugCommands();
 }
 
@@ -76,7 +72,7 @@ void GalagaGame::SetDebugCommands()
 	auto skipLevel = std::make_unique<SkipLevelCommand>();
 	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F1 }, std::move(skipLevel));
 	auto muteGame = std::make_unique<MuteGameCommand>();
-	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F2 }, std::move(muteGame));
+	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_F2 }, std::move(muteGame));
 }
 
 void GalagaGame::SkipToNextStage()

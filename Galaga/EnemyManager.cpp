@@ -18,8 +18,6 @@ using namespace dae;
 
 EnemyManager::EnemyManager()
 {
-    LoadPathsFromFile("paths.txt");
-    LoadFormationFromFile("formations.txt");
    // LoadWavesFromFile("waves.txt");
     //StartWave(m_WaveNumber);
 
@@ -28,6 +26,11 @@ EnemyManager::EnemyManager()
 
      m_WindowHeight = galaga->m_GameWidnowHeight;
      m_WindowWidth = galaga->m_GameWindowWidth;
+
+     LoadPathsFromFile("paths.txt");
+     LoadFormationFromFile("formations.txt");
+
+
 }
 
 void EnemyManager::Update()
@@ -39,26 +42,36 @@ void EnemyManager::Update()
         {
             StartAttack();
             m_IsAttacking = true;
+
+            
         }
     }
+
+    // Handle enemy spawning
+    if (m_Spawning)
+    {
+        if (m_CurrentGroup < m_SpawnQueue.size())
+        {
+            m_SpawnTimer += TimeManager::GetInstance().GetDeltaTime();
+
+            while (m_CurrentGroup < m_SpawnQueue.size() &&
+                m_SpawnQueue[m_CurrentGroup].spawnTime <= m_SpawnTimer)
+            {
+                const auto& scheduled = m_SpawnQueue[m_CurrentGroup];
+                SpawnEnemy(scheduled.info);
+                ++m_CurrentGroup;
+            }
+        }
+    }
+
 }
 
 void EnemyManager::StartStage(int stage)
 {
-   // if (stage >= static_cast<int>(m_Stages.size()))
-       // return;
-
-   // m_CanAttack = false;
-    m_CurrentStage = stage;
-    m_EnemiesInCurrentStage = 0;
-    m_CurrentGroup = 0;
-    //m_GroupQueues.clear();
-
-
     
-    auto bee = ObjectFactory::GetInstance().CreateBee(glm::vec3{ 200, 80, 0 }, m_Paths[0].points);
-    SceneManager::GetInstance().GetScene("Solo").Add(std::move(bee));
-
+    m_Spawning = true;
+    m_CurrentStage = stage;
+    StartWaveFromFormation(m_Formation);
 
 }
 
@@ -78,15 +91,88 @@ void EnemyManager::StartAttack()
     }
 }
 
-std::vector<FormationEnemyInfo> EnemyManager::LoadFormationFromFile(const std::string& filename)
+
+void EnemyManager::SpawnEnemy(const FormationEnemyInfo& info)
 {
-    std::vector<FormationEnemyInfo> formation;
+    std::unique_ptr<GameObject> enemy;
+
+    if (info.type == "Bee")
+        enemy = ObjectFactory::GetInstance().CreateBee(glm::vec3{ info.position, 0 }, GetPathByName(info.pathName));
+    else if (info.type == "Butterfly")
+        enemy = ObjectFactory::GetInstance().CreateButterfly(glm::vec3{ info.position, 0 }, GetPathByName(info.pathName));
+    else if (info.type == "BossGalaga")
+        enemy = ObjectFactory::GetInstance().CreateBossGalaga(glm::vec3{ info.position, 0 }, GetPathByName(info.pathName));
+    else
+    {
+        std::cerr << "Unknown enemy type: " << info.type << std::endl;
+        return;
+    }
+
+    if (enemy)
+        SceneManager::GetInstance().GetActiveScene().Add(std::move(enemy));
+}
+
+void EnemyManager::StartWaveFromFormation(std::vector<FormationEnemyInfo> formation)
+{
+    // Sort by group and subGroup
+    std::ranges::sort(formation, [](const FormationEnemyInfo& a, const FormationEnemyInfo& b) {
+        if (a.group == b.group)
+            return a.subGroup < b.subGroup;
+        return a.group < b.group;
+        });
+
+    m_SpawnQueue.clear();
+    m_SpawnTimer = 0.0f;
+    m_CurrentGroup = 0;
+
+    float groupDelay = 0.0f;
+    const float groupGap = 3.0f;     // seconds between groups
+    const float subGroupGap = 0.1f;  // slight delay between subgroups
+
+    int lastGroup = -1;
+    int lastSubGroup = -1;
+
+    for (const auto& info : formation)
+    {
+        if (info.group != lastGroup)
+        {
+            groupDelay += groupGap;
+            lastGroup = info.group;
+            lastSubGroup = -1;
+        }
+
+        if (info.subGroup != lastSubGroup)
+        {
+            groupDelay += subGroupGap;
+            lastSubGroup = info.subGroup;
+        }
+
+        m_SpawnQueue.push_back(ScheduledSpawn{ groupDelay, info });
+    }
+}
+
+std::vector<glm::vec2> EnemyManager::GetPathByName(const std::string& name) const
+{
+    for (const auto& path : m_Paths)
+    {
+        if (path.name == name)
+        {
+            return path.points;
+        }
+    }
+
+    std::cerr << "Path not found: " << name << std::endl;
+    return {}; // Return empty if not found
+}
+
+void EnemyManager::LoadFormationFromFile(const std::string& filename)
+{
     std::ifstream file("../Data/" + filename);
 
     if (!file.is_open())
     {
         std::cerr << "Failed to open formation file: " << filename << std::endl;
-        return formation;
+        return;
     }
 
     std::string line;
@@ -95,17 +181,30 @@ std::vector<FormationEnemyInfo> EnemyManager::LoadFormationFromFile(const std::s
         if (line.empty() || line[0] == '#') continue;
 
         std::istringstream ss(line);
-        std::string type, pathName;
-        int col, row, group, subGroup;
-        char comma;
+        std::string token;
 
-        ss >> type >> comma >> col >> comma >> row >> comma >> group >> comma >> subGroup >> comma >> pathName;
+        std::vector<std::string> tokens;
+        while (std::getline(ss, token, ','))
+        {
+            tokens.push_back(token);
+        }
+
+        if (tokens.size() != 6)
+        {
+            std::cerr << "Malformed line in formation file: " << line << std::endl;
+            continue;
+        }
+
+        std::string type = tokens[0];
+        int col = std::stoi(tokens[1]);
+        int row = std::stoi(tokens[2]);
+        int group = std::stoi(tokens[3]);
+        int subGroup = std::stoi(tokens[4]);
+        std::string pathName = tokens[5];
 
         glm::vec2 worldPos = GridToWorldPosition(col, row);
-        formation.emplace_back(FormationEnemyInfo{ type, worldPos, group, subGroup, pathName });
+        m_Formation.emplace_back(FormationEnemyInfo{ type, worldPos, group, subGroup, pathName });
     }
-
-    return formation;
 }
 
 std::vector<dae::GameObject*> EnemyManager::SelectAttackers(const std::vector<dae::GameObject*>& enemies) const

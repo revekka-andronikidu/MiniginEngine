@@ -175,8 +175,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position, co
 	bee->GetTransform().SetScale(scale);
 	bee->SetTag("enemy");
 
-	bee->AddComponent<PathMovement>(path, 355.f);
-	const auto pathFollow = bee->GetComponent<PathMovement>();
+	auto pathFollow = bee->AddComponent<PathMovement>(path, 355.f);
 	pathFollow->AddWorldSpacePoint({ position.x, position.y });
 	pathFollow->StartAtFirstPoint();
 
@@ -192,7 +191,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateBee(glm::vec3 position, co
 	
 	return bee;
 }
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateButterfly(glm::vec3 position)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateButterfly(glm::vec3 position, const std::vector<glm::vec2>& path)
 {
 	auto butterfly = std::make_unique<dae::GameObject>();
 	glm::vec3 scale{ 2,2,2 };
@@ -204,6 +203,9 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateButterfly(glm::vec3 positi
 	butterfly->GetTransform().SetScale(scale);
 	butterfly->SetTag("enemy");
 
+	auto pathFollow = butterfly->AddComponent<PathMovement>(path, 355.f);
+	pathFollow->AddWorldSpacePoint({ position.x, position.y });
+	pathFollow->StartAtFirstPoint();
 
 	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, texture->GetTextureSize().y * scale.y, 0 * scale.z };
 	auto collider = butterfly->AddComponent<ColliderComponent>(colliderSize);
@@ -215,7 +217,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateButterfly(glm::vec3 positi
 	return butterfly;
 
 }
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga(glm::vec3 position)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga(glm::vec3 position, const std::vector<glm::vec2>& path)
 {
 	auto galaga = std::make_unique<dae::GameObject>();
 
@@ -228,6 +230,9 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateBossGalaga(glm::vec3 posit
 	galaga->GetTransform().SetScale(scale);
 	galaga->SetTag("enemy");
 
+	auto pathFollow = galaga->AddComponent<PathMovement>(path, 355.f);
+	pathFollow->AddWorldSpacePoint({ position.x, position.y });
+	pathFollow->StartAtFirstPoint();
 
 	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, texture->GetTextureSize().y * scale.y, 0 * scale.z };
 	auto collider = galaga->AddComponent<ColliderComponent>(colliderSize);

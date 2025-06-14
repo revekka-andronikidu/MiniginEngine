@@ -115,9 +115,7 @@ namespace dae
 			std::lock_guard<std::mutex> lock(mutex);
 			
 				m_Muted = !m_Muted;
-				Mix_Volume(-1, static_cast<int>( m_Muted * MIX_MAX_VOLUME));
-			
-
+				Mix_MasterVolume(static_cast<int>( m_Muted * MIX_MAX_VOLUME));
 
 		}
 

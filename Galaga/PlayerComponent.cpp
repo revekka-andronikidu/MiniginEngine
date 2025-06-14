@@ -48,7 +48,7 @@ void dae::PlayerComponent::OnNotify(const GameObject& entity, const Event& event
 
 void PlayerComponent::OnHit()
 {
-    ServiceLocator::GetAudioService().PlayEffect(2, 0.8, true);
+    ServiceLocator::GetAudioService().PlayEffect(2, 0.8f, false);
     //animation
     //deactivate and respawn
     GetOwner()->GetComponent<LivesComponent>()->RemoveLive();
