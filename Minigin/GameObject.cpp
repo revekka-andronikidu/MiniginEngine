@@ -27,7 +27,6 @@ void dae::GameObject::Update()
 {
 	for (auto&  component : m_pComponents)
 	{
-		//if(!m_IsMarkedForDestroy && !component->IsMarkedForRemoval())
 		component->Update();
 	}
 }

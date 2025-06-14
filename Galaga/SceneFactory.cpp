@@ -107,6 +107,7 @@ void SceneFactory::CreateStageScene(std::string sceneName)
 	auto& objFactory = ObjectFactory::GetInstance();
 
 	m_Galaga->m_EnemyManager.get()->StartStage(1);
+	
 	// 1. Load level data from file (pseudo-code)
 	//LevelData data = LevelLoader::Load(sceneName + ".txt");
 	

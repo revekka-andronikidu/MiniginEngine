@@ -41,6 +41,7 @@ void Scene::Update()
 {
 	for(auto& object : m_objects)
 	{
+		if(object)
 		object->Update();
 	}
 }

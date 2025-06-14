@@ -128,3 +128,5 @@ std::shared_ptr<dae::ISoundHandle> dae::ResourceManager::LoadSound(const std::st
 	
 	return m_Sounds.at(file);
 }
+
+

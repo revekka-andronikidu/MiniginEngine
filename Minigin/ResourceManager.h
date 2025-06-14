@@ -25,6 +25,8 @@ namespace dae
 		std::shared_ptr<dae::Font> GetFont(const std::string& file);
 		//std::shared_ptr<ISoundHandle> LoadMusic(const std::string& file);
 
+		const std::filesystem::path GetDataPath() { return m_dataPath; };
+
 		std::shared_ptr<ISoundHandle> LoadSound(const std::string& file);
 		std::shared_ptr<ISoundHandle> GetSound(const std::string& file) const
 		{ 

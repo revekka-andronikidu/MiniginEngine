@@ -21,10 +21,6 @@ void SinglePlayerMode::OnEnter()
 
 		m_ScenesCreated = true;
 
-		auto game = GameManager::GetInstance().GetActiveGame();
-		auto galaga = dynamic_cast<GalagaGame*>(game);
-		auto& sceneManager = dae::SceneManager::GetInstance();
-		galaga->m_EnemyManager.get()->StartStage(1);
 	}
 	else
 	{

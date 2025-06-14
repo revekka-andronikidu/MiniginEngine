@@ -17,6 +17,8 @@ using namespace dae;
 
 GalagaGame::GalagaGame() 
 {
+
+
 	//Load audio
 	std::unique_ptr<IAudio> audio = std::make_unique<SDLAudio>();
 

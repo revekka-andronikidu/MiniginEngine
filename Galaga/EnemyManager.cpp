@@ -30,6 +30,7 @@ EnemyManager::EnemyManager()
      LoadPathsFromFile("paths.txt");
      LoadFormationFromFile("formations.txt");
 
+     std::cout << "Enemy init" << std::endl;
 
 }
 
@@ -48,10 +49,11 @@ void EnemyManager::Update()
     }
 
     // Handle enemy spawning
-    if (m_Spawning)
-    {
+    
         if (m_CurrentGroup < m_SpawnQueue.size())
         {
+           
+
             m_SpawnTimer += TimeManager::GetInstance().GetDeltaTime();
 
             while (m_CurrentGroup < m_SpawnQueue.size() &&
@@ -59,17 +61,16 @@ void EnemyManager::Update()
             {
                 const auto& scheduled = m_SpawnQueue[m_CurrentGroup];
                 SpawnEnemy(scheduled.info);
+                
                 ++m_CurrentGroup;
             }
         }
-    }
+    
 
 }
 
 void EnemyManager::StartStage(int stage)
 {
-    
-    m_Spawning = true;
     m_CurrentStage = stage;
     StartWaveFromFormation(m_Formation);
 
@@ -167,11 +168,15 @@ std::vector<glm::vec2> EnemyManager::GetPathByName(const std::string& name) cons
 
 void EnemyManager::LoadFormationFromFile(const std::string& filename)
 {
-    std::ifstream file("../Data/" + filename);
+
+    auto datapath = ResourceManager::GetInstance().GetDataPath();
+
+    const std::filesystem::path filePath = std::filesystem::path(datapath) / filename;
+    std::ifstream file(filePath);
 
     if (!file.is_open())
     {
-        std::cerr << "Failed to open formation file: " << filename << std::endl;
+        std::cout << "Failed to open formation file: " << filename << std::endl;
         return;
     }
 
@@ -191,7 +196,7 @@ void EnemyManager::LoadFormationFromFile(const std::string& filename)
 
         if (tokens.size() != 6)
         {
-            std::cerr << "Malformed line in formation file: " << line << std::endl;
+            std::cout << "Malformed line in formation file: " << line << std::endl;
             continue;
         }
 
@@ -201,6 +206,8 @@ void EnemyManager::LoadFormationFromFile(const std::string& filename)
         int group = std::stoi(tokens[3]);
         int subGroup = std::stoi(tokens[4]);
         std::string pathName = tokens[5];
+
+        
 
         glm::vec2 worldPos = GridToWorldPosition(col, row);
         m_Formation.emplace_back(FormationEnemyInfo{ type, worldPos, group, subGroup, pathName });
@@ -236,7 +243,9 @@ std::vector<dae::GameObject*> EnemyManager::SelectAttackers(const std::vector<da
 
 void EnemyManager::LoadPathsFromFile(const std::string& filename)
 {
-    const std::filesystem::path filePath = std::filesystem::path("../Data/") / filename;
+    auto datapath = ResourceManager::GetInstance().GetDataPath();
+
+    const std::filesystem::path filePath = std::filesystem::path(datapath) / filename;
 
     try
     {
@@ -297,10 +306,10 @@ void EnemyManager::LoadPathsFromFile(const std::string& filename)
 
 glm::vec2 EnemyManager::GridToWorldPosition(int col, int row)
 {
-    const float totalWidth = m_WindowWidth - 2 * kHorizontalPadding;
-    const float cellWidth = totalWidth / static_cast<float>(kGridCols);
-    const float x = kHorizontalPadding + (col + 0.5f) * cellWidth;
-    const float y = kTopOffset + row * kVerticalSpacing;
+    const int totalWidth = m_WindowWidth - 2 * kHorizontalPadding;
+    const int cellWidth = totalWidth / static_cast<float>(kGridCols);
+    const int x = kHorizontalPadding + (col + 0.5f) * cellWidth;
+    const int y = kTopOffset + row * kVerticalSpacing;
 
     return { x, y };
 }

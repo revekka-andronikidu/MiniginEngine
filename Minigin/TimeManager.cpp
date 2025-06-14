@@ -1,4 +1,5 @@
 #include "TimeManager.h"
+#include <iostream>
 namespace dae
 {
     void TimeManager::Init()
@@ -15,6 +16,8 @@ namespace dae
         auto currentTime = std::chrono::high_resolution_clock::now();
         m_deltaTime = std::chrono::duration<float>(currentTime - m_lastFrameTime).count();
         m_lastFrameTime = currentTime;
+
+        //std::cout << std::to_string(m_deltaTime) << std::endl;
 
         auto elapsedSeconds = std::chrono::duration<float>(currentTime - m_startTime).count();
         ++m_FrameCount;
