@@ -7,6 +7,7 @@
 #include "Font.h"
 #include "ServiceLocator.h"
 #include "SoundHandle.h"
+#include <iostream>
 
 namespace fs = std::filesystem;
 

@@ -109,6 +109,7 @@ void dae::Minigin::Run(/*const std::function<void()>& load*/)
 	auto& input = InputManager::GetInstance();
 	auto& time = TimeManager::GetInstance();
 
+
 	const int ms_per_frame = 1000 / m_fixedUpdateFramerate; //miliseconds pre frame
 	float lag = 0.0f;
 	
@@ -126,7 +127,7 @@ void dae::Minigin::Run(/*const std::function<void()>& load*/)
 			lag -= m_fixed_time_step;
 		}		
 
-		GameManager::GetInstance().GetActiveGame()->Update();
+		
 		sceneManager.Update();
 		sceneManager.LateUpdate();
 		renderer.Render();

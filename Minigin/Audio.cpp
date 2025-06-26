@@ -1,12 +1,11 @@
 #include "Audio.h"
 #include <iostream>
 #include "SDL.h"
-#include "SDL_mixer.h"
+#include <SDL_mixer.h>
 #include <algorithm>
 #include <stdexcept>
 #include "SoundHandle.h"
 #include "ResourceManager.h"
-#include <vld.h>
 
 namespace dae
 {
@@ -17,45 +16,47 @@ namespace dae
 	public:
 		SDL_AudioImpl()
 		{
-			/*if (SDL_Init(SDL_INIT_AUDIO) < 0)
+			if (SDL_Init(SDL_INIT_AUDIO) < 0)
 			{
 				throw std::runtime_error(std::string("SDL_Init Error: ") + SDL_GetError());
-			}*/
+			}
 
 			if (Mix_Init(MIX_INIT_MP3) != MIX_INIT_MP3) //to enable MP3 format
 			{
-				Mix_Quit();  // Cleanup mixer before throwing
+				//Mix_Quit();  // Cleanup mixer before throwing
 				throw std::runtime_error(std::string("Mix_Init Error: ") + Mix_GetError());
 			}
 
 			if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 4096) < 0)
 			{
-				Mix_Quit();  // Cleanup mixer before throwing
+				//Mix_Quit();  // Cleanup mixer before throwing
 				throw std::runtime_error(std::string("Mix_OpenAudio Error: ") + Mix_GetError());
 			}
-			VLDMarkAllLeaksAsReported();
+			
 		}
 
 		~SDL_AudioImpl()
-		{
-			
+		{	
 			Mix_CloseAudio();
 			Mix_Quit();
 			SDL_QuitSubSystem(SDL_INIT_AUDIO);
-			std::cout << "Destroying SDL_AudioImpl\n";
 		}
+
+
 
 		std::shared_ptr<ISoundHandle>LoadSound(const std::string& file)
 		{
+			//file;
 			Mix_Chunk* chunk = Mix_LoadWAV(file.c_str());
+			//chunk;
 			if (!chunk) throw std::runtime_error("Failed to load sound: " + file);
 
-			// Wrap in shared_ptr with correct deleter
+			 //Wrap in shared_ptr with correct deleter
 			std::shared_ptr<Mix_Chunk> sound(chunk, Mix_FreeChunk);
 
-			// Wrap in your SoundHandle
+			 //Wrap in your SoundHandle
 			return std::make_shared<SoundHandle<Mix_Chunk>>(sound);
-
+			//return nullptr;
 
 			// Wrap Mix_Chunk in SoundHandle<Mix_Chunk>
 			//auto sound = std::make_shared<Mix_Chunk>(chunk, Mix_FreeChunk);
@@ -171,6 +172,7 @@ namespace dae
 			while (!m_SoundQueue.empty())
 			{
 				auto& request = m_SoundQueue.front();
+				request;
 
 				int loops = request.looping ? -1 : 0;
 				
@@ -183,6 +185,7 @@ namespace dae
 				m_SoundQueue.pop();
 			}
 		}
+
 		void ClearQueue()
 		{
 			std::queue<SoundRequest> empty;
@@ -282,7 +285,14 @@ namespace dae
 	std::shared_ptr<ISoundHandle> LoggerAudio::LoadSound(const std::string& file) 
 	{
 		auto handle = m_pAudio->LoadSound(file);
-		std::cout << "Sound loaded: " << file << std::endl;
+		if (handle)
+		{
+			std::cout << "Sound loaded: " << file << std::endl;
+		}
+		else
+		{
+			std::cout << "Failed to load sound: " << file << std::endl;
+		}
 		return handle;
 	}
 

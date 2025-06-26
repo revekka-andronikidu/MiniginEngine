@@ -19,6 +19,8 @@ void EnemyAttackComponent::Update()
 			m_ShotsFired++;
 			m_ShootTimer = 0;
 			//std::cout << "Shots fired" << std::endl;
+
+			m_IsAttacking = false;
 		}
 	}
 }
