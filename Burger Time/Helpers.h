@@ -4,6 +4,15 @@
 
 namespace dae
 {
+	namespace GameSettings
+	{
+		inline  int windowWidth{208};
+		inline  int cellSize{ 16 };
+		inline  int HUDSize{ cellSize * 2};
+		inline  int windowHeight{ 208 + HUDSize };
+		inline  glm::vec3 scale{ 3.f, 3.f, 3.f };
+	}
+
 	enum class Direction
 	{
 		None,

@@ -69,22 +69,16 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const Event& e
 		m_ParentIngredient.Fall();
 		else
 		{
-			
+			auto ingredient = entity.GetParent()->GetComponent<IngredientComponent>();
+			ingredient->RegisterToTray(*m_ParentIngredient.m_Tray);
 		}
 	}
 	else if (entity.HasTag(Tag::TRAY) && event == EngineEvent::COLLISION)
 	{
 		if (m_ParentIngredient.m_IsFalling)
-			m_ParentIngredient.m_IsFalling = false;
-			m_ParentIngredient.m_IsOnTheTray = true;
-			EventSystem::GetInstance().TriggerEvent(
-				GameEvent::BURGER_PIECE_ON_TRAY,
-				entity
-			);
-		
-
-		//register with the tray
-
+		{
+			m_ParentIngredient.RegisterToTray(entity);
+		}
 	}
 	else if (entity.HasTag(Tag::PLATFORM) && event == EngineEvent::COLLISION)
 	{

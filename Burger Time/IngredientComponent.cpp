@@ -2,6 +2,9 @@
 #include "IngredientPieceComponent.h"
 #include "ObjectFactory.h"
 #include "TimeManager.h"
+#include "TrayComponent.h"
+#include <EventSystem.h>
+#include "GameEvents.h"
 
 using namespace dae;
 
@@ -72,7 +75,10 @@ void IngredientComponent::Fall()
 		piece->Reset();
 	}
 
-	//add 50 points (to the player and player notifies the point display?)
+
+
+	auto event = std::make_shared<dae::PointsIncreasedEvent>(50);
+	EventSystem::GetInstance().TriggerEvent(event, *GetOwner());
 
 }
 
@@ -80,3 +86,16 @@ bool IngredientComponent::ShouldFall()
 { 
 	return (m_MinFallDistance < GetOwner()->GetTransform().GetLocalPosition().y - m_LastHeight); 
 };
+
+void IngredientComponent::RegisterToTray(const GameObject& tray)
+{
+	m_IsFalling = false;
+	m_IsOnTheTray = true;
+
+	auto trayComp = tray.GetComponent<TrayComponent>();
+	if (trayComp)
+	{
+		trayComp->RegisterIngredient(this);
+		m_Tray = &tray;
+	}
+}

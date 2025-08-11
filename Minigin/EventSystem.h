@@ -1,8 +1,8 @@
 #pragma once
 #include "Singleton.h"
+#include <typeindex>
 #include <unordered_map>
 #include <vector>
-#include <string>
 #include <algorithm>
 #include "Event.h"
 
@@ -13,8 +13,6 @@ namespace dae
     {
     public:
         virtual ~IEventListener() = default;
-
-        //const GameObject& entity, const Event& event
         virtual void OnNotify(const GameObject& entity, const Event& event) = 0;
     };
 
@@ -28,10 +26,17 @@ namespace dae
             IEventListener* listener;
         };
 
- 
-        void AddListener(const Event& eventName, GameObject* target, IEventListener* listener)
+        template<typename EventType>
+        void AddListener(GameObject* target, IEventListener* listener)
         {
-            m_Listeners[eventName].push_back({ target, listener });
+            m_Listeners[std::type_index(typeid(EventType))].push_back({ target, listener });
+        }
+
+        template<typename EventType>
+        void AddGlobalListener(IEventListener* listener)
+        {
+            m_Listeners[std::type_index(typeid(EventType))]
+                .push_back({ nullptr, listener });
         }
 
         void RemoveListener(IEventListener* observer)
@@ -48,7 +53,7 @@ namespace dae
 
         void TriggerEvent(const Event& event, const GameObject& sender)
         {
-            auto it = m_Listeners.find(event);
+            auto it = m_Listeners.find(std::type_index(typeid(*event)));
             if (it == m_Listeners.end()) return;
 
             for (auto& entry : it->second)
@@ -60,12 +65,9 @@ namespace dae
             }
         }
 
-      
-
     private:
         friend class Singleton<EventSystem>;
         EventSystem() = default;
-        std::unordered_map<Event, std::vector<ListenerEntry>> m_Listeners;
-        //std::unordered_map<std::string, std::vector<IEventListener*>> m_Listeners;
+        std::unordered_map<std::type_index, std::vector<ListenerEntry>> m_Listeners;
     };
 }

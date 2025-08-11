@@ -1,7 +1,8 @@
 #include "PointsDisplay.h"
 #include "PointsComponent.h"
 #include "ResourceManager.h"
-//#include "GameEvents.h"
+#include <EventSystem.h>
+#include "GameEvents.h"
 
 dae::PointsDisplay::PointsDisplay(GameObject* owner, std::string text)
     : GraphicsComponent(owner)
@@ -18,23 +19,26 @@ dae::PointsDisplay::PointsDisplay(GameObject* owner, std::string text)
     m_pText = owner->GetComponent<TextComponent>();
 
 
+        dae::EventSystem::GetInstance().AddGlobalListener<PointsIncreasedEvent>(this);
 }
 
 
 void dae::PointsDisplay::OnNotify(const GameObject& entity, const Event& event)
 {
-   /* if (event == POINTS_UPDATED_EVENT)
+    if (auto pointsEvent = std::dynamic_pointer_cast<const dae::PointsIncreasedEvent>(event))
     {
-        m_CurrentPoints = entity.GetComponent<PointsComponent>()->GetPoints();
-    }*/
+        m_CurrentPoints += pointsEvent->GetPoints();
+        UpdateDisplay();
+    }
 
 }
 
-void dae::PointsDisplay::Render() const
+void dae::PointsDisplay::UpdateDisplay()
 {
     m_pText->SetText(m_textString + std::to_string(m_CurrentPoints));
-    auto pos = GetOwner()->GetTransform().GetLocalPosition();
+}
 
+void dae::PointsDisplay::Render() const
+{   
     m_pText->Render();
-
 }

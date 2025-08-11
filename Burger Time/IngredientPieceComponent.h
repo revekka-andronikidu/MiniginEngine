@@ -4,6 +4,7 @@
 
 #include <Observer.h>
 
+
 namespace dae
 {
     class IngredientComponent;
@@ -27,6 +28,8 @@ namespace dae
         bool IsSteppedOn() { return m_SteppedOn; };
         void IncrementNudge();
         void Reset();
+
+        
         
     
     private:

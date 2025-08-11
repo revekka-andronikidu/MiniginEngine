@@ -1,12 +1,12 @@
 #pragma once
 #include "GraphicsComponent.h"
-#include "Observer.h"
 #include "TextComponent.h"
+#include <EventSystem.h>
 
 
 namespace dae
 {
-    class PointsDisplay final : public GraphicsComponent, public Observer
+    class PointsDisplay final : public GraphicsComponent, public IEventListener
     {
     public:
         explicit PointsDisplay(GameObject* pOwner, std::string text = {""});
@@ -22,6 +22,8 @@ namespace dae
         int m_CurrentPoints;
         std::string m_textString;
         TextComponent* m_pText;
+
+       void UpdateDisplay();
 
 
     };

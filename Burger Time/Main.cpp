@@ -17,52 +17,9 @@
 #include <iostream>
 #include "Minigin.h"
 
-
 #include <GameManager.h>
 #include "BurgerTimeGame.h"
-
-#include <ResourceManager.h>
-#include <ServiceLocator.h>
-#include <Audio.h>
-#include "ObjectFactory.h"
-#include <SceneManager.h>
-#include <Scene.h>
-
-void load()
-{
-	//Load audio
-	
-
-	//Load resources
-
-
-	auto& scene = dae::SceneManager::GetInstance().CreateScene("Stage1");
-	dae::SceneManager::GetInstance().SetActiveScene("Stage1");
-
-
-	//background
-	auto& objFactory = dae::ObjectFactory::GetInstance();
-	auto background = objFactory.CreateTexture("level1.png", {0,0,0}, 2.5f);
-
-
-	scene.Add(std::move(background));
-
-
-	dae::ResourceManager::GetInstance().LoadSound("BGM.wav"); //0
-	//dae::ServiceLocator::GetAudioService().PlayEffect(0, 0.8f, true);
-
-
-	//gamecode
-
-}
-
-//std::string GetExeDirectory() {
-//	char buffer[MAX_PATH];
-//	GetModuleFileNameA(nullptr, buffer, MAX_PATH);
-//	std::string exePath = buffer;
-//	size_t pos = exePath.find_last_of("\\/");
-//	return exePath.substr(0, pos);
-//}
+#include "Helpers.h"
 
 int main(int, char* [])
 {
@@ -76,35 +33,14 @@ int main(int, char* [])
 		std::cout << "Successfully initialized steam." << std::endl;
 #endif
 
-	//auto datapath = GetExeDirectory() + "/Data/";
-	//auto datapath = ("../Data/");
 
-#if _DEBUG
-	
-#endif
+	dae::Minigin engine("../Data/BurgerTime/", dae::GameSettings::windowWidth * dae::GameSettings::scale.x, dae::GameSettings::windowHeight * dae::GameSettings::scale.y);
 
-	const int cellSize{ 16 };
-	float scale{ 3.f };
-	const int windowWidth{ 208 };
-	const int HUDSize{ cellSize * 2 };
-	const int windowHeight{ windowWidth + HUDSize };
+	auto& gameManager = dae::GameManager::GetInstance();
 
-	dae::Minigin engine("../Data/BurgerTime/", windowWidth * scale, windowHeight * scale);
-
-	
-	//load();
-	auto& game = dae::GameManager::GetInstance().CreateGame<dae::BurgerTimeGame>();
-
-	dae::GameInitParams initParams{};
-	initParams.windowWidth = windowWidth * scale;
-	initParams.windowHeight = windowHeight * scale;
-	initParams.cellSize = cellSize * scale;
-	initParams.scale = {scale, scale, scale};
-	initParams.HUDSize = HUDSize * scale;
-
-
-	dae::GameManager::GetInstance().SetActiveGame(&game);
-	game.Initialize(initParams);
+	auto& game = gameManager.CreateGame<dae::BurgerTimeGame>();
+	gameManager.SetActiveGame(&game);
+	game.Initialize();
 
 	engine.Run();
 

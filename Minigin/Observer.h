@@ -10,8 +10,6 @@ namespace dae
 	  //friend class Subject;
 
   public:
-
-	  //Observer() : m_pNext(nullptr) {};
 	  virtual ~Observer() {};
 	  virtual void OnNotify(const GameObject& entity, const Event& event) = 0;
 

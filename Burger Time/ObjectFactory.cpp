@@ -222,6 +222,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateTray(glm::vec3 position, g
 	//create custom collider (8 pixels from the bottom (6 from the top), 2 pixels thick, 16px from each side, 32px wide)
 	auto colliderSize = glm::vec3{ (texture->GetTextureSize().x/2 * scale.x), 1 * scale.y, 0 * scale.z };
 	auto colliderOffset = glm::vec3(16*scale.x, 6 * scale.y, 0);
+
 	auto collider = tray->AddComponent<ColliderComponent>(colliderSize, colliderOffset);
 
 
@@ -263,7 +264,6 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateIngredientPiece(Ingredient
 	auto collider = piece->AddComponent<ColliderComponent>(colliderSize);
 	
 	collider->AddObserver(pieceComp);
-	//add collider observer?
 
 	return piece;
 }

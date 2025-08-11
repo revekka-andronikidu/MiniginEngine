@@ -49,15 +49,8 @@ BurgerTimeGame::BurgerTimeGame()
 	SetDebugCommands();
 }
 
-void BurgerTimeGame::Initialize(const GameInitParams& gameInitParms)
+void BurgerTimeGame::Initialize()
 {
-	m_WindowWidth = gameInitParms.windowWidth;
-	m_WindowHeight = gameInitParms.windowHeight;
-	m_Scale = gameInitParms.scale;
-	m_CellSize = gameInitParms.cellSize;
-	m_HUDSize= gameInitParms.HUDSize;
-
-
 	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::MainMenu);
 	m_GameModeMachine.EnterState<MainMenuState>();
 }

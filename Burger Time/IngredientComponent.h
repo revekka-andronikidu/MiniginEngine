@@ -26,9 +26,12 @@ namespace dae
     protected:
         bool m_IsFalling{ false };
         bool m_IsOnTheTray{ false };
+        const GameObject* m_Tray{ nullptr };
         void OnSteppedOn();
         void Fall();
         bool ShouldFall();
+        void RegisterToTray(const GameObject& tray);
+
 
     private:
         bool m_PiecesSteppedOn[4]{};

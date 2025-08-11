@@ -50,29 +50,29 @@ void SceneFactory::CreateMainMenu()
 	auto logo = objFactory.CreateTexture("burgerTimeLogo.png", glm::vec3(0, 0, 0), scale);
 
 	auto logoSize = logo.get()->GetComponent<TextureComponent>()->GetTextureSize();
-	logo->GetTransform().SetPosition(glm::vec3(m_Game->m_WindowWidth / 2 - ((logoSize.x * scale) / 2), 70.f, 0));
+	logo->GetTransform().SetPosition(glm::vec3((GameSettings::windowWidth * GameSettings::scale.x) / 2 - ((logoSize.x * scale) / 2), 70.f, 0));
 	logo->GetTransform().SetScale(glm::vec3(scale, scale, scale));
 	logo->SetParent(menu.get(), false);
 
 	int gap{ 30 };
-	auto onePlayerMenuItem = objFactory.CreateMenuItem("1 PLAYER", font, glm::vec3(m_Game->m_WindowWidth / 2 - 60.f, m_Game->m_WindowHeight / 2, 0.f), menuComp, [this]()
+	auto onePlayerMenuItem = objFactory.CreateMenuItem("1 PLAYER", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2, 0.f), menuComp, [this]()
 		{
 			m_Game->m_GameModeMachine.EnterState<SinglePlayerMode>();
 		});
 
 	
 
-	auto twoPlayersMenuItem = objFactory.CreateMenuItem("2 PLAYERS", font, glm::vec3(m_Game->m_WindowWidth / 2 - 60.f, m_Game->m_WindowHeight / 2 + gap, 0.f), menuComp, [this]()
+	auto twoPlayersMenuItem = objFactory.CreateMenuItem("2 PLAYERS", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap, 0.f), menuComp, [this]()
 		{
 			m_Game->m_GameModeMachine.EnterState<CoopMode>();
 		});
 
-	auto versusMenuItem = objFactory.CreateMenuItem("VERSUS", font, glm::vec3(m_Game->m_WindowWidth / 2 - 60.f, m_Game->m_WindowHeight / 2 + gap * 2, 0.f), menuComp, [this]()
+	auto versusMenuItem = objFactory.CreateMenuItem("VERSUS", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap * 2, 0.f), menuComp, [this]()
 		{
 			m_Game->m_GameModeMachine.EnterState<VersusMode>();
 		});
 
-	auto highScoresMenuItem = objFactory.CreateMenuItem("HIGH SCORES", font, glm::vec3(m_Game->m_WindowWidth / 2 - 60.f, m_Game->m_WindowHeight / 2 + gap * 3, 0.f), menuComp, [this]()
+	auto highScoresMenuItem = objFactory.CreateMenuItem("HIGH SCORES", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap * 3, 0.f), menuComp, [this]()
 		{
 			//EnterScene
 			//m_Game->m_GameModeMachine.EnterState<HighScoresState>();
@@ -145,9 +145,9 @@ void SceneFactory::CreateLevel(GameState::GameModeType mode, unsigned short stag
 	int kRows{ 13 }; //grid rows
 	int kCols{ 13 }; //grid cols
 
-	int cellSize = m_Game->m_CellSize;
-	int yOffset = m_Game->m_HUDSize;
-	auto scale = m_Game->m_Scale;
+	int cellSize = GameSettings::cellSize * GameSettings::scale.x;
+	int yOffset = GameSettings::HUDSize * GameSettings::scale.y;
+	auto scale = GameSettings::scale;
 	////////////////////////////////////////
 
 	auto levelObject = std::make_unique<dae::GameObject>();
@@ -341,6 +341,8 @@ void SceneFactory::CreateLevel(GameState::GameModeType mode, unsigned short stag
 	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
 	auto text = ObjectFactory::GetInstance().CreateText("1UP", font, { 255,0,0,255 }, { cellSize/2, 0, 0 }, scale);
 	auto points = ObjectFactory::GetInstance().CreatePointsDisplay({ cellSize, cellSize/2, 0}, scale);
+
+
 	scene.Add(std::move(points));
 	scene.Add(std::move(text));
 }
