@@ -1,20 +1,12 @@
 #pragma once
-
-#pragma once
 #include "Event.h"
 
 namespace dae
 {
-	namespace EngineEvents
+	namespace EngineEvent
 	{
-	
-		struct Hit
-		{
-			GameObject* source{};
-			GameObject* target{};
-		};
 
-
+		inline const Event COLLISION{};
 	}
 
 }

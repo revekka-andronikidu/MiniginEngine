@@ -3,7 +3,7 @@
 
 namespace dae
 {
-	class SpriteComponent final: public GraphicsComponent
+	class SpriteComponent : public GraphicsComponent
 	{
 	public:
 		virtual void Update() override;
@@ -12,6 +12,8 @@ namespace dae
 		SpriteComponent(GameObject* pOwner, const std::string& fileName, int rows = 1, int columns = 1, float framesPerSec = 10.f);
 
 		glm::ivec2 GetTextureSize() const override;
+
+		void SetAnimate(bool animate) { m_Animate = animate; };
 		
 
 		virtual ~SpriteComponent() = default;
@@ -19,7 +21,9 @@ namespace dae
 		SpriteComponent(SpriteComponent&& other) = delete;
 		SpriteComponent& operator=(const SpriteComponent& other) = delete;
 		SpriteComponent& operator=(SpriteComponent&& other) = delete;
-	private:
+
+
+	protected:
 		int m_Rows{};
 		int m_Columns{};
 		int m_TotalFrames{0};
@@ -27,9 +31,10 @@ namespace dae
 		float m_FramesPerSecond{};
 		//float m_SecondsPerFrame{};
 		float m_ElapsedTime{};
+		bool m_Animate;
 
-		void Animate();
-		SDL_Rect GetCurrentSrcRect() const;
+		virtual void Animate();
+		virtual SDL_Rect GetCurrentSrcRect() const;
 	};
 
 }

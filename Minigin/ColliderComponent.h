@@ -22,8 +22,6 @@ namespace dae
         void Update() override { UpdateOverlaps(); };
         void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
         
-        //const glm::vec3 m_Size;
-        //const glm::vec3 m_Offset;
         bool m_IsActive{};
 
     private:

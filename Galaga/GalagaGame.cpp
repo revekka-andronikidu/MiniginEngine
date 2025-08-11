@@ -59,7 +59,7 @@ void GalagaGame::OnNotify(const GameObject& entity, const Event& event)
 
 }
 
-void GalagaGame::Initialize() //initialize after construction otherwise conflict in GameManager
+void GalagaGame::Initialize(const GameInitParams& gameInitParms) //initialize after construction otherwise conflict in GameManager
 {
 	CreateScenes();
 	m_GameModeMachine.EnterState<MainMenuState>();

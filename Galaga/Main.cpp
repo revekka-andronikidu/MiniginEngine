@@ -39,18 +39,26 @@ int main(int, char* [])
 		std::cout << "Successfully initialized steam." << std::endl;
 #endif
 
-	auto datapath = GetExeDirectory() + "/Data/";
+	//auto datapath = GetExeDirectory() + "/Data/Galaga/";
 
 #if _DEBUG
-	std::cout << "Looking for data in: " << datapath << std::endl;
+	//std::cout << "Looking for data in: " << datapath << std::endl;
 #endif
+	dae::Minigin engine("../Data/Galaga/");
+	//dae::Minigin engine(datapath);
 
-	dae::Minigin engine(datapath);
+	//auto& game = dae::GameManager::GetInstance().CreateGame<dae::GalagaGame>();
 
-	auto& game = dae::GameManager::GetInstance().CreateGame<dae::GalagaGame>();
-	dae::GameManager::GetInstance().SetActiveGame(&game);
+	//dae::GameInitParams initParams{};
+	//initParams.windowWidth = engine.GetWindowWidth();   // from your engine
+	//initParams.windowHeight = engine.GetWindowHeight(); // from your engine
+
+	//dae::GameManager::GetInstance().SetActiveGame(&game);
+
+	//game.Initialize(initParams);
 
 	engine.Run();
+
 
 #ifdef USE_STEAMWORKS
 	SteamAPI_Shutdown();

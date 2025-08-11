@@ -127,6 +127,12 @@
     <ClInclude Include="EngineEvents.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteSheetComponent.h">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="EventSystem.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameObject.cpp">
@@ -199,6 +205,9 @@
       <Filter>Engine\GameManager</Filter>
     </ClCompile>
     <ClCompile Include="SpriteComponent.cpp">
+      <Filter>Engine\Objects\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteSheetComponent.cpp">
       <Filter>Engine\Objects\Components</Filter>
     </ClCompile>
   </ItemGroup>

@@ -13,7 +13,7 @@ namespace dae
 		MenuComponent(GameObject* pOwner) : BaseComponent(pOwner) {};
 		~MenuComponent() = default;
 
-		void AddMenuItem(std::shared_ptr<dae::GameObject> item) { m_menuItems.push_back(item); };
+		void AddMenuItem(std::shared_ptr<dae::GameObject> item) { m_pMenuItems.push_back(item); };
 		void ChangeMenuItem(Direction direction);
 		void AddMenuArrow(std::shared_ptr<dae::GameObject> object) 
 		{ 
@@ -30,7 +30,7 @@ namespace dae
 		
 
 	private:
-		std::vector <std::shared_ptr<dae::GameObject>> m_menuItems{};
+		std::vector <std::shared_ptr<dae::GameObject>> m_pMenuItems{};
 		int m_currentItem{ 0 };
 		std::shared_ptr<dae::GameObject> m_menuArrowIcon; //? pass the whole game obj
 		

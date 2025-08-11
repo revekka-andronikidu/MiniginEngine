@@ -99,8 +99,8 @@ void VersusMode::CreateScenes()
 
 void MainMenuState::OnEnter()
 {
-	auto game = GameManager::GetInstance().GetActiveGame();
-	auto galaga = dynamic_cast<GalagaGame*>(game);
+	//auto game = GameManager::GetInstance().GetActiveGame();
+	//auto galaga = dynamic_cast<GalagaGame*>(game);
 	auto& sceneManager = dae::SceneManager::GetInstance();
 
 

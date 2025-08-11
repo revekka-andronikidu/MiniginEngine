@@ -18,7 +18,7 @@ namespace dae
     {
     private:
         friend class Singleton<ObjectFactory>;
-        ObjectFactory();
+        ObjectFactory() ;
 
     public:
 

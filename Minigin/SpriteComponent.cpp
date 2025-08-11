@@ -1,5 +1,7 @@
 #include "SpriteComponent.h"
 #include "TimeManager.h"
+
+
 using namespace dae;
 
 SpriteComponent::SpriteComponent(GameObject* pOwner, const std::string& fileName, int rows, int columns, float framesPerSec) : GraphicsComponent(pOwner)
@@ -7,13 +9,16 @@ SpriteComponent::SpriteComponent(GameObject* pOwner, const std::string& fileName
 , m_Columns{ columns }
 , m_FramesPerSecond{ framesPerSec }
 {
-	m_pTexture = ResourceManager::GetInstance().LoadTexture(fileName);
+	m_pTexture = ResourceManager::GetInstance().GetTexture(fileName);
 	m_TotalFrames = m_Rows * m_Columns;
 };
 
 void SpriteComponent::Update()
 {
-	Animate();
+    if (m_Animate)
+    {
+        Animate();
+    }
 }
 
 glm::ivec2 SpriteComponent::GetTextureSize() const

@@ -207,7 +207,7 @@ namespace dae
 			m_SoundQueue = std::move(temp);
 		}
 
-		bool m_Muted{ false };
+		bool m_Muted{ true };
 		float m_volume{0};
 	};
 

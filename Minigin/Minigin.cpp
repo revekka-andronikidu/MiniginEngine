@@ -65,7 +65,9 @@ void PrintSDLVersion()
 //	return glm::vec2(width, height);
 //}
 
-dae::Minigin::Minigin(const std::string &dataPath)
+dae::Minigin::Minigin(const std::string &dataPath, int windowWidth, int windowHeight)
+	: m_WindowWidth(windowWidth)
+	, m_WindowHeight(windowHeight)
 {
 	PrintSDLVersion();
 	

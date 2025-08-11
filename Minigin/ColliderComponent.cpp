@@ -36,38 +36,20 @@ void ColliderComponent::UpdateOverlaps()
             {
                 //std::cout << "OVERLAP STARTED" << std::endl;
 
-                // Create event
-                auto hitEvent = std::make_shared<TypedEvent<EngineEvents::Hit>>(EngineEvents::Hit{ GetOwner(), other });
-
-                Notify(*GetOwner(), hitEvent);                  // This collider’s observers
-                otherCollider->Notify(*other, hitEvent);
-                // Notify both objects — assuming they are Subjects
-                //GetOwner()->GetComponent<Subject>()->Notify(*GetOwner(), hitEvent); // e.g. bullet notifies it's hitting
-                //other->GetComponent<Subject>()->Notify(*other, hitEvent);          // e.g. player notifies it's hit
-
-                // New overlap began
-               // OnTriggerEnterEvent.Invoke(GetOwner(), other);
-                
-                //if (otherCollider)
-                    //otherCollider->OnTriggerEnterEvent.Invoke(other, GetOwner());
+                Notify(*other, EngineEvent::COLLISION); 
+                otherCollider->Notify(*GetOwner(), EngineEvent::COLLISION);
             }
         }
     }
 
-        // Check for overlaps that ended
-        for (auto* previous : m_PreviousOverlaps)
-        {
-            if (!m_CurrentOverlaps.contains(previous) && GetOwner() < previous)
-            {
-                //std::cout << "OVERLAP ENDED" << std::endl;
-
-
-                // Overlap ended
-               // OnTriggerExitEvent.Invoke(GetOwner(), previous);
-                //if (auto* otherCollider = previous->GetComponent<ColliderComponent>())
-                    //otherCollider->OnTriggerExitEvent.Invoke(previous, GetOwner());
-            }
-        }
+        //// Check for overlaps that ended
+        //for (auto* previous : m_PreviousOverlaps)
+        //{
+        //    if (!m_CurrentOverlaps.contains(previous) && GetOwner() < previous)
+        //    {
+        //        //std::cout << "OVERLAP ENDED" << std::endl;
+        //    }
+        //}
 
         // Save current as previous for next frame
         m_PreviousOverlaps = m_CurrentOverlaps;
@@ -75,24 +57,13 @@ void ColliderComponent::UpdateOverlaps()
 	
 }
 
-//auto overlapPair = std::minmax(GetGameObject(), other);
-//
-//if (!m_CurrentOverlaps.contains(other) && !active_overlaps.contains(overlapPair))
-//{
-//    OnTriggerEnterEvent.Invoke(GetGameObject(), other);
-//    if (const auto otherColliderComponent = other->GetComponent<ColliderComponent>())
-//        otherColliderComponent->OnTriggerEnterEvent.Invoke(other, GetGameObject());
-//
-//    active_overlaps.insert(overlapPair);
-
-
 bool ColliderComponent::IsOverlapping(const ColliderComponent* other)
 {
     if (!other) return false;
 
     // Get position of both colliders
-    const glm::vec3 posA = GetOwner()->GetTransform().GetWorldPosition();
-    const glm::vec3 posB = other->GetOwner()->GetTransform().GetWorldPosition();
+    const glm::vec3 posA = GetOwner()->GetTransform().GetWorldPosition() + m_Offset;
+    const glm::vec3 posB = other->GetOwner()->GetTransform().GetWorldPosition() + other->m_Offset;
 
     const glm::vec3 sizeA = m_Size;
     const glm::vec3 sizeB = other->m_Size;

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -24,6 +24,7 @@
     <ProjectGuid>{1cc7efda-a246-454f-9725-64abab958f7d}</ProjectGuid>
     <RootNamespace>BurgerTime</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>BurgerTime</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -102,6 +103,13 @@
       <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /I /Y "$(SolutionDir)Data\BurgerTime" "$(SolutionDir)$(Platform)\Data\BurgerTime\"
+xcopy "$(SolutionDir)3rdParty\SDL2\lib$(PlatformTarget)\SDL2.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y	</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -124,6 +132,13 @@
       <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /I /Y "$(SolutionDir)Data\BurgerTime" "$(SolutionDir)$(Platform)\Data\BurgerTime\"
+xcopy "$(SolutionDir)3rdParty\SDL2\lib$(PlatformTarget)\SDL2.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y	</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -142,6 +157,13 @@
       <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /I /Y "$(SolutionDir)Data\BurgerTime" "$(SolutionDir)$(Platform)\Data\BurgerTime\"
+xcopy "$(SolutionDir)3rdParty\SDL2\lib$(PlatformTarget)\SDL2.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y	</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -164,9 +186,48 @@
       <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /I /Y "$(SolutionDir)Data\BurgerTime" "$(SolutionDir)$(Platform)\Data\BurgerTime\"
+xcopy "$(SolutionDir)3rdParty\SDL2\lib$(PlatformTarget)\SDL2.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_image\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_ttf\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y
+xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPath)" /R /Y	</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BurgerTimeGame.cpp" />
+    <ClCompile Include="GameCommands.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="GridComponent.cpp" />
+    <ClCompile Include="IngredientComponent.cpp" />
+    <ClCompile Include="IngredientPieceComponent.cpp" />
+    <ClCompile Include="LivesDisplay.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="PlayerComponent.cpp" />
+    <ClCompile Include="PointsComponent.cpp" />
+    <ClCompile Include="PointsDisplay.cpp" />
+    <ClCompile Include="SceneFactory.cpp" />
+    <ClCompile Include="TrayComponent.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BurgerTimeGame.h" />
+    <ClInclude Include="GameCommands.h" />
+    <ClInclude Include="GameEvents.h" />
+    <ClInclude Include="GameScenes.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="GridComponent.h" />
+    <ClInclude Include="Helpers.h" />
+    <ClInclude Include="IngredientComponent.h" />
+    <ClInclude Include="IngredientPieceComponent.h" />
+    <ClInclude Include="LivesComponent.h" />
+    <ClInclude Include="LivesDisplay.h" />
+    <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="PlayerComponent.h" />
+    <ClInclude Include="PointsComponent.h" />
+    <ClInclude Include="PointsDisplay.h" />
+    <ClInclude Include="SceneFactory.h" />
+    <ClInclude Include="TrayComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

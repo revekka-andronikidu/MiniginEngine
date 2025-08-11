@@ -12,9 +12,9 @@ using namespace dae;
 void dae::PlayerComponent::OnNotify(const GameObject& entity, const Event& event)
 {
 
-    if (event->GetType() == typeid(EngineEvents::Hit) )
+    if (event->GetType() == typeid(EngineEvents::Collision) )
     {
-        const auto& data = static_cast<const TypedEvent<EngineEvents::Hit>&>(*event).GetData();
+        const auto& data = static_cast<const TypedEvent<EngineEvents::Collision>&>(*event).GetData();
 
         if (data.source->HasTag("enemyBullet") || data.target->HasTag("enemyBullet") || data.source->HasTag("enemy") || data.target->HasTag("enemy"))
         {

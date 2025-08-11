@@ -224,6 +224,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     <ClInclude Include="ColliderComponent.h" />
     <ClInclude Include="EngineEvents.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="EventSystem.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FPSComponent.h" />
     <ClInclude Include="Game.h" />
@@ -241,6 +242,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SoundHandle.h" />
     <ClInclude Include="SpriteComponent.h" />
+    <ClInclude Include="SpriteSheetComponent.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateMachine.h" />
     <ClInclude Include="Subject.h" />
@@ -270,6 +272,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="ServiceLocator.cpp" />
     <ClCompile Include="SpriteComponent.cpp" />
+    <ClCompile Include="SpriteSheetComponent.cpp" />
     <ClCompile Include="StateMachine.cpp" />
     <ClCompile Include="TextComponent.cpp" />
     <ClCompile Include="Texture2D.cpp" />

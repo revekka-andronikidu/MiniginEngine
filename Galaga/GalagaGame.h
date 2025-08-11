@@ -19,7 +19,7 @@ namespace dae
 		GalagaGame();
 		virtual ~GalagaGame() = default;
 		
-		void Initialize() override;
+		void Initialize(const GameInitParams& gameInitParms) override;
 		void Update() override;
 
 

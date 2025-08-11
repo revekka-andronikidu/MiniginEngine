@@ -11,13 +11,14 @@ namespace dae
 	//	//func to change menu icon
 
 	//};
+ 
 
 
 	void MenuComponent::ChangeMenuItem(Direction direction)
 	{
 		if (direction == Direction::Down)
 		{
-			m_currentItem = (m_currentItem + 1) % m_menuItems.size();
+			m_currentItem = (m_currentItem + 1) % m_pMenuItems.size();
 		}
 		else
 		{
@@ -27,7 +28,7 @@ namespace dae
 			}
 			else
 			{
-				m_currentItem = static_cast<int>(m_menuItems.size()) - 1;
+				m_currentItem = static_cast<int>(m_pMenuItems.size()) - 1;
 			}
 		}
 
@@ -59,7 +60,7 @@ namespace dae
 				{
 					//calculate pos
 					//set pos
-					auto transform = m_menuItems[m_currentItem]->GetTransform();
+					auto transform = m_pMenuItems[m_currentItem]->GetTransform();
 					auto pos = transform.GetWorldPosition();
 					auto sizeX = textureComp->GetTextureSize().x * m_menuArrowIcon->GetTransform().GetScale().y;
 					//auto sizeY = textureComp->GetTextureSize().y * m_menuArrowIcon->GetTransform().GetScale().y;
@@ -87,7 +88,7 @@ namespace dae
 	void MenuComponent::EnterMenuItem()
 	{
 		//load appropriate scene
-		m_menuItems[m_currentItem]->GetComponent<ActionComponent>()->Excecute();
+		m_pMenuItems[m_currentItem]->GetComponent<ActionComponent>()->Excecute();
 
 #if _DEBUG
 		std::cout << "Entered: " << std::to_string(m_currentItem) << std::endl;

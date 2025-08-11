@@ -10,5 +10,6 @@ void GameManager::SetActiveGame(Game* game)
 	//TODO: deactivate the previous game safely
 	
 	m_ActiveGame = game;
-	m_ActiveGame->Initialize();
+
+	//TODO: call INIT here?
 };
