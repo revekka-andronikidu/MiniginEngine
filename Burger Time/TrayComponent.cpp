@@ -42,6 +42,6 @@ void TrayComponent::CheckIfComplete()
     {
         //std::cout << "[Tray] All burgers completed! Bonus points awarded.\n";
         auto event = std::make_shared<dae::PointsIncreasedEvent>(250);
-        EventSystem::GetInstance().TriggerEvent(event, *GetOwner());
+        EventSystem::GetInstance().TriggerEvent(*event, *GetOwner());
     }
 }

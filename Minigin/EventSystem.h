@@ -13,12 +13,13 @@ namespace dae
     {
     public:
         virtual ~IEventListener() = default;
-        virtual void OnNotify(const GameObject& entity, const Event& event) = 0;
+        virtual void OnNotify(const GameObject& entity, const BaseEvent& event) = 0;
     };
 
     class EventSystem final : public Singleton<EventSystem>
     {
     public:
+        static bool IsAlive() { return s_Alive; }
 
         struct ListenerEntry
         {
@@ -51,9 +52,9 @@ namespace dae
             }
         }
 
-        void TriggerEvent(const Event& event, const GameObject& sender)
+        void TriggerEvent(const BaseEvent& event, const GameObject& sender)
         {
-            auto it = m_Listeners.find(std::type_index(typeid(*event)));
+            auto it = m_Listeners.find(std::type_index(typeid(event)));
             if (it == m_Listeners.end()) return;
 
             for (auto& entry : it->second)
@@ -67,7 +68,9 @@ namespace dae
 
     private:
         friend class Singleton<EventSystem>;
-        EventSystem() = default;
+        EventSystem() { s_Alive = true; }
+        ~EventSystem() { s_Alive = false; }
+        static inline bool s_Alive = false;
         std::unordered_map<std::type_index, std::vector<ListenerEntry>> m_Listeners;
     };
 }

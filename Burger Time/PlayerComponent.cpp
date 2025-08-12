@@ -27,15 +27,15 @@ void PlayerComponent::Move(Direction dir)
 
 
 	//get from grid
-	const int cellSize{ 48 };
-	const float scale{ 3.f };
+	//const float scale{ GameSettings::scale.x };
+	const int cellSize{ static_cast<int>(GameSettings::cellSize * GameSettings::scale.x) };
+	
 	//////////////
 
 	//GET FROM LEVEL AS WELL OR MOVE COMMAND?
 
 	int m_LeftBorder{0};
 	int m_RightBorder{cellSize * gridWidth};
-	float m_MoveSpeed{150.f};
 
 
 	auto pos = GetOwner()->GetTransform().GetLocalPosition();
@@ -64,7 +64,7 @@ void PlayerComponent::Move(Direction dir)
 
 			// Align player feet with platform top
 			int cellY = static_cast<int>(newPos.y + cellSize) / (cellSize);
-			newPos.y = static_cast<float>(cellY * (cellSize) - 3 * scale);
+			newPos.y = static_cast<float>(cellY * (cellSize) - 3 * GameSettings::scale.y);
 		}
 	}
 		break;
@@ -83,7 +83,7 @@ void PlayerComponent::Move(Direction dir)
 
 			// Align player feet with platform top
 			int cellY = static_cast<int>(newPos.y + cellSize) / cellSize;
-			newPos.y = static_cast<float>(cellY * (cellSize) -  3 * scale);
+			newPos.y = static_cast<float>(cellY * (cellSize) -  3 * GameSettings::scale.y);
 		}
 	}
 		break;

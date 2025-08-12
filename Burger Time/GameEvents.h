@@ -4,12 +4,12 @@
 
 namespace dae
 {
-	namespace GameEvent
-	{
-		//inline const Event LIVES_UPDATED{};
-		//inline const Event PLAYER_DEATH{};
-		inline const Event POINTS_UPDATED{};
-	}
+	//namespace GameEvent
+	//{
+	//	//inline const Event LIVES_UPDATED{};
+	//	//inline const Event PLAYER_DEATH{};
+	//	inline const Event POINTS_UPDATED{};
+	//}
 
 	class PointsIncreasedEvent final : public BaseEvent
 	{

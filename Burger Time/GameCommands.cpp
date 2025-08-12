@@ -4,12 +4,32 @@
 #include <algorithm>
 #include <SpriteSheetComponent.h>
 #include "PlayerComponent.h"
+#include <GameManager.h>
+#include "BurgerTimeGame.h"
+#include "GameState.h"
 
 using namespace dae;
 
 void MuteGameCommand::Execute()
 {
 	ServiceLocator::GetAudioService().Mute();
+}
+
+void SkipLevelCommand::Execute()
+{
+	//Check only if in the GameMode
+	//Is there next stage availible?
+
+	auto game = GameManager::GetInstance().GetActiveGame();
+	auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
+
+	auto state = burgerTime->m_GameModeMachine.GetCurrentState();
+
+	//make it work for all modes
+	auto mode = dynamic_cast<SinglePlayerMode*>(state);
+	mode->NextStage();
+
+
 }
 
 void MenuMoveCommand::Execute()

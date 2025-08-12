@@ -2,11 +2,9 @@
 #include <ResourceManager.h>
 #include <EngineEvents.h>
 #include "IngredientComponent.h"
-#include <EventSystem.h>
-#include "GameEvents.h"
 
 using namespace dae;
-IngredientPieceComponent::IngredientPieceComponent(dae::GameObject* owner, IngredientType type, int piece, IngredientComponent& parent) : GraphicsComponent(owner)
+IngredientPieceComponent::IngredientPieceComponent(dae::GameObject* owner, IngredientType type, int piece, IngredientComponent& parent) : GraphicsComponent(owner), IEventListener()
 , m_SrcRect{}
 , m_SteppedOn{false}
 , m_ParentIngredient{ parent }
@@ -31,6 +29,9 @@ IngredientPieceComponent::IngredientPieceComponent(dae::GameObject* owner, Ingre
 		m_SrcRect = {startX*sizeX, startY*sizeY, sizeX, sizeY}; // first pos of sthe sprite sheet
 		m_SrcRect.y += sizeY * static_cast<int>(type); //ingredient type
 		m_SrcRect.x += sizeX * piece; //piece number
+
+		EventSystem::GetInstance().AddListener<CollisionEvent>(owner, this);
+
 }
 
 void IngredientPieceComponent::Render() const
@@ -51,41 +52,48 @@ void IngredientPieceComponent::Render() const
 	}
 };
 
-void IngredientPieceComponent::OnNotify(const GameObject& entity, const Event& event)
+void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEvent& event)
 {
-	if (entity.HasTag(Tag::PLAYER) && event == EngineEvent::COLLISION)
+
+	if (auto collision = dynamic_cast<const CollisionEvent*>(&event))
 	{
-		if (!m_SteppedOn)
+		const GameObject& other = collision->other;
+
+		if (other.HasTag(Tag::PLAYER))
 		{
-			m_SteppedOn = true;
-			m_ParentIngredient.OnSteppedOn(); //maybe register the parent at start
-			IncrementNudge();
+			if (!m_SteppedOn)
+			{
+				m_SteppedOn = true;
+				m_ParentIngredient.OnSteppedOn(); //maybe register the parent at start
+				IncrementNudge();
+			}
 		}
-	}
-	else if (entity.HasTag(Tag::BURGER) && event == EngineEvent::COLLISION)
-	{
-		//if not on the tray
-		if(!m_ParentIngredient.m_IsOnTheTray)
-		m_ParentIngredient.Fall();
-		else
+
+		else if (other.HasTag(Tag::BURGER))
 		{
-			auto ingredient = entity.GetParent()->GetComponent<IngredientComponent>();
-			ingredient->RegisterToTray(*m_ParentIngredient.m_Tray);
+			//if not on the tray
+			if (!m_ParentIngredient.m_IsOnTheTray)
+				m_ParentIngredient.Fall();
+			else
+			{
+				auto ingredient = other.GetParent()->GetComponent<IngredientComponent>();
+				ingredient->RegisterToTray(*m_ParentIngredient.m_Tray);
+			}
 		}
-	}
-	else if (entity.HasTag(Tag::TRAY) && event == EngineEvent::COLLISION)
-	{
-		if (m_ParentIngredient.m_IsFalling)
+		else if (other.HasTag(Tag::TRAY))
 		{
-			m_ParentIngredient.RegisterToTray(entity);
+			if (m_ParentIngredient.m_IsFalling)
+			{
+				m_ParentIngredient.RegisterToTray(other);
+			}
 		}
-	}
-	else if (entity.HasTag(Tag::PLATFORM) && event == EngineEvent::COLLISION)
-	{
-		if (m_ParentIngredient.m_IsFalling)
+		else if (other.HasTag(Tag::PLATFORM))
 		{
-			if( m_ParentIngredient.ShouldFall())
-			m_ParentIngredient.m_IsFalling = false;
+			if (m_ParentIngredient.m_IsFalling)
+			{
+				if (m_ParentIngredient.ShouldFall())
+					m_ParentIngredient.m_IsFalling = false;
+			}
 		}
 	}
 

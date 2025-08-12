@@ -37,9 +37,9 @@ void GridComponent::RemoveObjectFromCell(int x, int y, CellObject type) {
 
 const GridCell& GridComponent::PositionToCell(int x, int y) const
 {
-        int cellSize{ 16 * 3 };
-        int cellX = x / cellSize;
-        int cellY = y / cellSize;
+        //int cellSize = GameSettings::cellSize * GameSettings::scale.x ;
+        int cellX = x / m_CellSize;
+        int cellY = y / m_CellSize;
 
         if (IsValidPosition(cellX, cellY)) {
             return m_grid[cellY][cellX];
@@ -53,14 +53,14 @@ const GridCell& GridComponent::PositionToCell(int x, int y) const
 
 bool GridComponent::IsOnPlatform(int posX, int posY) const
 {
-    const int cellSize = 16 * 3; // 48 px
-    int cellY = posY / cellSize;
-    int localY = 48-( posY % cellSize); // Y position within the cell (0 = bottom)
+    //const int cellSize = GameSettings::cellSize * GameSettings::scale.x; // 48 px
+    int cellY = posY / m_CellSize;
+    int localY = m_CellSize -( posY % m_CellSize); // Y position within the cell (0 = bottom)
 
     // Only true if in bottom third (0 to 15 px of the cell)
-    if (localY <= cellSize / 3)
+    if (localY <= m_CellSize / 3)
     {
-        int cellX = posX / cellSize;
+        int cellX = posX / m_CellSize;
         if (IsValidPosition(cellX, cellY))
         {
             const auto& cell = m_grid[cellY][cellX];
@@ -75,13 +75,13 @@ bool GridComponent::IsOnPlatform(int posX, int posY) const
 
 bool GridComponent::CanClimb(Direction dir, int posX, int posY) const
 {
-    const int cellSize = 16 * 3;
-    const int cellX = posX / cellSize;
-    const int cellY = posY / cellSize;
-    const int localX = posX % cellSize;
-    const int localY = cellSize - (posY % cellSize);
+    //const int cellSize = GameSettings::cellSize * GameSettings::scale.x;
+    const int cellX = posX / m_CellSize;
+    const int cellY = posY / m_CellSize;
+    const int localX = posX % m_CellSize;
+    const int localY = m_CellSize - (posY % m_CellSize);
 
-    const int margin = 4*3; //4px times scale
+    const int margin = 4* GameSettings::scale.x; //4px times scale
 
 
     if (!IsValidPosition(cellX, cellY))
@@ -138,15 +138,15 @@ bool GridComponent::CanClimb(Direction dir, int posX, int posY) const
 
      if (isOnNormalLadder || ladderBelow && !offsetLadderBelowLeft && !offsetLadderBelowCenter) {
          // Normal ladder in current or below
-         positionValid = localX >= margin && localX <= (cellSize - margin);
+         positionValid = localX >= margin && localX <= (m_CellSize - margin);
      }
      else if (isOnOffsetLadderRight || offsetLadderBelowLeft) {
          // Offset ladder is in left cell
-         positionValid = localX <= (cellSize / 2 - margin);
+         positionValid = localX <= (m_CellSize / 2 - margin);
      }
      else if (isOnOffsetLadderLeft || offsetLadderBelowCenter) {
          // Offset ladder in current or center below
-         positionValid = localX >= (cellSize / 2 + margin);
+         positionValid = localX >= (m_CellSize / 2 + margin);
      }
 
      if (!positionValid)
@@ -156,20 +156,20 @@ bool GridComponent::CanClimb(Direction dir, int posX, int posY) const
 
 
     if (dir == Direction::Up) {
-        return isOnLadder || (hasLadderBelow() && localY < 9);
+        return isOnLadder || (hasLadderBelow() && localY < 3 * GameSettings::scale.x);
     }
 
     if (dir == Direction::Down) {
         bool ladderBelow = hasLadderBelow();
-        return (isOnLadder && (ladderBelow || localY > 9)) || ladderBelow;
+        return (isOnLadder && (ladderBelow || localY > 3 * GameSettings::scale.y)) || ladderBelow;
     }
 }
 
 float GridComponent::GetLadderCenterX(int posX, int posY) const
 {
-    const int cellSize = 16 * 3;
-    int cellX = posX / cellSize;
-    int cellY = posY / cellSize;
+    //const int cellSize = GameSettings::cellSize * GameSettings::scale.x;
+    int cellX = posX / m_CellSize;
+    int cellY = posY / m_CellSize;
 
     if (!IsValidPosition(cellX, cellY))
         return 0;
@@ -179,11 +179,11 @@ float GridComponent::GetLadderCenterX(int posX, int posY) const
     if (offsetLadderCells.contains(cellX))
     {
         int baseCellX = GetBaseCellX(cellX);
-        return (baseCellX + 0.5f) * cellSize;
+        return (baseCellX + 0.5f) * m_CellSize;
     }
     else
     {
-        return (cellX) * cellSize;;
+        return (cellX) * m_CellSize;
     }
 }
 

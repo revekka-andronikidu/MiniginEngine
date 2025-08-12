@@ -62,7 +62,7 @@ dae::LivesDisplay::~LivesDisplay()
 }
 
 
-void dae::LivesDisplay::OnNotify(const GameObject& entity, const Event& event)
+void dae::LivesDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
 {
 
     //if (event == LIVES_UPDATED_EVENT)

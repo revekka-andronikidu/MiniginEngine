@@ -78,7 +78,7 @@ void IngredientComponent::Fall()
 
 
 	auto event = std::make_shared<dae::PointsIncreasedEvent>(50);
-	EventSystem::GetInstance().TriggerEvent(event, *GetOwner());
+	EventSystem::GetInstance().TriggerEvent(*event, *GetOwner());
 
 }
 

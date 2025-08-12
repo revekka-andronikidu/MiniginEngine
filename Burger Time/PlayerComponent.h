@@ -24,6 +24,7 @@ namespace dae
 		void Animate();
 
 	private:
+		float m_MoveSpeed{ 50.f * GameSettings::scale.x };
 		GridComponent* m_pGrid{ nullptr };
 
 	};

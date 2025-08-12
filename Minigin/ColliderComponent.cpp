@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "EngineEvents.h"
 #include "Subject.h"
-
+#include "EventSystem.h"
 
 using namespace dae;
 void ColliderComponent::UpdateOverlaps()
@@ -17,7 +17,7 @@ void ColliderComponent::UpdateOverlaps()
 
     for (auto* other : objects)
     {
-        if (other == GetOwner() || other->IsMarkedForDestroy() || !other) //check if object is valid
+        if (!other || other == GetOwner() || other->IsMarkedForDestroy()) //check if object is valid
             continue;
 
         const auto otherCollider = other->GetComponent<ColliderComponent>();
@@ -36,8 +36,10 @@ void ColliderComponent::UpdateOverlaps()
             {
                 //std::cout << "OVERLAP STARTED" << std::endl;
 
-                Notify(*other, EngineEvent::COLLISION); 
-                otherCollider->Notify(*GetOwner(), EngineEvent::COLLISION);
+               /* Notify(*other, EngineEvent::COLLISION); 
+                otherCollider->Notify(*GetOwner(), EngineEvent::COLLISION);*/
+                EventSystem::GetInstance().TriggerEvent(CollisionEvent(*other), *GetOwner());
+                EventSystem::GetInstance().TriggerEvent(CollisionEvent(*GetOwner()), *other);
             }
         }
     }

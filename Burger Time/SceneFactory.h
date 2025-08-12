@@ -15,7 +15,8 @@ namespace dae
 
 	public:
 		void CreateMainMenu();
-		void CreateLevel(GameState::GameModeType mode, unsigned short stage);
+		void CreateLevel(unsigned short stage);
+		void CreateHUD();
 	};
 
 }

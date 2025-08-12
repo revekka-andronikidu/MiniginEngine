@@ -59,8 +59,8 @@ void BurgerTimeGame::SetDebugCommands()
 {
 	auto& input = dae::InputManager::GetInstance();
 
-	//auto skipLevel = std::make_unique<SkipLevelCommand>();
-	//input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F1 }, std::move(skipLevel));
+	auto skipLevel = std::make_unique<SkipLevelCommand>();
+	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_F1 }, std::move(skipLevel));
 
 	auto muteGame = std::make_unique<MuteGameCommand>();
 	input.BindGlobalInput(KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_F2 }, std::move(muteGame));
@@ -68,8 +68,9 @@ void BurgerTimeGame::SetDebugCommands()
 
 void BurgerTimeGame::LoadLevel()
 {
-	// put t
-	SceneFactory::GetInstance().CreateLevel(m_GameModeMachine.GetCurrentState()->GetModeType(), m_CurrentStage);
+	
+
+	SceneFactory::GetInstance().CreateLevel(m_CurrentStage);
 	
 	
 }

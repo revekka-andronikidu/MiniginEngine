@@ -35,13 +35,9 @@ SceneFactory::SceneFactory()
 void SceneFactory::CreateMainMenu()
 {
 	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::MainMenu);
-
 	auto& objFactory = ObjectFactory::GetInstance();
-
 	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 16); 
-
 	auto menu = objFactory.CreateMainMenu();
-
 	auto menuComp = menu.get()->GetComponent<MenuComponent>();;
 
 	//auto background = objFactory.CreateTexture("bg_back2.png");
@@ -122,7 +118,7 @@ void SceneFactory::CreateMainMenu()
 }
 
 
-void SceneFactory::CreateLevel(GameState::GameModeType mode, unsigned short stage)
+void SceneFactory::CreateLevel(unsigned short stage)
 {
 	const auto path = dae::ResourceManager::GetInstance().GetDataPath();
 	const std::string fileName = "level" + std::to_string(stage) + ".json";
@@ -145,8 +141,8 @@ void SceneFactory::CreateLevel(GameState::GameModeType mode, unsigned short stag
 	int kRows{ 13 }; //grid rows
 	int kCols{ 13 }; //grid cols
 
-	int cellSize = GameSettings::cellSize * GameSettings::scale.x;
-	int yOffset = GameSettings::HUDSize * GameSettings::scale.y;
+	int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
+	int yOffset = static_cast<int>(GameSettings::HUDSize * GameSettings::scale.y);
 	auto scale = GameSettings::scale;
 	////////////////////////////////////////
 
@@ -272,8 +268,8 @@ void SceneFactory::CreateLevel(GameState::GameModeType mode, unsigned short stag
 		int x = coord[0];
 		int y = coord[1];
 
-		gridComp->AddObjectToCell(x + 1, y, CellObject::TRAY);
-		gridComp->AddObjectToCell(x + 2, y, CellObject::TRAY);
+		//gridComp->AddObjectToCell(x + 1, y, CellObject::TRAY);
+		//gridComp->AddObjectToCell(x + 2, y, CellObject::TRAY);
 
 
 		auto posX = cellSize * x;
@@ -338,11 +334,39 @@ void SceneFactory::CreateLevel(GameState::GameModeType mode, unsigned short stag
 	levelObject->GetTransform().SetPosition(pos);
 	scene.Add(std::move(levelObject));
 
+	//auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
+	//auto text = ObjectFactory::GetInstance().CreateText("1UP", font, { 255,0,0,255 }, { cellSize/2, 0, 0 }, scale);
+	//auto points = ObjectFactory::GetInstance().CreatePointsDisplay({ cellSize, cellSize/2, 0}, scale);
+
+
+	//scene.Add(std::move(points));
+	//scene.Add(std::move(text));
+
+	CreateHUD();
+}
+
+void SceneFactory::CreateHUD()
+{
+	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::Stage1);
+
+	int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
+
 	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
-	auto text = ObjectFactory::GetInstance().CreateText("1UP", font, { 255,0,0,255 }, { cellSize/2, 0, 0 }, scale);
-	auto points = ObjectFactory::GetInstance().CreatePointsDisplay({ cellSize, cellSize/2, 0}, scale);
+	auto text = ObjectFactory::GetInstance().CreateText("1UP", font, { 255,0,0,255 }, TextComponent::TextAlign::Left, { cellSize / 2, 0, 0 }, GameSettings::scale);
+	auto points = ObjectFactory::GetInstance().CreatePointsDisplay({ cellSize * 2 + cellSize/2, cellSize / 2, 0}, GameSettings::scale);
 
 
+	//HISCORE DISPLAY
+	auto HItext = ObjectFactory::GetInstance().CreateText("HI-SCORES", font, { 255,0,0,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, 0, 0 }, GameSettings::scale);
+
+	//LIVES
+
+
+
+	//PEPPERS
+
+
+	scene.Add(std::move(HItext));
 	scene.Add(std::move(points));
 	scene.Add(std::move(text));
 }

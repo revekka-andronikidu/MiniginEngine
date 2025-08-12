@@ -12,6 +12,13 @@ namespace dae
 		void Execute() override;
 	};
 
+	class SkipLevelCommand final : public Command
+	{
+	public:
+		SkipLevelCommand() = default;
+		void Execute() override;
+	};
+
 	class MenuMoveCommand : public GameObjectCommand
 	{
 	public:

@@ -6,12 +6,13 @@
 #include <MenuComponent.h>
 #include "Helpers.h"
 #include <SDL_ttf.h>
-//#include <Font.h>
+#include <TextComponent.h>
 
 namespace dae
 {
     class Font;
     class IngredientComponent;
+
 
     class ObjectFactory final : public Singleton<ObjectFactory>
     {
@@ -21,7 +22,7 @@ namespace dae
 
     public:
         std::unique_ptr<dae::GameObject> CreateTexture(const std::string& fileName, const glm::vec3& position = glm::vec3(0, 0, 0), const float scale = 1.f);
-        std::unique_ptr<dae::GameObject> CreateText(const std::string& text, std::shared_ptr<Font> font, SDL_Color color, const glm::vec3& position = glm::vec3(0, 0, 0), glm::vec3 scale = { 1.f, 1.f, 1.f });
+        std::unique_ptr<dae::GameObject> CreateText(const std::string& text, std::shared_ptr<Font> font, SDL_Color color, TextComponent::TextAlign aligment = TextComponent::TextAlign::Left, const glm::vec3& position = glm::vec3(0, 0, 0), glm::vec3 scale = { 1.f, 1.f, 1.f });
         std::unique_ptr<dae::GameObject> CreateMainMenu();
         std::shared_ptr<dae::GameObject> CreateMenuItem(const std::string& text, std::shared_ptr<Font> font, const glm::vec3& position, dae::MenuComponent* menu, std::function<void()> action);
         std::shared_ptr<dae::GameObject> CreateMenuArrow(const std::string& textureName, dae::MenuComponent* menu, const float scale = 1.f);

@@ -13,7 +13,7 @@ dae::PointsDisplay::PointsDisplay(GameObject* owner, std::string text)
     {
         auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
         std::string text{ m_textString + std::to_string(m_CurrentPoints) };
-        owner->AddComponent<TextComponent>(text, font);
+        owner->AddComponent<TextComponent>(text, font, SDL_Color{255,255,255,255}, TextComponent::TextAlign::Right);
 
     }
     m_pText = owner->GetComponent<TextComponent>();
@@ -22,10 +22,16 @@ dae::PointsDisplay::PointsDisplay(GameObject* owner, std::string text)
         dae::EventSystem::GetInstance().AddGlobalListener<PointsIncreasedEvent>(this);
 }
 
-
-void dae::PointsDisplay::OnNotify(const GameObject& entity, const Event& event)
+dae::PointsDisplay::~PointsDisplay()
 {
-    if (auto pointsEvent = std::dynamic_pointer_cast<const dae::PointsIncreasedEvent>(event))
+if (EventSystem::IsAlive())
+    dae::EventSystem::GetInstance().RemoveListener(this);
+}
+
+
+void dae::PointsDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
+{
+    if (auto pointsEvent = dynamic_cast<const PointsIncreasedEvent*>(&event))
     {
         m_CurrentPoints += pointsEvent->GetPoints();
         UpdateDisplay();

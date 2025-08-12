@@ -6,7 +6,7 @@ namespace dae
 	namespace EngineEvent
 	{
 
-		inline const Event COLLISION{};
+		inline const EventPtr COLLISION = std::make_shared<const BaseEvent>();
 	}
 
 }

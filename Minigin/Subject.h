@@ -101,7 +101,7 @@ namespace dae
 			}
 		}*/
 
-		void Notify(const GameObject& entity, const Event& event)
+		void Notify(const GameObject& entity, const BaseEvent& event)
 		{
 			for (auto observer : m_pObservers)
 			{

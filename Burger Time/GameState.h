@@ -41,6 +41,8 @@ namespace dae
         void Update() override {};
         void OnExit() override {};
         GameModeType GetModeType() const { return GameModeType::Solo; }
+
+        void NextStage();
     private:
 
 

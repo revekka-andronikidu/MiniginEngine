@@ -49,3 +49,25 @@ void SinglePlayerMode::OnEnter()
 
 	SceneManager::GetInstance().SetActiveScene(SceneNames::Stage1);
 }
+
+void SinglePlayerMode::NextStage()
+{
+	auto game = GameManager::GetInstance().GetActiveGame();
+	auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
+
+	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::GetStageName(burgerTime->m_CurrentStage+1));
+	
+	//remeber score
+	//remember lives
+	//pass to the new scene
+
+
+	burgerTime->m_CurrentStage += 1;
+
+	SceneFactory::GetInstance().CreateLevel(burgerTime->m_CurrentStage);
+
+	
+	SceneManager::GetInstance().SetActiveScene(SceneNames::GetStageName(burgerTime->m_CurrentStage));
+	SceneManager::GetInstance().DestroyScene(SceneNames::GetStageName(burgerTime->m_CurrentStage-1));
+
+}

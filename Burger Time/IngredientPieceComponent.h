@@ -1,14 +1,14 @@
 #pragma once
 #include <GraphicsComponent.h>
 #include "Helpers.h"
-
-#include <Observer.h>
+#include <EventSystem.h>
+//#include <Observer.h>
 
 
 namespace dae
 {
     class IngredientComponent;
-	class IngredientPieceComponent final : public GraphicsComponent, public Observer
+	class IngredientPieceComponent final : public GraphicsComponent, public IEventListener
 	{
     public:
         IngredientPieceComponent(dae::GameObject* owner, IngredientType type, int piece, IngredientComponent& parent);
@@ -23,7 +23,7 @@ namespace dae
         IngredientPieceComponent& operator=(const IngredientPieceComponent& other) = delete;
         IngredientPieceComponent& operator=(IngredientPieceComponent&& other) = delete;
 
-        void OnNotify(const GameObject& entity, const Event& event) override;
+        void OnNotify(const GameObject& entity, const BaseEvent& event) override;
 
         bool IsSteppedOn() { return m_SteppedOn; };
         void IncrementNudge();

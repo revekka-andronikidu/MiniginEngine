@@ -30,10 +30,10 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 	return item;
 };
 
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateText(const std::string& text, std::shared_ptr<Font> font, SDL_Color color, const glm::vec3& position,glm::vec3 scale)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateText(const std::string& text, std::shared_ptr<Font> font, SDL_Color color, TextComponent::TextAlign aligment, const glm::vec3& position,glm::vec3 scale)
 {
 	auto item = std::make_unique<dae::GameObject>();
-	item->AddComponent<dae::TextComponent>(text,font, color);
+	item->AddComponent<dae::TextComponent>(text,font, color, aligment);
 	
 	item->GetTransform().SetPosition(position);
 	item->GetTransform().SetScale(glm::vec3(scale));
@@ -250,10 +250,8 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateIngredientPiece(Ingredient
 	piece.get()->SetTag(Tag::BURGER);
 	auto pieceComp = piece->AddComponent<IngredientPieceComponent>(type, index, parent);
 
-
-	//int pieceSize = cell/2 * scale;
-	int pieceSize = 24;
-	int scale = 3; // get from game settings
+	int pieceSize = GameSettings::cellSize/2 * GameSettings::scale.x;
+	int scale = GameSettings::scale.x; // get from game settings
 
 	glm::vec3 offset = glm::vec3{ index * pieceSize, 0 , 0 };
 	piece->GetTransform().SetPosition(offset);
@@ -262,8 +260,6 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateIngredientPiece(Ingredient
 	//collision box
 	auto colliderSize = glm::vec3{ pieceSize, pieceSize, 0};
 	auto collider = piece->AddComponent<ColliderComponent>(colliderSize);
-	
-	collider->AddObserver(pieceComp);
 
 	return piece;
 }

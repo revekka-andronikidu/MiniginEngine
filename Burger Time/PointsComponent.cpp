@@ -13,7 +13,7 @@ namespace dae
 	void PointsComponent::IncreasePoints(int points)
 	{
 		m_Points += points;
-		Notify(*GetOwner(), GameEvent::POINTS_UPDATED);
+		//Notify(*GetOwner(), GameEvent::POINTS_UPDATED);
 
 	}
 }

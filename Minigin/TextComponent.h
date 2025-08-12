@@ -12,13 +12,21 @@ namespace dae
 	public:
 		class Texture2D;
 
+		enum class TextAlign
+		{
+			Left,
+			Center,
+			Right
+		};
+
 		virtual void Update() override;		
 
 		void SetText(const std::string& text);
 		void SetColor(const SDL_Color color);
 		glm::ivec2 GetTextureSize() const override;
+		void Render() const override;
 
-		TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, SDL_Color color = {255,255,255,255});
+		TextComponent(GameObject* pOwner, const std::string& text, std::shared_ptr<Font> font, SDL_Color color = {255,255,255,255}, TextAlign aligment = TextAlign::Left);
 		virtual ~TextComponent() = default;
 		TextComponent(const TextComponent& other) = delete;
 		TextComponent(TextComponent&& other) = delete;
@@ -30,6 +38,7 @@ namespace dae
 		std::string m_text;
 		std::shared_ptr<Font> m_font;
 		SDL_Color m_color;
+		TextAlign m_alignment;
 	};
 }
 

@@ -49,7 +49,7 @@ namespace dae
 		const std::string Stage2{ "Stage2" };
 		const std::string Stage3{ "Stage3" };
 		
-		inline std::string GetStageName(unsigned short stage)
+		inline std::string GetStageName(int stage)
 		{
 			return "Stage" + std::to_string(stage);
 		}

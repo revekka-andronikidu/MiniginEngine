@@ -52,6 +52,7 @@ namespace dae
     private:
         int m_Width;
         int m_Height;
+		int m_CellSize{ static_cast<int>(GameSettings::cellSize * GameSettings::scale.x) };
         std::vector<std::vector<GridCell>> m_grid;
 
         const int GetBaseCellX(int cellX) const;
