@@ -13,15 +13,20 @@ void SpriteSheetComponent::AddAnimation(const std::string& animName, const Anima
     m_Animations[animName] = anim;
 }
 
-void SpriteSheetComponent::SetAnimation(const std::string& animName)
+void SpriteSheetComponent::SetAnimation(const std::string& animName, bool isMirrored)
 {
-    if (animName == m_CurrentState) return;
+    if (animName == m_CurrentState && isMirrored == m_IsMirrored) return;
 
     m_CurrentState = animName;
+    m_IsMirrored = isMirrored;
 
-    m_pCurrentAnimation = &m_Animations[animName];
-    m_CurrentFrame = 0;
-    m_ElapsedTime = 0.f;
+    auto it = m_Animations.find(animName);
+    if (it != m_Animations.end())
+    {
+        m_pCurrentAnimation = &it->second;
+        m_CurrentFrame = 0;
+        m_ElapsedTime = 0.f;
+    }
 }
 
 

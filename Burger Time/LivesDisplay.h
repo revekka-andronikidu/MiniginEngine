@@ -1,16 +1,14 @@
 #pragma once
 #include "GraphicsComponent.h"
-#include "Observer.h"
-//#include "GameEvents.h"
 
 namespace dae
 {
-    class LivesDisplay final : public GraphicsComponent, public Observer
+    class LivesDisplay final : public GraphicsComponent
     {
     public:
 
         //explicit LivesDisplay(GameObject* pOwner);
-        explicit LivesDisplay(GameObject* pOwner, const std::string& filePath,const  glm::vec3 scale = glm::vec3(1, 1, 1), const bool mirorred = false);
+        explicit LivesDisplay(GameObject* pOwner);
 
         ~LivesDisplay();
 
@@ -18,12 +16,15 @@ namespace dae
         void Update() override {};
         void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
 
-        void OnNotify(const GameObject& entity, const BaseEvent& event) override;
+		void SetLives(int lives)
+		{
+			m_CurrentLives = lives;
+		}
+        //void OnNotify(const GameObject& entity, const BaseEvent& event) override;
 
     private:
         int m_CurrentLives;
-        bool m_IsMirrored;
-        glm::vec3 m_Scale;
+		SDL_Rect m_SrcRect;
     };
 };
 

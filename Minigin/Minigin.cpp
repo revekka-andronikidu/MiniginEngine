@@ -68,6 +68,10 @@ void PrintSDLVersion()
 dae::Minigin::Minigin(const std::string &dataPath, int windowWidth, int windowHeight)
 	: m_WindowWidth(windowWidth)
 	, m_WindowHeight(windowHeight)
+	, m_Renderer(Renderer::GetInstance())
+	, m_SceneManager(SceneManager::GetInstance())
+	, m_Input(InputManager::GetInstance())
+	, m_Time(TimeManager::GetInstance())
 {
 	PrintSDLVersion();
 	
@@ -92,6 +96,7 @@ dae::Minigin::Minigin(const std::string &dataPath, int windowWidth, int windowHe
 	Renderer::GetInstance().Init(g_window);
 
 	ResourceManager::GetInstance().Init(dataPath);
+
 }
 
 dae::Minigin::~Minigin()
@@ -104,12 +109,7 @@ dae::Minigin::~Minigin()
 
 void dae::Minigin::Run(/*const std::function<void()>& load*/)
 {
-	//load();
-
-	auto& renderer = Renderer::GetInstance();
-	auto& sceneManager = SceneManager::GetInstance();
-	auto& input = InputManager::GetInstance();
-	auto& time = TimeManager::GetInstance();
+	auto game = GameManager::GetInstance().GetActiveGame();
 
 
 	const int ms_per_frame = 1000 / m_fixedUpdateFramerate; //miliseconds pre frame
@@ -119,26 +119,26 @@ void dae::Minigin::Run(/*const std::function<void()>& load*/)
 	bool doContinue = true;
 	while (doContinue)
 	{
-		time.Update();
-		lag += time.GetDeltaTime();
-		doContinue = input.ProcessInput();
+		m_Time.Update();
+		lag += m_Time.GetDeltaTime();
+		doContinue = m_Input.ProcessInput();
 
 		while (lag >= m_fixed_time_step)
 		{
-			sceneManager.FixedUpdate(m_fixed_time_step); //for physiscs and networking
+			m_SceneManager.FixedUpdate(m_fixed_time_step); //for physiscs and networking
 			lag -= m_fixed_time_step;
 		}		
 
-		
-		sceneManager.Update();
-		sceneManager.LateUpdate();
-		renderer.Render();
+		game->Update();
+		m_SceneManager.Update();
+		m_SceneManager.LateUpdate();
+		m_Renderer.Render();
 
 #ifdef USE_STEAMWORKS
 		SteamAPI_RunCallbacks();
 #endif
 
-		const auto sleep_time = time.GetLastFrameTime() + std::chrono::milliseconds(ms_per_frame) - std::chrono::high_resolution_clock::now();
+		const auto sleep_time = m_Time.GetLastFrameTime() + std::chrono::milliseconds(ms_per_frame) - std::chrono::high_resolution_clock::now();
 		std::this_thread::sleep_for(sleep_time);
 	}
 }

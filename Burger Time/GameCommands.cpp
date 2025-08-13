@@ -2,7 +2,6 @@
 #include <ServiceLocator.h>
 #include <TimeManager.h>
 #include <algorithm>
-#include <SpriteSheetComponent.h>
 #include "PlayerComponent.h"
 #include <GameManager.h>
 #include "BurgerTimeGame.h"
@@ -26,7 +25,7 @@ void SkipLevelCommand::Execute()
 	auto state = burgerTime->m_GameModeMachine.GetCurrentState();
 
 	//make it work for all modes
-	auto mode = dynamic_cast<SinglePlayerMode*>(state);
+	auto mode = dynamic_cast<InGameState*>(state);
 	mode->NextStage();
 
 
@@ -35,6 +34,7 @@ void SkipLevelCommand::Execute()
 void MenuMoveCommand::Execute()
 {
 	GetGameObject()->GetComponent<MenuComponent>()->ChangeMenuItem(m_direction);
+	ServiceLocator::GetAudioService().PlayEffect(SoundID::SystemSound.id, 0.5f, false);
 };
 
 void MenuEnterCommand::Execute()
@@ -42,51 +42,9 @@ void MenuEnterCommand::Execute()
 	GetGameObject()->GetComponent<MenuComponent>()->EnterMenuItem();
 };
 
-void StopMove::Execute()
-{
-	auto obj = GetGameObject()->GetComponent<SpriteSheetComponent>();
-	obj->SetAnimate(false);
-};
-
 void MoveCommand::Execute()
 {
-	//Create player class or component that has function that manges the animation and call it here instead
 	auto player = GetGameObject()->GetComponent<PlayerComponent>();
 	player->Move(m_Direction);
-
-
-	//MOVE THIS TO ANIMATE FUNCTION OF PLAYER
-
-	//player->Animate();
-
-	auto obj = GetGameObject()->GetComponent<SpriteSheetComponent>();
-
-		switch (m_Direction)
-		{
-		case Direction::Up:  
-			obj->SetAnimation("Up");
-			break;
-		case Direction::Down:  
-			obj->SetAnimation("Down");
-			break;
-		case Direction::Left: 
-			obj->SetAnimation("Left");
-			break;
-		case Direction::Right: 
-			obj->SetAnimation("Throw");
-			break;
-		default: 
-			//obj->SetAnimation("Idle");
-			obj->SetAnimate(false);
-			break;
-		}	
-
-	if (obj)
-	{
-		obj->SetAnimate(true); // This is the key
-	}
-
-	/////////////
-
 };
 

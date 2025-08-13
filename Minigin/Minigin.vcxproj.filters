@@ -124,7 +124,7 @@
     <ClInclude Include="SpriteSheetComponent.h">
       <Filter>Engine\Objects\Components</Filter>
     </ClInclude>
-    <ClInclude Include="EventSystem.h">
+    <ClInclude Include="EventManager.h">
       <Filter>Engine\Events</Filter>
     </ClInclude>
   </ItemGroup>

@@ -50,6 +50,7 @@ void dae::TextComponent::Render() const
 		return;
 
 	glm::vec3 pos = GetOwner()->GetTransform().GetWorldPosition();
+	pos.y += m_VerticalOffset;
 	glm::vec3 scale = GetOwner()->GetTransform().GetScale();
 
 	int textureWidth = m_pTexture->GetSize().x;
@@ -82,4 +83,22 @@ void dae::TextComponent::SetColor(const SDL_Color color)
 {
 	m_color = color;
 	m_needsUpdate = true;
+}
+
+void dae::TextComponent::SetAlign(const TextAlign aligment)
+{
+	m_alignment = aligment;
+	m_needsUpdate = true;
+}
+
+void dae::TextComponent::SetFont(const std::shared_ptr<Font> font)
+{
+	m_font = font;
+	m_needsUpdate = true;
+
+}
+
+void dae::TextComponent::SetVerticalOffset(float offset) 
+{ 
+	m_VerticalOffset = offset; 
 }

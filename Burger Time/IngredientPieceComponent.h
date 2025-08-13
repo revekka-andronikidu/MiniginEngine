@@ -1,7 +1,7 @@
 #pragma once
 #include <GraphicsComponent.h>
 #include "Helpers.h"
-#include <EventSystem.h>
+#include <EventManager.h>
 //#include <Observer.h>
 
 
@@ -12,7 +12,7 @@ namespace dae
 	{
     public:
         IngredientPieceComponent(dae::GameObject* owner, IngredientType type, int piece, IngredientComponent& parent);
-        ~IngredientPieceComponent() = default;
+        ~IngredientPieceComponent();
 
         void Update() override {};
         void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
@@ -35,7 +35,7 @@ namespace dae
     private:
         SDL_Rect m_SrcRect;
         bool m_SteppedOn;
-        int m_Nudge{1};
+        int m_Nudge{0};
         float m_NudgeSize{ 1 };
         IngredientComponent& m_ParentIngredient;
 

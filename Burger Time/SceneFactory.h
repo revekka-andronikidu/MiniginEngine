@@ -5,6 +5,7 @@
 namespace dae
 {
 	class BurgerTimeGame;
+	class Scene;
 	class SceneFactory final : public Singleton<SceneFactory>
 	{
 	private:
@@ -16,7 +17,7 @@ namespace dae
 	public:
 		void CreateMainMenu();
 		void CreateLevel(unsigned short stage);
-		void CreateHUD();
+		void CreateHUD(Scene& scene);
 	};
 
 }

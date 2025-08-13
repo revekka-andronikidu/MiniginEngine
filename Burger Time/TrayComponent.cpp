@@ -2,7 +2,7 @@
 #include "IngredientComponent.h"
 #include "GameEvents.h"
 #include <GameObject.h>
-#include <EventSystem.h>
+#include <EventManager.h>
 //#include <iostream>
 
 using namespace dae;
@@ -16,7 +16,7 @@ TrayComponent::TrayComponent(GameObject* owner, int totalPieces)
 
 TrayComponent::~TrayComponent()
 {
-   // dae::EventSystem::GetInstance().RemoveListener(this);
+   // dae::EventManager::GetInstance().RemoveListener(this);
 }
 
 
@@ -40,8 +40,8 @@ void TrayComponent::CheckIfComplete()
 {
     if (static_cast<int>(m_IngredientsOnTray.size()) >= m_TotalPieces)
     {
-        //std::cout << "[Tray] All burgers completed! Bonus points awarded.\n";
         auto event = std::make_shared<dae::PointsIncreasedEvent>(250);
-        EventSystem::GetInstance().TriggerEvent(*event, *GetOwner());
+        EventManager::GetInstance().TriggerEvent(*event, *GetOwner());
+        EventManager::GetInstance().TriggerEvent(GameEvent::BURGER_COMPLETED, *GetOwner());
     }
 }

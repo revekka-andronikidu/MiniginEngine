@@ -204,6 +204,7 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     <ClCompile Include="LivesDisplay.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="PeppersDisplay.cpp" />
     <ClCompile Include="PlayerComponent.cpp" />
     <ClCompile Include="PointsComponent.cpp" />
     <ClCompile Include="PointsDisplay.cpp" />
@@ -214,7 +215,6 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     <ClInclude Include="BurgerTimeGame.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameEvents.h" />
-    <ClInclude Include="GameScenes.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GridComponent.h" />
     <ClInclude Include="Helpers.h" />
@@ -223,11 +223,13 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     <ClInclude Include="LivesComponent.h" />
     <ClInclude Include="LivesDisplay.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="PeppersDisplay.h" />
     <ClInclude Include="PlayerComponent.h" />
     <ClInclude Include="PointsComponent.h" />
     <ClInclude Include="PointsDisplay.h" />
     <ClInclude Include="SceneFactory.h" />
     <ClInclude Include="TrayComponent.h" />
+    <ClInclude Include="TrayManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

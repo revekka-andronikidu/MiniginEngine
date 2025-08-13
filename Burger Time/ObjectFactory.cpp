@@ -13,6 +13,7 @@
 #include "IngredientPieceComponent.h"
 #include <SDL_ttf.h>
 #include "TrayComponent.h"
+#include "TrayManager.h"
 
 using namespace dae;
 
@@ -89,16 +90,17 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreatePlayer(glm::vec3 startPos,
 	auto player = std::make_unique<dae::GameObject>();
 	player->SetTag(Tag::PLAYER);
 
+	float framesPS{8};
 
 	auto animationComp = player->AddComponent<dae::SpriteSheetComponent>(texture, rows, cols);
-	animationComp->AddAnimation("Idle", { 1, 1, 6.f });
-	animationComp->AddAnimation("Up", {6,3, 6.f});
-	animationComp->AddAnimation("Down", {0,3,6.f});
-	animationComp->AddAnimation("Left", {3, 3, 6.f});
+	animationComp->AddAnimation("Idle", { 1, 1, 1.f });
+	animationComp->AddAnimation("Up", {6,3, framesPS });
+	animationComp->AddAnimation("Down", {0,3,framesPS });
+	animationComp->AddAnimation("Left", {3, 3, framesPS });
 	//animationComp->AddAnimation("Throw", {15, 1, 1.f});
 	animationComp->AddAnimation("Throw", { 16, 1, 1.f });
 	//animationComp->AddAnimation("Throw", { 17, 1, 1.f });
-	animationComp->AddAnimation("Death", {18, 6, 6.f});
+	animationComp->AddAnimation("Death", {18, 6, framesPS });
 
 
 	animationComp->SetAnimation("Idle");
@@ -207,10 +209,10 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateLadder(glm::vec3 position,
 	return platform;
 }
 
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateTray(glm::vec3 position, glm::vec3 scale)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateTray(glm::vec3 position, glm::vec3 scale, int burgerIngredients )
 {
 	auto tray = std::make_unique<dae::GameObject>();
-	tray.get()->AddComponent<TrayComponent>(4);
+	auto trayComp = tray.get()->AddComponent<TrayComponent>(burgerIngredients);
 	tray.get()->SetTag(Tag::TRAY);
 
 	auto texture = tray->AddComponent<dae::TextureComponent>("tray.png");
@@ -218,6 +220,8 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateTray(glm::vec3 position, g
 	tray->GetTransform().SetPosition(position);
 	tray->GetTransform().SetScale(scale);
 
+
+	TrayManager::GetInstance().RegisterTray(trayComp);
 
 	//create custom collider (8 pixels from the bottom (6 from the top), 2 pixels thick, 16px from each side, 32px wide)
 	auto colliderSize = glm::vec3{ (texture->GetTextureSize().x/2 * scale.x), 1 * scale.y, 0 * scale.z };
@@ -235,11 +239,8 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateIngredient(glm::vec3 posit
 
 	ingredient->AddComponent<IngredientComponent>(type);
 
-
-
 	ingredient->GetTransform().SetPosition(position);
 	ingredient->GetTransform().SetScale(scale);
-
 
 	return ingredient;
 }

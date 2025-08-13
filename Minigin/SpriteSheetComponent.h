@@ -17,7 +17,7 @@ namespace dae
         SpriteSheetComponent(GameObject* pOwner, const std::string& fileName, int rows, int columns);
         ~SpriteSheetComponent() = default;
 
-        void SetAnimation(const std::string& animName);
+        void SetAnimation(const std::string& animName, bool isMirrored = false);
         void AddAnimation(const std::string& animName, const Animation& anim);
 
 
@@ -31,6 +31,7 @@ namespace dae
         std::string m_CurrentState;
         virtual void Animate() override;
         SDL_Rect GetCurrentSrcRect() const override;
+       
     };
 
 }

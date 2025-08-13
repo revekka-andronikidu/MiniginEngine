@@ -11,7 +11,7 @@ namespace dae
 		PlayerComponent(GameObject* pOwner);
 		~PlayerComponent() = default;
 
-		void Update() override {};
+		void Update() override;
 		void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
 
 		PlayerComponent(const PlayerComponent& other) = delete;
@@ -24,8 +24,11 @@ namespace dae
 		void Animate();
 
 	private:
+		bool m_IsMoving{ false };
 		float m_MoveSpeed{ 50.f * GameSettings::scale.x };
+		Direction m_CurrentDirection{ Direction::Down };
 		GridComponent* m_pGrid{ nullptr };
+
 
 	};
 }

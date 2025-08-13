@@ -5,7 +5,7 @@
 #include "Scene.h"
 #include "EngineEvents.h"
 #include "Subject.h"
-#include "EventSystem.h"
+#include "EventManager.h"
 
 using namespace dae;
 void ColliderComponent::UpdateOverlaps()
@@ -38,8 +38,8 @@ void ColliderComponent::UpdateOverlaps()
 
                /* Notify(*other, EngineEvent::COLLISION); 
                 otherCollider->Notify(*GetOwner(), EngineEvent::COLLISION);*/
-                EventSystem::GetInstance().TriggerEvent(CollisionEvent(*other), *GetOwner());
-                EventSystem::GetInstance().TriggerEvent(CollisionEvent(*GetOwner()), *other);
+                EventManager::GetInstance().TriggerEvent(CollisionEvent(*other), *GetOwner());
+                EventManager::GetInstance().TriggerEvent(CollisionEvent(*GetOwner()), *other);
             }
         }
     }

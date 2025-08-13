@@ -79,7 +79,18 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const float x, const
 	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), nullptr, &dst);
 }
 
-void dae::Renderer::RenderTexture(const Texture2D& texture, const SDL_Rect& srcRect, float x, float y, const glm::vec3& scale) const
+//void dae::Renderer::RenderTexture(const Texture2D& texture, const SDL_Rect& srcRect, float x, float y, const glm::vec3& scale) const
+//{
+//	SDL_Rect dst{};
+//	dst.x = static_cast<int>(x);
+//	dst.y = static_cast<int>(y);
+//	dst.w = static_cast<int>(srcRect.w * scale.x);
+//	dst.h = static_cast<int>(srcRect.h * scale.y);
+//
+//	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &srcRect, &dst);
+//}
+
+void dae::Renderer::RenderTexture(const Texture2D& texture, const SDL_Rect& srcRect, float x, float y, const glm::vec3& scale, bool flipHorizontal) const
 {
 	SDL_Rect dst{};
 	dst.x = static_cast<int>(x);
@@ -87,7 +98,9 @@ void dae::Renderer::RenderTexture(const Texture2D& texture, const SDL_Rect& srcR
 	dst.w = static_cast<int>(srcRect.w * scale.x);
 	dst.h = static_cast<int>(srcRect.h * scale.y);
 
-	SDL_RenderCopy(GetSDLRenderer(), texture.GetSDLTexture(), &srcRect, &dst);
+	SDL_RendererFlip flip = flipHorizontal ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+
+	SDL_RenderCopyEx(GetSDLRenderer(),texture.GetSDLTexture(),&srcRect,&dst, 0.0, nullptr, flip);
 }
 
 SDL_Renderer* dae::Renderer::GetSDLRenderer() const { return m_renderer; }

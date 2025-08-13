@@ -24,6 +24,8 @@ namespace dae
 
 
 	protected:
+		bool m_Animate;
+		bool m_IsMirrored = false;
 		int m_Rows{};
 		int m_Columns{};
 		int m_TotalFrames{0};
@@ -31,7 +33,7 @@ namespace dae
 		float m_FramesPerSecond{};
 		//float m_SecondsPerFrame{};
 		float m_ElapsedTime{};
-		bool m_Animate;
+		
 
 		virtual void Animate();
 		virtual SDL_Rect GetCurrentSrcRect() const;

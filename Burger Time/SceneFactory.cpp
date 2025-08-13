@@ -9,7 +9,6 @@
 #include <Scene.h>
 #include <InputManager.h>
 #include "GameCommands.h"
-#include "GameScenes.h"
 
 #include <fstream>
 #include <iostream>
@@ -19,6 +18,9 @@
 
 #include "IngredientComponent.h"
 
+#include "PeppersDisplay.h"
+#include "LivesDisplay.h"
+#include "PointsDisplay.h"
 
 
 using namespace dae;
@@ -53,19 +55,20 @@ void SceneFactory::CreateMainMenu()
 	int gap{ 30 };
 	auto onePlayerMenuItem = objFactory.CreateMenuItem("1 PLAYER", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2, 0.f), menuComp, [this]()
 		{
-			m_Game->m_GameModeMachine.EnterState<SinglePlayerMode>();
+			m_Game->m_SelectedGameMode = GameMode::Solo;
+			m_Game->m_GameModeMachine.EnterState<InGameState>(m_Game->m_SelectedGameMode);
 		});
 
-	
-
-	auto twoPlayersMenuItem = objFactory.CreateMenuItem("2 PLAYERS", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap, 0.f), menuComp, [this]()
+		auto twoPlayersMenuItem = objFactory.CreateMenuItem("2 PLAYERS", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap, 0.f), menuComp, [this]()
 		{
-			m_Game->m_GameModeMachine.EnterState<CoopMode>();
+				m_Game->m_SelectedGameMode = GameMode::Coop;
+				m_Game->m_GameModeMachine.EnterState<InGameState>(m_Game->m_SelectedGameMode);
 		});
 
 	auto versusMenuItem = objFactory.CreateMenuItem("VERSUS", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap * 2, 0.f), menuComp, [this]()
 		{
-			m_Game->m_GameModeMachine.EnterState<VersusMode>();
+			m_Game->m_SelectedGameMode = GameMode::Versus;
+			m_Game->m_GameModeMachine.EnterState<InGameState>(m_Game->m_SelectedGameMode);
 		});
 
 	auto highScoresMenuItem = objFactory.CreateMenuItem("HIGH SCORES", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap * 3, 0.f), menuComp, [this]()
@@ -220,7 +223,7 @@ void SceneFactory::CreateLevel(unsigned short stage)
 		scene.Add(std::move(platformR));
 	}
 
-	int burgerIndex = 0;
+	int numPieces{0};
 	for (const auto& burger : data["burgers"])
 	{
 		// Step 1: Copy ingredients and sort by Y position descending (so bottom is first)
@@ -232,35 +235,30 @@ void SceneFactory::CreateLevel(unsigned short stage)
 			});
 
 		// Step 2: Loop in reverse (bottom to top), assign index from top (0) to bottom (N-1)
-		int numPieces = static_cast<int>(sortedIngredients.size());
+		numPieces = static_cast<int>(sortedIngredients.size());
 		for (int i = 0; i < numPieces; ++i)
 		{
 			const auto& piece = sortedIngredients[numPieces - 1 - i]; // top piece first
 
 			int x = piece["position"][0];
 			int y = piece["position"][1];
+
 			IngredientType type = static_cast<IngredientType>(piece["ingredientType"]);
 
 			glm::vec3 pos = { cellSize * x, cellSize * y + cellSize/2 - 2*scale.y, 0.0f };
-			int index = i;
-
 			auto ingredient = ObjectFactory::GetInstance().CreateIngredient(pos, scale, type);
 			ingredient->SetParent(levelObject.get());
 
 
+			//Add pieces to the scene
 			auto comp = ingredient.get()->GetComponent<IngredientComponent>();
-
 			auto pieces = comp->GetPieces();
-
 			for (auto piece : pieces)
 			{
 				scene.Add(piece);
 			}
-
 			scene.Add(std::move(ingredient));
 		}
-
-		++burgerIndex;
 	}
 
 	for (const auto& coord : data["tray"]) 
@@ -275,7 +273,7 @@ void SceneFactory::CreateLevel(unsigned short stage)
 		auto posX = cellSize * x;
 		auto posY = cellSize * y;
 
-		auto tray = ObjectFactory::GetInstance().CreateTray({ posX,posY, 0 }, scale);
+		auto tray = ObjectFactory::GetInstance().CreateTray({ posX,posY, 0 }, scale, numPieces);
 		tray->SetParent(levelObject.get());
 
 		scene.Add(std::move(tray));
@@ -302,27 +300,15 @@ void SceneFactory::CreateLevel(unsigned short stage)
 
 		auto& input = dae::InputManager::GetInstance();
 
-		auto moveUp = std::make_unique<MoveCommand>(player.get(), Direction::Up, 0, 600, 150.f);
-		auto moveDown = std::make_unique<MoveCommand>(player.get(), Direction::Down, 0, 600, 150.f);
-		auto moveLeft = std::make_unique<MoveCommand>(player.get(), Direction::Left, 0, 600, 150.f);
-		auto moveRight = std::make_unique<MoveCommand>(player.get(), Direction::Right, 0, 600, 150.f);
-
-		auto stop = std::make_unique<StopMove>(player.get());
-		auto stop1 = std::make_unique<StopMove>(player.get());
-		auto stop2 = std::make_unique<StopMove>(player.get());
-		auto stop3 = std::make_unique<StopMove>(player.get());
-
-
+		auto moveUp = std::make_unique<MoveCommand>(player.get(), Direction::Up);
+		auto moveDown = std::make_unique<MoveCommand>(player.get(), Direction::Down);
+		auto moveLeft = std::make_unique<MoveCommand>(player.get(), Direction::Left);
+		auto moveRight = std::make_unique<MoveCommand>(player.get(), Direction::Right);
 
 		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_D }, std::move(moveRight));
 		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_A }, std::move(moveLeft));
 		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_S }, std::move(moveDown));
 		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_W }, std::move(moveUp));
-
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_D }, std::move(stop1));
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_A }, std::move(stop));
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_S }, std::move(stop2));
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyUp, SDL_SCANCODE_W }, std::move(stop3));
 
 		player->SetParent(levelObject.get());
 		scene.Add(std::move(player));
@@ -331,42 +317,52 @@ void SceneFactory::CreateLevel(unsigned short stage)
 
 	auto pos = levelObject->GetTransform().GetWorldPosition();
 	pos.y += yOffset;
+	pos.x += GameSettings::xOffset;
 	levelObject->GetTransform().SetPosition(pos);
 	scene.Add(std::move(levelObject));
 
-	//auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
-	//auto text = ObjectFactory::GetInstance().CreateText("1UP", font, { 255,0,0,255 }, { cellSize/2, 0, 0 }, scale);
-	//auto points = ObjectFactory::GetInstance().CreatePointsDisplay({ cellSize, cellSize/2, 0}, scale);
 
-
-	//scene.Add(std::move(points));
-	//scene.Add(std::move(text));
-
-	CreateHUD();
+	CreateHUD(scene);
 }
 
-void SceneFactory::CreateHUD()
+void SceneFactory::CreateHUD(Scene& scene)
 {
-	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::Stage1);
+	//auto& scene = SceneManager::GetInstance().GetScene(SceneNames::Stage1);
 
 	int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
 
 	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
 	auto text = ObjectFactory::GetInstance().CreateText("1UP", font, { 255,0,0,255 }, TextComponent::TextAlign::Left, { cellSize / 2, 0, 0 }, GameSettings::scale);
 	auto points = ObjectFactory::GetInstance().CreatePointsDisplay({ cellSize * 2 + cellSize/2, cellSize / 2, 0}, GameSettings::scale);
-
+	points->GetComponent<PointsDisplay>()->SetPoints(m_Game->m_Score);
 
 	//HISCORE DISPLAY
-	auto HItext = ObjectFactory::GetInstance().CreateText("HI-SCORES", font, { 255,0,0,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, 0, 0 }, GameSettings::scale);
+	auto HItext = ObjectFactory::GetInstance().CreateText("HI-SCORE", font, { 255,0,0,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, 0, 0 }, GameSettings::scale);
+	//numbers here
+	// 
+	
 
 	//LIVES
+	auto livedDisplay = std::make_unique<dae::GameObject>();
+	auto livesComp = livedDisplay.get()->AddComponent<LivesDisplay>();
+	livesComp->SetLives(m_Game->m_PlayerLives);
 
-
+	glm::vec3 pos = { 0, GameSettings::windowHeight * GameSettings::scale.y, 0 };
+	livedDisplay.get()->GetTransform().SetPosition(pos);
+	livedDisplay.get()->GetTransform().SetScale(GameSettings::scale);
 
 	//PEPPERS
+	auto peppersDisplay = std::make_unique<dae::GameObject>();
+	auto peppersComp = peppersDisplay.get()->AddComponent<PeppersDisplay>();
+	peppersComp->SetPeppers(m_Game->m_Peppers);
+	pos = { (GameSettings::windowWidth - GameSettings::xOffset/2) * GameSettings::scale.x , 0, 0 };
+	peppersDisplay.get()->GetTransform().SetPosition(pos);
+	peppersDisplay.get()->GetTransform().SetScale(GameSettings::scale);
 
 
 	scene.Add(std::move(HItext));
 	scene.Add(std::move(points));
 	scene.Add(std::move(text));
+	scene.Add(std::move(livedDisplay));
+	scene.Add(std::move(peppersDisplay));
 }

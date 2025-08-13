@@ -1,28 +1,31 @@
+#pragma once    
 #include "LivesDisplay.h"
 #include "LivesComponent.h"
 #include "ResourceManager.h"
-#include <iostream>
+#include "Helpers.h"
 
 
-
-//dae::LivesDisplay::LivesDisplay(GameObject* owner)
-//    : GraphicsComponent(owner)
-//    , m_IsMirrored{ false }
-//    , m_CurrentLives{}
-//{
-//}
-
-dae::LivesDisplay::LivesDisplay(GameObject* owner, const std::string& filePath, const glm::vec3 scale, const bool mirrored)
+dae::LivesDisplay::LivesDisplay(GameObject* owner)
     : GraphicsComponent(owner)
-    , m_IsMirrored{ mirrored }
-    , m_CurrentLives{}
-    , m_Scale{scale}
+	, m_CurrentLives{ 3 } // Default lives
 {
+    m_pTexture = ResourceManager::GetInstance().GetTexture("spritesheet.png");
+    if (!m_pTexture)
+    {
+        std::cout << " No texture found" << std::endl;
+        //throw
+    }
 
+    int sheetWidth{ 30 };
+    int sheetHeight{ 22 };
+    int posX{ 25 };
+    int posY{ 0 };
 
-    m_pTexture = ResourceManager::GetInstance().LoadTexture(filePath);
+    auto textureSize = m_pTexture.get()->GetSize();
+    int sizeX = textureSize.x / sheetWidth;
+    int sizeY = textureSize.y / sheetHeight;
 
-
+    m_SrcRect = { posX * sizeX, posY * sizeY, sizeX, sizeY };
 }
 
 void dae::LivesDisplay::Render() const
@@ -30,52 +33,37 @@ void dae::LivesDisplay::Render() const
     if (m_pTexture)
     {
         auto pos = GetOwner()->GetTransform().GetLocalPosition();
-        auto textureSize = m_pTexture.get()->GetSize();
-    
 
-        float offset = 5.f;
-
-        if (m_IsMirrored)
-        {
-            for (int i = 0; i <= m_CurrentLives - 2; i++)
+            for (int i = 1; i < m_CurrentLives; i++)
             {
-                Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x - (textureSize.x * m_Scale.x) * i - offset * i, pos.y, m_Scale);
+                Renderer::GetInstance().RenderTexture(*m_pTexture, m_SrcRect, pos.x, pos.y - (GameSettings::cellSize/2 * GameSettings::scale.y) * i, GameSettings::scale);
             }
-        }
-        else
-        {
-            for (int i = 0; i <= m_CurrentLives - 2; i++)
-            {
-                Renderer::GetInstance().RenderTexture(*m_pTexture, pos.x + (textureSize.x * m_Scale.x) * i + offset * i, pos.y, m_Scale);
-            }
-        }
     }
 }
 
 dae::LivesDisplay::~LivesDisplay()
 {
-    // if (m_pLivesComponent)
-     //{
-         //m_pLivesComponent->RemoveAllObservers();
-        // m_pLivesComponent = nullptr;
-     //}
+	/*if (EventManager::IsAlive())
+	{
+		EventManager::GetInstance().RemoveListener(this);
+	}*/
 }
 
 
-void dae::LivesDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
-{
-
-    //if (event == LIVES_UPDATED_EVENT)
-    //{
-    //    // Update the health bar UI
-    //    m_CurrentLives = entity.GetComponent<LivesComponent>()->GetLives();
-    //    std::cout << "Player Lives: " << std::to_string(m_CurrentLives) << std::endl;
-
-    //}
-
-    //if (event == OBJECT_DEATH_EVENT)
-    //{
-    //    //
-    //    std::cout << "Player Death" << std::endl;
-    //}
-}
+//void dae::LivesDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
+//{
+//
+//    //if (event == LIVES_UPDATED_EVENT)
+//    //{
+//    //    // Update the health bar UI
+//    //    m_CurrentLives = entity.GetComponent<LivesComponent>()->GetLives();
+//    //    std::cout << "Player Lives: " << std::to_string(m_CurrentLives) << std::endl;
+//
+//    //}
+//
+//    //if (event == OBJECT_DEATH_EVENT)
+//    //{
+//    //    //
+//    //    std::cout << "Player Death" << std::endl;
+//    //}
+//}

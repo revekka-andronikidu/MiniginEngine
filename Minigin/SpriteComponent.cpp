@@ -34,7 +34,7 @@ void SpriteComponent::Render() const
 		const glm::vec3& pos = GetOwner()->GetTransform().GetWorldPosition();
 		const glm::vec3& scale = GetOwner()->GetTransform().GetScale();
 
-		Renderer::GetInstance().RenderTexture(*m_pTexture, GetCurrentSrcRect(), pos.x, pos.y, scale);
+		Renderer::GetInstance().RenderTexture(*m_pTexture, GetCurrentSrcRect(), pos.x, pos.y, scale, m_IsMirrored);
 
 
 		//::cout << " rendered" << std::endl;

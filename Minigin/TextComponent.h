@@ -23,6 +23,9 @@ namespace dae
 
 		void SetText(const std::string& text);
 		void SetColor(const SDL_Color color);
+		void SetFont(const std::shared_ptr<Font> font);
+		void SetAlign(const TextAlign aligment);
+		void SetVerticalOffset(float offset);
 		glm::ivec2 GetTextureSize() const override;
 		void Render() const override;
 
@@ -33,8 +36,11 @@ namespace dae
 		TextComponent& operator=(const TextComponent& other) = delete;
 		TextComponent& operator=(TextComponent&& other) = delete;
 
+
+
 	private:
 		bool m_needsUpdate;
+		float m_VerticalOffset{ 0.f };
 		std::string m_text;
 		std::shared_ptr<Font> m_font;
 		SDL_Color m_color;

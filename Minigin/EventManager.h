@@ -16,7 +16,7 @@ namespace dae
         virtual void OnNotify(const GameObject& entity, const BaseEvent& event) = 0;
     };
 
-    class EventSystem final : public Singleton<EventSystem>
+    class EventManager final : public Singleton<EventManager>
     {
     public:
         static bool IsAlive() { return s_Alive; }
@@ -52,6 +52,8 @@ namespace dae
             }
         }
 
+
+
         void TriggerEvent(const BaseEvent& event, const GameObject& sender)
         {
             auto it = m_Listeners.find(std::type_index(typeid(event)));
@@ -59,7 +61,7 @@ namespace dae
 
             for (auto& entry : it->second)
             {
-                if (entry.target == nullptr || entry.target == &sender)
+                if (entry.target == &sender || entry.target == nullptr)
                 {
                     entry.listener->OnNotify(sender, event);
                 }
@@ -67,9 +69,9 @@ namespace dae
         }
 
     private:
-        friend class Singleton<EventSystem>;
-        EventSystem() { s_Alive = true; }
-        ~EventSystem() { s_Alive = false; }
+        friend class Singleton<EventManager>;
+        EventManager() { s_Alive = true; }
+        ~EventManager() { s_Alive = false; }
         static inline bool s_Alive = false;
         std::unordered_map<std::type_index, std::vector<ListenerEntry>> m_Listeners;
     };

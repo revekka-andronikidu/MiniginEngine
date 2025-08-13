@@ -3,8 +3,9 @@
 #include "ObjectFactory.h"
 #include "TimeManager.h"
 #include "TrayComponent.h"
-#include <EventSystem.h>
+#include <EventManager.h>
 #include "GameEvents.h"
+#include "ServiceLocator.h"
 
 using namespace dae;
 
@@ -64,6 +65,7 @@ void IngredientComponent::Fall()
 	
 	
 	m_IsFalling = true;
+	ServiceLocator::GetAudioService().PlayEffect(SoundID::BurgerFall.id, 0.8f, false);
 
 	auto newPos = GetOwner()->GetTransform().GetLocalPosition();
 	m_LastHeight = newPos.y;
@@ -78,13 +80,13 @@ void IngredientComponent::Fall()
 
 
 	auto event = std::make_shared<dae::PointsIncreasedEvent>(50);
-	EventSystem::GetInstance().TriggerEvent(*event, *GetOwner());
+	EventManager::GetInstance().TriggerEvent(*event, *GetOwner());
 
 }
 
 bool IngredientComponent::ShouldFall() 
 { 
-	return (m_MinFallDistance < GetOwner()->GetTransform().GetLocalPosition().y - m_LastHeight); 
+	return (m_MinFallDistance > GetOwner()->GetTransform().GetLocalPosition().y - m_LastHeight); 
 };
 
 void IngredientComponent::RegisterToTray(const GameObject& tray)
@@ -98,4 +100,6 @@ void IngredientComponent::RegisterToTray(const GameObject& tray)
 		trayComp->RegisterIngredient(this);
 		m_Tray = &tray;
 	}
+
+	ServiceLocator::GetAudioService().PlayEffect(SoundID::BurgerLand.id, 0.8f, false);
 }

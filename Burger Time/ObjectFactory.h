@@ -35,7 +35,7 @@ namespace dae
         std::unique_ptr<dae::GameObject> CreateLongRightPlatform(glm::vec3 position, glm::vec3 scale);
         std::unique_ptr<dae::GameObject> CreateLadder(glm::vec3 position, glm::vec3 scale);
 
-        std::unique_ptr<dae::GameObject> CreateTray(glm::vec3 position, glm::vec3 scale);
+        std::unique_ptr<dae::GameObject> CreateTray(glm::vec3 position, glm::vec3 scale, int burgerIngredients = 4);
         std::unique_ptr<dae::GameObject> CreateIngredient(glm::vec3 position, glm::vec3 scale, IngredientType type);
         std::shared_ptr<dae::GameObject> CreateIngredientPiece(IngredientType type, int index, IngredientComponent& parent);
 

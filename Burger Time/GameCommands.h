@@ -36,27 +36,22 @@ namespace dae
 		void Execute() override;
 	};
 
-	class StopMove : public GameObjectCommand
-	{
-	public:
-		StopMove(GameObject* gameObject) : GameObjectCommand(gameObject) {};
-		void Execute() override;
-	};
 
 	class MoveCommand : public GameObjectCommand
 	{
 	public:
-		MoveCommand(GameObject* gameObject, Direction direction, int leftBorder = 0, int rifgtBorder = 500, float speed = 10.f) : GameObjectCommand(gameObject), m_Direction{ direction }, m_MoveSpeed{ speed }, m_LeftBorder{ leftBorder }, m_RightBorder{ rifgtBorder } {};
+		//MoveCommand(GameObject* gameObject, Direction direction, int leftBorder = 0, int rifgtBorder = 500, float speed = 10.f) : GameObjectCommand(gameObject), m_Direction{ direction }, m_MoveSpeed{ speed }, m_LeftBorder{ leftBorder }, m_RightBorder{ rifgtBorder } {};
+		MoveCommand(GameObject* gameObject, Direction direction) : GameObjectCommand(gameObject), m_Direction{ direction } {};
 
 		void Execute() override;
-
 		void SetDirection(Direction direction) { m_Direction = direction; };
-		void SetSpeed(float speed) { m_MoveSpeed = speed; };
+
+		//void SetSpeed(float speed) { m_MoveSpeed = speed; };
 
 	private:
-		int m_LeftBorder;
-		int m_RightBorder;
-		float m_MoveSpeed{};
+		//int m_LeftBorder;
+		//int m_RightBorder;
+		//float m_MoveSpeed{};
 		Direction m_Direction{};
 
 		

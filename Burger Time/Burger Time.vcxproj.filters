@@ -19,6 +19,9 @@
     <Filter Include="Components">
       <UniqueIdentifier>{d197a4b0-ef35-463a-a0b0-bb57e29e9472}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Displays">
+      <UniqueIdentifier>{a14495d0-a471-44e5-a300-798440c9d815}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -42,9 +45,6 @@
     <ClCompile Include="PointsDisplay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LivesDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PointsComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
@@ -63,6 +63,12 @@
     <ClCompile Include="TrayComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="LivesDisplay.cpp">
+      <Filter>Displays</Filter>
+    </ClCompile>
+    <ClCompile Include="PeppersDisplay.cpp">
+      <Filter>Displays</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectFactory.h">
@@ -71,20 +77,8 @@
     <ClInclude Include="GameCommands.h">
       <Filter>GameHelpers</Filter>
     </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SceneFactory.h">
       <Filter>GameHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="GameScenes.h">
-      <Filter>GameHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="PointsDisplay.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LivesDisplay.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointsComponent.h">
       <Filter>Components</Filter>
@@ -101,9 +95,6 @@
     <ClInclude Include="Helpers.h">
       <Filter>GameHelpers</Filter>
     </ClInclude>
-    <ClInclude Include="BurgerTimeGame.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="IngredientComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
@@ -115,6 +106,24 @@
     </ClInclude>
     <ClInclude Include="TrayComponent.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="LivesDisplay.h">
+      <Filter>Displays</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PointsDisplay.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BurgerTimeGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PeppersDisplay.h">
+      <Filter>Displays</Filter>
+    </ClInclude>
+    <ClInclude Include="TrayManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,6 +4,13 @@
 
 void dae::SceneManager::Update()
 {
+	if (m_pendingSceneChange)
+	{
+		SetActiveScene(m_pendingSceneChange->newScene);
+		DestroyScene(m_pendingSceneChange->destroyScene);
+		m_pendingSceneChange.reset();
+	}
+
 	if(m_pActiveScene)
 		m_pActiveScene->Update();
 }
@@ -91,4 +98,9 @@ void dae::SceneManager::DestroyScene(const std::string& name)
 		}
 	}
 	//throw std::exception("Scene not found");
+}
+
+void dae::SceneManager::QueueSceneChange(const std::string& newScene, const std::string& destroyScene)
+{
+	m_pendingSceneChange = PendingSceneChange{ newScene, destroyScene };
 }

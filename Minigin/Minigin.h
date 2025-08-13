@@ -6,7 +6,12 @@
 
 namespace dae
 {
-	class Minigin
+	class Renderer;
+	class SceneManager;
+	class InputManager;
+	class TimeManager;
+
+	class Minigin final
 	{
 	public:
 		explicit Minigin(const std::string& dataPath, int windowWidth, int windowHeight);
@@ -26,6 +31,10 @@ namespace dae
 	private:
 		const int m_fixedUpdateFramerate{TimeManager::GetInstance().GetFixedFrameRate()};
 		const float m_fixed_time_step{ 1.f / m_fixedUpdateFramerate };
+		Renderer& m_Renderer;
+		SceneManager& m_SceneManager;
+		InputManager& m_Input;
+		TimeManager& m_Time;
 		
 	};
 }

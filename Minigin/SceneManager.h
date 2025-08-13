@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include "Singleton.h"
+#include <optional>
 
 namespace dae
 {
@@ -25,10 +26,21 @@ namespace dae
 		Scene& GetActiveScene() const { return *m_pActiveScene; };
 		void DestroyScene(const std::string& name);
 
+		void QueueSceneChange(const std::string& newScene, const std::string& destroyScene);
+		
+
 	private:
 		friend class Singleton<SceneManager>;
 		SceneManager() = default;
+
+		struct PendingSceneChange 
+		{
+			std::string newScene;
+			std::string destroyScene;
+		};
+
 		std::vector<std::shared_ptr<Scene>> m_scenes;
 		Scene* m_pActiveScene{nullptr};
+		std::optional<PendingSceneChange> m_pendingSceneChange;
 	};
 }

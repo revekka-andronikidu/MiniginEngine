@@ -1,7 +1,7 @@
 #pragma once
 #include "GraphicsComponent.h"
 #include "TextComponent.h"
-#include <EventSystem.h>
+#include <EventManager.h>
 
 
 namespace dae
@@ -17,6 +17,12 @@ namespace dae
         void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
 
         void OnNotify(const GameObject& entity, const BaseEvent& event) override;
+
+		void SetPoints(int points)
+		{
+			m_CurrentPoints = points;
+			UpdateDisplay();
+		}
 
     private:
         int m_CurrentPoints;

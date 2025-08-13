@@ -2,6 +2,7 @@
 #include <ResourceManager.h>
 #include <EngineEvents.h>
 #include "IngredientComponent.h"
+#include "ServiceLocator.h"
 
 using namespace dae;
 IngredientPieceComponent::IngredientPieceComponent(dae::GameObject* owner, IngredientType type, int piece, IngredientComponent& parent) : GraphicsComponent(owner), IEventListener()
@@ -30,8 +31,16 @@ IngredientPieceComponent::IngredientPieceComponent(dae::GameObject* owner, Ingre
 		m_SrcRect.y += sizeY * static_cast<int>(type); //ingredient type
 		m_SrcRect.x += sizeX * piece; //piece number
 
-		EventSystem::GetInstance().AddListener<CollisionEvent>(owner, this);
+		EventManager::GetInstance().AddListener<CollisionEvent>(owner, this);
 
+}
+
+IngredientPieceComponent::~IngredientPieceComponent()
+{
+	if (EventManager::IsAlive())
+	{
+		EventManager::GetInstance().RemoveListener(this);
+	}
 }
 
 void IngredientPieceComponent::Render() const
@@ -64,6 +73,7 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEven
 			if (!m_SteppedOn)
 			{
 				m_SteppedOn = true;
+				ServiceLocator::GetAudioService().PlayEffect(SoundID::BurgerStep.id, 0.8f, false);
 				m_ParentIngredient.OnSteppedOn(); //maybe register the parent at start
 				IncrementNudge();
 			}
@@ -77,6 +87,7 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEven
 			else
 			{
 				auto ingredient = other.GetParent()->GetComponent<IngredientComponent>();
+				if(!ingredient->m_IsOnTheTray)
 				ingredient->RegisterToTray(*m_ParentIngredient.m_Tray);
 			}
 		}
@@ -91,8 +102,11 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEven
 		{
 			if (m_ParentIngredient.m_IsFalling)
 			{
-				if (m_ParentIngredient.ShouldFall())
+				if (!m_ParentIngredient.ShouldFall())
+				{
 					m_ParentIngredient.m_IsFalling = false;
+					ServiceLocator::GetAudioService().PlayEffect(SoundID::BurgerLand.id, 0.8f, false);
+				}
 			}
 		}
 	}
@@ -101,13 +115,11 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEven
 
 void IngredientPieceComponent::IncrementNudge()
 {
-	int levelScale = 3;// get from game settings
-
 	m_Nudge++;
 	if (m_SteppedOn)
 	{
 		auto pos = GetOwner()->GetTransform().GetLocalPosition();
-		pos.y = m_Nudge * m_NudgeSize * levelScale;
+		pos.y = m_Nudge * m_NudgeSize * GameSettings::scale.y;
 		GetOwner()->GetTransform().SetPosition(pos);
 	}
 	else
@@ -121,7 +133,7 @@ void IngredientPieceComponent::IncrementNudge()
 void IngredientPieceComponent::Reset()
 {
 	m_SteppedOn = false;
-	m_Nudge = 1;
+	m_Nudge = 0;
 
 	auto pos = GetOwner()->GetTransform().GetLocalPosition();
 	pos.y = 0;

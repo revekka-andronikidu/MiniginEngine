@@ -4,7 +4,7 @@
 #include <glm.hpp>
 #include <GameObject.h>
 #include <TimeManager.h>
-
+#include <SpriteSheetComponent.h>
 #include "SceneManager.h"
 #include "GridComponent.h"
 #include "Scene.h"
@@ -16,10 +16,20 @@ dae::PlayerComponent::PlayerComponent(GameObject* owner) : BaseComponent(owner)
 
 }
 
+void dae::PlayerComponent::Update()
+{
+	Animate();
+	m_IsMoving = false;
+}
+
+
 void PlayerComponent::Move(Direction dir)
 {
 	if (!m_pGrid)
 		return;
+
+	m_CurrentDirection = dir;
+	m_IsMoving = true;
 
 	//GET THESE FROM LEVEL/GAME INFO
 	const int gridWidth = m_pGrid->GetWidth();
@@ -119,5 +129,25 @@ void PlayerComponent::Move(Direction dir)
 
 void PlayerComponent::Animate()
 {
+	auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
+	if (!sprite) return;
+
+	if (!m_IsMoving)
+	{
+		sprite->SetAnimate(false);
+		return;
+	}
+
+	switch (m_CurrentDirection)
+	{
+	case Direction::Up:    sprite->SetAnimation("Up"); break;
+	case Direction::Down:  sprite->SetAnimation("Down"); break;
+	case Direction::Left:  sprite->SetAnimation("Left"); break;
+	case Direction::Right: sprite->SetAnimation("Left", true); break;
+	default: sprite->SetAnimate(false); return;
+	}
+
+	sprite->SetAnimate(true);
 
 }
+

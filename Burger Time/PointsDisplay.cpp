@@ -1,7 +1,7 @@
 #include "PointsDisplay.h"
 #include "PointsComponent.h"
 #include "ResourceManager.h"
-#include <EventSystem.h>
+#include <EventManager.h>
 #include "GameEvents.h"
 
 dae::PointsDisplay::PointsDisplay(GameObject* owner, std::string text)
@@ -19,21 +19,20 @@ dae::PointsDisplay::PointsDisplay(GameObject* owner, std::string text)
     m_pText = owner->GetComponent<TextComponent>();
 
 
-        dae::EventSystem::GetInstance().AddGlobalListener<PointsIncreasedEvent>(this);
+       dae::EventManager::GetInstance().AddGlobalListener<ScoreUpdatedEvent>(this);
 }
 
 dae::PointsDisplay::~PointsDisplay()
 {
-if (EventSystem::IsAlive())
-    dae::EventSystem::GetInstance().RemoveListener(this);
+if (EventManager::IsAlive())
+    dae::EventManager::GetInstance().RemoveListener(this);
 }
 
 
 void dae::PointsDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
 {
-    if (auto pointsEvent = dynamic_cast<const PointsIncreasedEvent*>(&event))
-    {
-        m_CurrentPoints += pointsEvent->GetPoints();
+    if (auto e = dynamic_cast<const ScoreUpdatedEvent*>(&event)) {
+        m_CurrentPoints = e->GetNewScore();
         UpdateDisplay();
     }
 
