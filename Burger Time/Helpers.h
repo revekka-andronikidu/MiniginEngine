@@ -66,6 +66,9 @@ namespace dae
 	{
 		const std::string MainMenu{ "Main Menu" };
 		const std::string HighScores{ "High Scores" };
+		const std::string HighScoreEntry{ "High Score Entry" };
+		const std::string DummyScene{ "Empty" };
+		const std::string GameOver{ "GameOver" };
 
 		const std::string Stage1{ "Stage1" };
 		const std::string Stage2{ "Stage2" };

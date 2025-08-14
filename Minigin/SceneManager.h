@@ -23,6 +23,8 @@ namespace dae
 
 		//void SwitchScene();
 		Scene& GetScene(const std::string& name) const;
+		bool HasScene(const std::string& name) const;
+		
 		Scene& GetActiveScene() const { return *m_pActiveScene; };
 		void DestroyScene(const std::string& name);
 

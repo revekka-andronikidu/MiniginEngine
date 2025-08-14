@@ -88,16 +88,28 @@ dae::Scene& dae::SceneManager::GetScene(const std::string& name) const
 	throw std::exception("Scene not found");
 }
 
-void dae::SceneManager::DestroyScene(const std::string& name) 
+bool dae::SceneManager::HasScene(const std::string& name) const
 {
 	for (const auto& scene : m_scenes)
 	{
 		if (scene->GetSceneName() == name)
 		{
-			scene.get()->~Scene();
+			return true;
 		}
 	}
-	//throw std::exception("Scene not found");
+	return false;
+}
+
+void dae::SceneManager::DestroyScene(const std::string& name) 
+{
+    auto it = std::remove_if(m_scenes.begin(), m_scenes.end(),
+        [&](const std::shared_ptr<Scene>& scene) {
+            return scene->GetSceneName() == name;
+        });
+
+    if (it != m_scenes.end()) {
+        m_scenes.erase(it, m_scenes.end()); // unique_ptr will handle destruction
+    }
 }
 
 void dae::SceneManager::QueueSceneChange(const std::string& newScene, const std::string& destroyScene)

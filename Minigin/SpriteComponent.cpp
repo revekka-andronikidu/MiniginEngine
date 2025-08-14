@@ -8,6 +8,7 @@ SpriteComponent::SpriteComponent(GameObject* pOwner, const std::string& fileName
 , m_Rows{ rows }
 , m_Columns{ columns }
 , m_FramesPerSecond{ framesPerSec }
+, m_Animate{ false }
 {
 	m_pTexture = ResourceManager::GetInstance().GetTexture(fileName);
 	m_TotalFrames = m_Rows * m_Columns;

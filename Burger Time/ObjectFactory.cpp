@@ -14,6 +14,8 @@
 #include <SDL_ttf.h>
 #include "TrayComponent.h"
 #include "TrayManager.h"
+#include "KeypadComponent.h"
+#include "AnimatedTextComponent.h"
 
 using namespace dae;
 
@@ -25,7 +27,6 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 {
 	auto item = std::make_unique<dae::GameObject>();
 	auto texture = item->AddComponent<dae::TextureComponent>(fileName);
-	auto logoSize = texture->GetTextureSize();
 	item->GetTransform().SetPosition(position);
 	item->GetTransform().SetScale(glm::vec3(scale, scale, scale));
 	return item;
@@ -58,10 +59,13 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateMenuItem(
 )
 {
     auto item = std::make_shared<dae::GameObject>();
-    item->AddComponent<dae::TextComponent>(text, font);
-    item->GetTransform().SetPosition(position);
+    auto textComp = item->AddComponent<dae::TextComponent>(text, font);
+	item->GetTransform().SetScale(GameSettings::scale);
     item->SetParent(menu->GetOwner(), false);
     item->AddComponent<ActionComponent>(action);
+	auto pos = position;
+	pos.x -= textComp->GetTextureSize().x * GameSettings::scale.x / 2;
+	item->GetTransform().SetPosition(pos);
     menu->AddMenuItem(item);
     return item;
 };
@@ -278,4 +282,34 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreatePointsDisplay(glm::vec3 po
 
 
 	return pointsDisplayScore;
+}
+
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateHighScoreEntryKeypad(glm::vec3 position, glm::vec3 scale)
+{
+	auto keypad = std::make_unique<dae::GameObject>();
+
+	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
+	auto texture = keypad->AddComponent<dae::TextureComponent>("ScoresBG.png");
+	keypad->AddComponent<KeypadComponent>();
+	
+
+
+
+
+
+	keypad->GetTransform().SetPosition(position);
+	keypad->GetTransform().SetScale(scale);
+	return keypad;
+}
+
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateAnimatedText(const std::string finalText, float intreval, std::shared_ptr<Font> font, glm::vec3 position, glm::vec3 scale, SDL_Color color, TextComponent::TextAlign aligment)
+{
+	auto item = std::make_unique<dae::GameObject>();
+	item.get()->GetTransform().SetScale(scale);
+	item.get()->GetTransform().SetPosition(position);
+	auto nameTextComp = item->AddComponent<dae::TextComponent>("", font, color, aligment);
+	item->AddComponent<AnimatedTextComponent>(nameTextComp, finalText, intreval);
+	
+	return item;
+
 }

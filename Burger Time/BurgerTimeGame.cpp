@@ -11,6 +11,7 @@
 #include "SceneFactory.h"
 
 #include "GameEvents.h"
+#include "HighScoresManager.h"
 
 
 using namespace dae;
@@ -26,41 +27,54 @@ BurgerTimeGame::BurgerTimeGame()
 	dae::ServiceLocator::RegisterAudioService(std::move(audio));
 #endif
 	
+	auto& hs = HighScoreManager::GetInstance();
+	hs.Init("highscores.json"); 
+	m_HighScore = hs.GetHighestScore();
 
-	//TODO:
-	//init ALL resources (textures, sounds, fonts)
-	//FONTS
+	if (hs.GetScores().size() >= 5)
+	{
+		m_LowestSavedScore = hs.GetScores().back().score;
+	}
+	
+	
+
+
+	LoadResources();
+	AddListeners();
+	SetDebugCommands();
+
+
+	SceneManager::GetInstance().CreateScene(SceneNames::DummyScene);
+	SceneManager::GetInstance().SetActiveScene(SceneNames::DummyScene);	
+	m_GameModeMachine.EnterState<GameState>();
+}
+
+void BurgerTimeGame::LoadResources()
+{
 	ResourceManager::GetInstance().LoadFont("emulogic.ttf", 8);
-	ResourceManager::GetInstance().LoadFont("emulogic.ttf", 16);
 
 	ResourceManager::GetInstance().LoadTexture("spritesheet.png");
 
 	//SOUNDS
-	ResourceManager::GetInstance().LoadSound(SoundID::BGM.filename); 
-	ResourceManager::GetInstance().LoadSound(SoundID::BurgerFall.filename);  
-	ResourceManager::GetInstance().LoadSound(SoundID::BurgerLand.filename);  
-	ResourceManager::GetInstance().LoadSound(SoundID::BurgerStep.filename);  
-	ResourceManager::GetInstance().LoadSound(SoundID::RoundClear.filename);  
-	ResourceManager::GetInstance().LoadSound(SoundID::GameStart.filename);   
-	ResourceManager::GetInstance().LoadSound(SoundID::SystemSound.filename); 
-
-	//ServiceLocator::GetAudioService().PlayEffect(0, 0.8f, true);
-
-	//init high scores
+	ResourceManager::GetInstance().LoadSound(SoundID::BGM.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::BurgerFall.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::BurgerLand.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::BurgerStep.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::RoundClear.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::GameStart.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::SystemSound.filename);
+}
+void BurgerTimeGame::AddListeners()
+{
 
 	EventManager::GetInstance().AddGlobalListener<LevelCompleteEvent>(this);
 	EventManager::GetInstance().AddGlobalListener<PointsIncreasedEvent>(this);
-
-
-	m_GameModeMachine.EnterState<GameState>();
-	SetDebugCommands();
-
 }
 
 void BurgerTimeGame::Initialize()
 {
-	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::MainMenu);
-	m_GameModeMachine.EnterState<MainMenuState>();
+	//m_GameModeMachine.EnterState<MainMenuState>();
+	m_GameModeMachine.EnterState<GameOverState>(5.f);
 }
 
 void BurgerTimeGame::SetDebugCommands()
@@ -96,7 +110,7 @@ void BurgerTimeGame::GameStart()
 void BurgerTimeGame::Reset()
 {
 	m_Score = 0;
-	m_EnemyScore = 0; 
+	//m_EnemyScore = 0; 
 	m_CurrentStage = 1;
 	m_Peppers = 5; 
 
@@ -109,19 +123,18 @@ void BurgerTimeGame::OnNotify(const GameObject& entity, const BaseEvent& event)
 	if (dynamic_cast<const LevelCompleteEvent*>(&event))
 	{
 					//stop all enemy movement
+					// //stop player 
 					//play animation
 					//move to next stage
 
-		if (m_CurrentStage <= m_MaxStages)
+		if (m_CurrentStage < m_MaxStages)
 		{
-			m_GameModeMachine.EnterState<LevelCompleteState>(3.0f);
+			m_GameModeMachine.EnterState<LevelCompleteState>(4.0f);
 			return;
 		}
 		else
 		{
-			//m_GameModeMachine.EnterState<GameWon>();
-			//write down high scores
-			
+			m_GameModeMachine.EnterState<GameOverState>(5.f);			
 		}
 		
 	}

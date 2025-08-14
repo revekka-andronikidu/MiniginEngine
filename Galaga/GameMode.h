@@ -96,8 +96,8 @@ namespace dae
     {
 
         virtual void OnEnter();
-        virtual void Update() {};
-        virtual void OnExit() {};
+        virtual void Update();
+        virtual void OnExit();
     };
 
 }

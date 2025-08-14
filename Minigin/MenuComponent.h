@@ -19,7 +19,7 @@ namespace dae
 		{ 
 			m_menuArrowIcon = object; 
 			m_dirtyFlag = true;
-			void SetMenuArrowPosition();
+			SetMenuArrowPosition();
 		};
 
 		void EnterMenuItem();

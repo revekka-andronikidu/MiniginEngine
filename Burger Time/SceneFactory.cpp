@@ -21,7 +21,9 @@
 #include "PeppersDisplay.h"
 #include "LivesDisplay.h"
 #include "PointsDisplay.h"
-
+#include "HighScoresManager.h"
+#include "KeypadComponent.h"
+#include "AnimatedTextComponent.h"
 
 using namespace dae;
 
@@ -36,9 +38,9 @@ SceneFactory::SceneFactory()
 
 void SceneFactory::CreateMainMenu()
 {
-	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::MainMenu);
+	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::MainMenu);
 	auto& objFactory = ObjectFactory::GetInstance();
-	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 16); 
+	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8); 
 	auto menu = objFactory.CreateMainMenu();
 	auto menuComp = menu.get()->GetComponent<MenuComponent>();;
 
@@ -52,30 +54,31 @@ void SceneFactory::CreateMainMenu()
 	logo->GetTransform().SetScale(glm::vec3(scale, scale, scale));
 	logo->SetParent(menu.get(), false);
 
-	int gap{ 30 };
-	auto onePlayerMenuItem = objFactory.CreateMenuItem("1 PLAYER", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2, 0.f), menuComp, [this]()
+	glm::vec3 position{ GameSettings::windowWidth * GameSettings::scale.x / 2, GameSettings::windowHeight * GameSettings::scale.y / 3, 0.f };
+
+	int gap{ static_cast<int>(GameSettings::cellSize * GameSettings::scale.y) };
+	auto onePlayerMenuItem = objFactory.CreateMenuItem("1 PLAYER", font, position, menuComp, [this]()
 		{
 			m_Game->m_SelectedGameMode = GameMode::Solo;
 			m_Game->m_GameModeMachine.EnterState<InGameState>(m_Game->m_SelectedGameMode);
 		});
 
-		auto twoPlayersMenuItem = objFactory.CreateMenuItem("2 PLAYERS", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap, 0.f), menuComp, [this]()
+		auto twoPlayersMenuItem = objFactory.CreateMenuItem("2 PLAYERS", font, glm::vec3(position.x,  position.y + gap, 0.f), menuComp, [this]()
 		{
 				m_Game->m_SelectedGameMode = GameMode::Coop;
 				m_Game->m_GameModeMachine.EnterState<InGameState>(m_Game->m_SelectedGameMode);
 		});
 
-	auto versusMenuItem = objFactory.CreateMenuItem("VERSUS", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap * 2, 0.f), menuComp, [this]()
+	auto versusMenuItem = objFactory.CreateMenuItem("VERSUS", font, glm::vec3(position.x, position.y + gap * 2, 0.f), menuComp, [this]()
 		{
 			m_Game->m_SelectedGameMode = GameMode::Versus;
 			m_Game->m_GameModeMachine.EnterState<InGameState>(m_Game->m_SelectedGameMode);
 		});
 
-	auto highScoresMenuItem = objFactory.CreateMenuItem("HIGH SCORES", font, glm::vec3(GameSettings::windowWidth * GameSettings::scale.x / 2 - 60.f, GameSettings::windowHeight * GameSettings::scale.y / 2 + gap * 3, 0.f), menuComp, [this]()
+	auto highScoresMenuItem = objFactory.CreateMenuItem("HIGH SCORES", font, glm::vec3(position.x, position.y + gap * 3, 0.f), menuComp, [this]()
 		{
 			//EnterScene
-			//m_Game->m_GameModeMachine.EnterState<HighScoresState>();
-			//dae::SceneManager::GetInstance().SetActiveScene("HighScores");
+			m_Game->m_GameModeMachine.EnterState<HighScoresState>();
 		});
 
 	auto menuPointerItem = objFactory.CreateMenuArrow("arrow.png", menuComp, 0.1f);
@@ -266,10 +269,6 @@ void SceneFactory::CreateLevel(unsigned short stage)
 		int x = coord[0];
 		int y = coord[1];
 
-		//gridComp->AddObjectToCell(x + 1, y, CellObject::TRAY);
-		//gridComp->AddObjectToCell(x + 2, y, CellObject::TRAY);
-
-
 		auto posX = cellSize * x;
 		auto posY = cellSize * y;
 
@@ -337,7 +336,15 @@ void SceneFactory::CreateHUD(Scene& scene)
 	points->GetComponent<PointsDisplay>()->SetPoints(m_Game->m_Score);
 
 	//HISCORE DISPLAY
-	auto HItext = ObjectFactory::GetInstance().CreateText("HI-SCORE", font, { 255,0,0,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, 0, 0 }, GameSettings::scale);
+	if (m_Game->m_HighScore != 0)
+	{
+		auto HItext = ObjectFactory::GetInstance().CreateText("HI-SCORE", font, { 255,0,0,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, 0, 0 }, GameSettings::scale);
+		auto HIScore = ObjectFactory::GetInstance().CreateText(std::to_string(m_Game->m_HighScore), font, { 255,255,255,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, GameSettings::cellSize/2 * GameSettings::scale.y, 0 }, GameSettings::scale);
+	
+		scene.Add(std::move(HItext));
+		scene.Add(std::move(HIScore));
+	}
+	
 	//numbers here
 	// 
 	
@@ -360,9 +367,222 @@ void SceneFactory::CreateHUD(Scene& scene)
 	peppersDisplay.get()->GetTransform().SetScale(GameSettings::scale);
 
 
-	scene.Add(std::move(HItext));
+	
+
 	scene.Add(std::move(points));
 	scene.Add(std::move(text));
 	scene.Add(std::move(livedDisplay));
 	scene.Add(std::move(peppersDisplay));
+}
+
+void SceneFactory::CreateHighScores()
+{
+	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::HighScores);
+	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
+
+	auto burgerTime = ObjectFactory::GetInstance().CreateText("BURGER TIME", font, { 255,0,0,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, (GameSettings::windowHeight / 4 - GameSettings::cellSize*2)* GameSettings::scale.y, 0 }, GameSettings::scale);
+	auto bestPlayers = ObjectFactory::GetInstance().CreateText("BEST FIVE PLAYERS", font, { 255,255,0,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, GameSettings::windowHeight / 4 * GameSettings::scale.y, 0 }, GameSettings::scale);
+
+
+	auto& hs = HighScoreManager::GetInstance();
+	auto scores = hs.GetScores();
+
+	glm::vec3 pos{ GameSettings::cellSize * 2 * GameSettings::scale.x, 0, 0 };
+	int yoffset = GameSettings::cellSize * GameSettings::scale.y;
+
+	for (int i = 0; i < 5; ++i)
+	{
+		int offset = yoffset * (i + 1);
+		pos.y = bestPlayers.get()->GetTransform().GetLocalPosition().y + GameSettings::cellSize * GameSettings::scale.y + offset;
+
+		// Default values if not enough scores
+		std::string name = "XXX";
+		int points = 0;
+
+		if (i < static_cast<int>(scores.size()))
+		{
+			name = scores[i].name;
+			points = scores[i].score;
+		}
+
+		// Create texts
+		auto numberText = ObjectFactory::GetInstance().CreateText(
+			std::to_string(i + 1),
+			font,
+			{ 255,255,255,255 },
+			TextComponent::TextAlign::Left,
+			pos,
+			GameSettings::scale
+		);
+
+		// Name
+		auto nameText = ObjectFactory::GetInstance().CreateText(
+			name,
+			font,
+			{ 255,255,255,255 },
+			TextComponent::TextAlign::Left,
+			{ pos.x + (GameSettings::cellSize *GameSettings::scale.x), pos.y, pos.z },
+			GameSettings::scale
+		);
+
+		// Points
+		auto pointsText = ObjectFactory::GetInstance().CreateText(
+			std::to_string(points),
+			font,
+			{ 255,255,255,255 },
+			TextComponent::TextAlign::Right,
+			{ (GameSettings::windowWidth - GameSettings::cellSize * 4) * GameSettings::scale.x, pos.y, pos.z },
+			GameSettings::scale
+		);
+
+		// PTS label
+		auto ptsLabel = ObjectFactory::GetInstance().CreateText(
+			"PTS",
+			font,
+			{ 255,255,255,255 },
+			TextComponent::TextAlign::Left,
+			{ (GameSettings::windowWidth - GameSettings::cellSize * 4 + GameSettings::cellSize/4) * GameSettings::scale.x, pos.y, pos.z },
+			GameSettings::scale
+		);
+
+		// Add all to scene
+		scene.Add(std::move(numberText));
+		scene.Add(std::move(nameText));
+		scene.Add(std::move(pointsText));
+		scene.Add(std::move(ptsLabel));
+	}
+	auto back = ObjectFactory::GetInstance().CreateText("PRESS ENTER/B TO RETURN", font, { 255,255,255,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, (GameSettings::windowHeight - GameSettings::windowHeight / 4 + GameSettings::cellSize) * GameSettings::scale.y, 0 }, GameSettings::scale);
+	auto menu = ObjectFactory::GetInstance().CreateText("TO THE MAIN MENU", font, { 255,255,255,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, (GameSettings::windowHeight - GameSettings::windowHeight / 4 + GameSettings::cellSize * 2) * GameSettings::scale.y, 0 }, GameSettings::scale);
+
+	auto& input = dae::InputManager::GetInstance();
+	auto menuBack = std::make_unique<BackToMenuCommand>();
+	auto menuBackC = std::make_unique<BackToMenuCommand>();
+
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(menuBack));
+	//input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonB }, std::move(menuBackC));
+
+	scene.Add(std::move(back));
+	scene.Add(std::move(menu));
+	scene.Add(std::move(bestPlayers));	
+	scene.Add(std::move(burgerTime));
+}
+
+void SceneFactory::CreateHighScoreEntry()
+{
+	auto& scene = SceneManager::GetInstance().GetScene(SceneNames::HighScoreEntry);
+	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
+
+	auto keypad = ObjectFactory::GetInstance().CreateHighScoreEntryKeypad(glm::vec3(GameSettings::xOffset / 4 * GameSettings::scale.x, 0, 0));
+	auto keypadComp = keypad.get()->GetComponent<KeypadComponent>();
+
+	auto arrow = std::make_shared<dae::GameObject>();
+	arrow->SetParent(keypad.get(), true);
+	arrow->AddComponent<dae::TextureComponent>("HIarrow.png");
+	arrow->GetTransform().SetScale({ GameSettings::scale.x/2, GameSettings::scale.y/2,0 });
+	keypadComp->AddMenuArrow(arrow);
+	
+	
+	auto& input = dae::InputManager::GetInstance();
+
+	auto menuUp = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Up);
+	auto menuDown = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Down);
+	auto menuLeft = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Left);
+	auto menuRight = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Right);
+	auto menuEnter = std::make_unique<KeypadSelectCommand>(keypad.get());
+
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_W }, std::move(menuUp));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_S }, std::move(menuDown));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_D }, std::move(menuRight));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_A }, std::move(menuLeft));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(menuEnter));
+
+	
+	scene.Add(std::move(keypad));
+	scene.Add(std::move(arrow));
+
+	auto& hs = HighScoreManager::GetInstance();
+	auto scores = hs.GetScores(); 
+
+	// Create the new entry with placeholder name
+	//int playerScore{ m_Game->m_Score };
+	std::string currentName = "_____";
+	HighScore newEntry;
+	newEntry.score = m_Game->m_Score;
+
+	auto it = std::find_if(scores.begin(), scores.end(), [&](const HighScore& s) {
+		return newEntry.score > s.score;
+		});
+
+	// Find where our new entry will be inserted BEFORE inserting
+	int insertIndex = static_cast<int>(std::distance(scores.begin(), it));
+
+	// Now safe to insert
+	scores.insert(it, newEntry);
+
+	// Trim to top 5
+	if (scores.size() > 5) {
+		scores.resize(5);
+	}
+
+	glm::vec3 pos{ GameSettings::cellSize / 2 * 5 * GameSettings::scale.x, (GameSettings::cellSize / 2 * 19 - 2) * GameSettings::scale.y, 0 };
+	int yOffset = GameSettings::cellSize * GameSettings::scale.y;
+
+	int pointsOffset = (GameSettings::cellSize / 2 * 25);
+
+	for (int i = 0; i < 5; ++i)
+	{
+		std::string name = "XXX";
+		std::string points = "0";
+
+		if (i < scores.size())
+		{
+			name = scores[i].name;
+			points = std::to_string(scores[i].score);
+		}
+
+		// If this is the slot we are entering, replace name with currentName
+		if (i == insertIndex) 
+		{
+			//name diplayed here
+			auto nameObj = std::make_unique<dae::GameObject>();
+			nameObj.get()->GetTransform().SetScale(GameSettings::scale);
+			auto nameTextComp = nameObj->AddComponent<dae::TextComponent>(
+				currentName, font, SDL_Color{ 255, 255, 255, 255 },
+				TextComponent::TextAlign::Left
+			);
+			nameObj->GetTransform().SetPosition({ pos.x, pos.y + yOffset * i, 0 });
+			scene.Add(std::move(nameObj));
+
+			// store a pointer in keypad so it can update while typing
+			keypadComp->SetTextComponent(nameTextComp);
+
+		
+			
+			auto pointsText = ObjectFactory::GetInstance().CreateText(points + " PTS", font, { 255,255,255,255 }, TextComponent::TextAlign::Right, glm::vec3((pointsOffset)*GameSettings::scale.x, pos.y + yOffset * i, pos.z), GameSettings::scale);
+			scene.Add(std::move(pointsText));
+			continue;
+		}
+
+		auto nameText = ObjectFactory::GetInstance().CreateText(name, font, { 255,255,255,255 }, TextComponent::TextAlign::Left, { pos.x, pos.y + yOffset * i, 0 }, GameSettings::scale);
+		auto pointsText = ObjectFactory::GetInstance().CreateText(points + " PTS", font, { 255,255,255,255 }, TextComponent::TextAlign::Right, glm::vec3((pointsOffset) * GameSettings::scale.x, pos.y + yOffset * i, pos.z), GameSettings::scale);
+
+		scene.Add(std::move(nameText));
+		scene.Add(std::move(pointsText));
+
+	}
+}
+
+void SceneFactory::CreateGameOver()
+{
+	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::GameOver);
+	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
+
+	glm::vec3 pos{ GameSettings::windowWidth / 2 * GameSettings::scale.x,(GameSettings::windowHeight / 2 - GameSettings::cellSize * 2) * GameSettings::scale.y, 0 } ;
+	glm::vec3 scale{GameSettings::scale.x * 2, GameSettings::scale.y * 2, 0 };
+
+	auto obj = ObjectFactory::GetInstance().CreateAnimatedText("GAME OVER", 0.3f, font, pos, scale, SDL_Color{ 255, 255, 255, 255 }, TextComponent::TextAlign::Center);
+	auto anim = obj->GetComponent<AnimatedTextComponent>();
+	anim->Restart();
+
+	scene.Add(std::move(obj));
 }

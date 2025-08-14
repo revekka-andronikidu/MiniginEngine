@@ -36,6 +36,29 @@ namespace dae
 		void Execute() override;
 	};
 
+	class KeypadMoveCommand : public GameObjectCommand
+	{
+	public:
+		KeypadMoveCommand(GameObject* gameObject, Direction direction) : GameObjectCommand(gameObject), m_direction{ direction } {};
+		void Execute() override;
+	private:
+		Direction m_direction{};
+	};
+
+	class KeypadSelectCommand : public GameObjectCommand
+	{
+	public:
+		KeypadSelectCommand(GameObject* gameObject) : GameObjectCommand(gameObject) {};
+		void Execute() override;
+	};
+
+	class BackToMenuCommand : public Command
+	{
+	public:
+		BackToMenuCommand() = default;
+		void Execute() override;
+	};
+
 
 	class MoveCommand : public GameObjectCommand
 	{

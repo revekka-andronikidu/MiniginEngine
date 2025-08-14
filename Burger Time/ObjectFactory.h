@@ -41,6 +41,10 @@ namespace dae
 
         std::unique_ptr<dae::GameObject> CreatePointsDisplay(glm::vec3 position, glm::vec3 scale);
 
+        std::unique_ptr<dae::GameObject> CreateHighScoreEntryKeypad(glm::vec3 position = {0,0,0}, glm::vec3 scale = GameSettings::scale);
+
+        std::unique_ptr<dae::GameObject> CreateAnimatedText(const std::string finalText, float intreval, std::shared_ptr<Font> font, glm::vec3 position = { 0,0,0 }, glm::vec3 scale = GameSettings::scale, SDL_Color color = SDL_Color{ 255, 255, 255, 255 }, TextComponent::TextAlign aligment = TextComponent::TextAlign::Left);
+
     };
 
 }

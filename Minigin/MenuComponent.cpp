@@ -5,15 +5,6 @@
 
 namespace dae
 {
-	//MenuComponent::MenuComponent(GameObject* pOwner) : BaseComponent(pOwner)
-	//{
-	//	//init menu pointer icon
-	//	//func to change menu icon
-
-	//};
- 
-
-
 	void MenuComponent::ChangeMenuItem(Direction direction)
 	{
 		if (direction == Direction::Down)

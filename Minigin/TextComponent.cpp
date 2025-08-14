@@ -13,7 +13,7 @@ dae::TextComponent::TextComponent(GameObject* pOwner, const std::string& text, s
 , m_color{ color }
 , m_alignment{aligment}
 {
-	m_pTexture = nullptr;
+	Update();
 	
 }
 
@@ -25,6 +25,13 @@ glm::ivec2 dae::TextComponent::GetTextureSize() const
 void dae::TextComponent::Update()
 
 {
+	if (m_text.empty())
+	{
+		m_pTexture.reset();
+		m_needsUpdate = false;
+		return;
+	}
+
 	if (m_needsUpdate)
 	{
 		const SDL_Color color = m_color; 

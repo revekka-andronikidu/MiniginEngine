@@ -69,6 +69,12 @@
     <ClCompile Include="PeppersDisplay.cpp">
       <Filter>Displays</Filter>
     </ClCompile>
+    <ClCompile Include="KeypadComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedTextComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectFactory.h">
@@ -124,6 +130,15 @@
     </ClInclude>
     <ClInclude Include="TrayManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HighScoresManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="KeypadComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedTextComponent.h">
+      <Filter>Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

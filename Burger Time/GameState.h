@@ -38,8 +38,6 @@ namespace dae
         void OnExit() override;
 
         GameMode GetModeType() const { return GameMode::Unknown; }
-    private:
-        bool m_menuCreated{ false };
     };
 
     class LevelCompleteState : public GameState
@@ -54,6 +52,38 @@ namespace dae
     private:
         float m_Timer{0.f};
 		float m_WaitTime{ 3.0f }; // wait time before next stage
+    };
+
+    class GameOverState : public GameState
+    {
+    public:
+        GameOverState(float waitTime) : m_WaitTime(waitTime), m_Timer{ 0.f } {}
+
+        void OnEnter() override;
+        void Update() override;
+        void OnExit() override;
+
+    private:
+        float m_Timer{ 0.f };
+        float m_WaitTime{ 3.0f }; // wait time before next stage
+        void NextScreen();
+    };
+
+   
+
+    class HighScoresState : public GameState
+    {
+    public:
+        void OnEnter() override;
+        void OnExit() override;
+    };
+
+
+    class HighScoreEnterState : public GameState
+    {
+    public:
+        void OnEnter() override;
+        void OnExit() override;
     };
 
 

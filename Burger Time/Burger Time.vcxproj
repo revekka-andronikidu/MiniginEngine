@@ -195,12 +195,14 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedTextComponent.cpp" />
     <ClCompile Include="BurgerTimeGame.cpp" />
     <ClCompile Include="GameCommands.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GridComponent.cpp" />
     <ClCompile Include="IngredientComponent.cpp" />
     <ClCompile Include="IngredientPieceComponent.cpp" />
+    <ClCompile Include="KeypadComponent.cpp" />
     <ClCompile Include="LivesDisplay.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
@@ -212,14 +214,17 @@ xcopy "$(SolutionDir)3rdParty\SDL2_mixer\lib$(PlatformTarget)*.dll" "$(OutputPat
     <ClCompile Include="TrayComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedTextComponent.h" />
     <ClInclude Include="BurgerTimeGame.h" />
     <ClInclude Include="GameCommands.h" />
     <ClInclude Include="GameEvents.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GridComponent.h" />
     <ClInclude Include="Helpers.h" />
+    <ClInclude Include="HighScoresManager.h" />
     <ClInclude Include="IngredientComponent.h" />
     <ClInclude Include="IngredientPieceComponent.h" />
+    <ClInclude Include="KeypadComponent.h" />
     <ClInclude Include="LivesComponent.h" />
     <ClInclude Include="LivesDisplay.h" />
     <ClInclude Include="ObjectFactory.h" />

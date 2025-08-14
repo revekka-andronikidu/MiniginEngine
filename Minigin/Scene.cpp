@@ -58,6 +58,7 @@ void Scene::DestroyObjects()
 		object->RemoveDeadComponents();
 	}
 
+	if(m_objects.size() > 0)
 	std::erase_if(m_objects,
 		[&](const std::shared_ptr<GameObject>& object)
 		{

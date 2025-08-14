@@ -20,10 +20,13 @@ namespace dae
 		////////
 
 		int m_Score{ 0 };
-		int m_EnemyScore{ 0 }; //if versus mode
+		//int m_EnemyScore{ 0 }; //if versus mode
 		int m_PlayerLives{ 3 };
 		int m_Peppers{ 5 }; //default peppers
 		//int m_EnemyPlayerLives{ 3 }; //if versus mode
+
+		int m_HighScore{ 0 };
+		int m_LowestSavedScore{ 0 };
 
 		unsigned short m_CurrentStage{ 1 };
 		StateMachine<GameState> m_GameModeMachine;
@@ -47,6 +50,9 @@ namespace dae
 
 	private:
 		void SetDebugCommands();
+
+		void LoadResources();
+		void AddListeners();
 	};
 }
 

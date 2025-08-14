@@ -6,21 +6,18 @@
 #include "BurgerTimeGame.h"
 #include "TimeManager.h"
 #include "TrayManager.h"
-
+#include <Scene.h>
 using namespace dae;
 
 void MainMenuState::OnEnter()
-{
+{	
 	auto& sceneManager = dae::SceneManager::GetInstance();
 
-	if (!m_menuCreated)
+	if (!sceneManager.HasScene(SceneNames::MainMenu))
 	{
 		SceneFactory::GetInstance().CreateMainMenu();
-		m_menuCreated = true;
 	}
-
-	sceneManager.SetActiveScene(SceneNames::MainMenu);
-
+	sceneManager.QueueSceneChange(SceneNames::MainMenu, SceneManager::GetInstance().GetActiveScene().GetSceneName());
 }
 void MainMenuState::OnExit()
 {
@@ -88,4 +85,74 @@ void LevelCompleteState::OnExit()
 {
 	ServiceLocator::GetAudioService().StopSound(SoundID::RoundClear.id);
 	m_Timer = 0.f;
+}
+
+void HighScoresState::OnEnter()
+{
+	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::HighScores);
+	SceneFactory::GetInstance().CreateHighScores();
+
+	SceneManager::GetInstance().QueueSceneChange(SceneNames::HighScores, SceneManager::GetInstance().GetActiveScene().GetSceneName());
+	//SceneManager::GetInstance().SetActiveScene(scene);
+}
+
+void HighScoresState::OnExit()
+{
+
+	SceneManager::GetInstance().QueueSceneChange(SceneNames::DummyScene, SceneNames::HighScores);
+}
+
+void HighScoreEnterState::OnEnter()
+{
+	ServiceLocator::GetAudioService().PlayEffect(SoundID::GameStart.id, 0.8f, false);
+
+	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::HighScoreEntry);
+	SceneFactory::GetInstance().CreateHighScoreEntry();
+
+	SceneManager::GetInstance().SetActiveScene(scene);
+}
+
+void HighScoreEnterState::OnExit()
+{
+	SceneManager::GetInstance().QueueSceneChange(SceneNames::DummyScene, SceneNames::HighScoreEntry);
+}
+
+void GameOverState::OnEnter()
+{
+	SceneFactory::GetInstance().CreateGameOver();
+
+	SceneManager::GetInstance().QueueSceneChange(SceneNames::GameOver, SceneManager::GetInstance().GetActiveScene().GetSceneName());
+}
+
+void GameOverState::Update()
+{
+	m_Timer += TimeManager::GetInstance().GetDeltaTime();
+	if (m_Timer >= m_WaitTime)
+	{
+		m_Timer = 0.f;
+		NextScreen();
+	}
+}
+
+void GameOverState::NextScreen()
+{
+	auto game = GameManager::GetInstance().GetActiveGame();
+	auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
+
+
+	if (burgerTime->m_Score > burgerTime->m_LowestSavedScore)
+	{
+		burgerTime->m_GameModeMachine.EnterState<HighScoreEnterState>();
+	}
+	else
+	{
+		burgerTime->m_GameModeMachine.EnterState<HighScoresState>();
+	}
+}
+
+
+void GameOverState::OnExit()
+{
+
+	SceneManager::GetInstance().QueueSceneChange(SceneNames::DummyScene, SceneNames::GameOver);
 }

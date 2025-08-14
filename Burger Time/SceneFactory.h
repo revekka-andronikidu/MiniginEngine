@@ -16,8 +16,11 @@ namespace dae
 
 	public:
 		void CreateMainMenu();
+		void CreateHighScoreEntry();
+		void CreateHighScores();
 		void CreateLevel(unsigned short stage);
 		void CreateHUD(Scene& scene);
+		void CreateGameOver();
 	};
 
 }
