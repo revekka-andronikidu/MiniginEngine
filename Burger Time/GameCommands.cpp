@@ -17,19 +17,10 @@ void MuteGameCommand::Execute()
 
 void SkipLevelCommand::Execute()
 {
-	//Check only if in the GameMode
-	//Is there next stage availible?
-
 	auto game = GameManager::GetInstance().GetActiveGame();
 	auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
 
-	auto state = burgerTime->m_GameModeMachine.GetCurrentState();
-
-	//make it work for all modes
-	auto mode = dynamic_cast<InGameState*>(state);
-	mode->NextStage();
-
-
+	burgerTime->SkipLevel();
 }
 
 void MenuMoveCommand::Execute()
@@ -71,3 +62,8 @@ void MoveCommand::Execute()
 	player->Move(m_Direction);
 };
 
+void PepperCommand::Execute()
+{
+	auto player = GetGameObject()->GetComponent<PlayerComponent>();
+	player->Pepper();
+};

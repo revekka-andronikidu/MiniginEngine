@@ -16,6 +16,8 @@
 #include "TrayManager.h"
 #include "KeypadComponent.h"
 #include "AnimatedTextComponent.h"
+#include "EnemyComponent.h"
+#include "PepperComponent.h"
 
 using namespace dae;
 
@@ -26,7 +28,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateTexture(
 )
 {
 	auto item = std::make_unique<dae::GameObject>();
-	auto texture = item->AddComponent<dae::TextureComponent>(fileName);
+	item->AddComponent<dae::TextureComponent>(fileName);
 	item->GetTransform().SetPosition(position);
 	item->GetTransform().SetScale(glm::vec3(scale, scale, scale));
 	return item;
@@ -45,7 +47,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateText(const std::string& te
 std::unique_ptr <dae::GameObject> ObjectFactory::CreateMainMenu()
 {
 	auto mainMenu = std::make_unique<dae::GameObject>();
-	auto menu = mainMenu->AddComponent<dae::MenuComponent>();
+	mainMenu->AddComponent<dae::MenuComponent>();
 
 	return mainMenu;
 }
@@ -84,7 +86,7 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateMenuArrow(
     return item;
 };
 
-std::unique_ptr<dae::GameObject> ObjectFactory::CreatePlayer(glm::vec3 startPos, glm::vec3 scale)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreatePlayer(glm::vec3 startPos, glm::vec3 scale, int lives)
 {
 	std::string texture{"spritesheet.png"};
 	int cols{ 15 };
@@ -94,17 +96,19 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreatePlayer(glm::vec3 startPos,
 	auto player = std::make_unique<dae::GameObject>();
 	player->SetTag(Tag::PLAYER);
 
-	float framesPS{8};
+	float framesPS{8.f};
 
 	auto animationComp = player->AddComponent<dae::SpriteSheetComponent>(texture, rows, cols);
-	animationComp->AddAnimation("Idle", { 1, 1, 1.f });
-	animationComp->AddAnimation("Up", {6,3, framesPS });
-	animationComp->AddAnimation("Down", {0,3,framesPS });
-	animationComp->AddAnimation("Left", {3, 3, framesPS });
+	animationComp->AddAnimation("Idle", {{1}, 1.f });
+	animationComp->AddAnimation("Up", {{6,7,8}, framesPS });
+	animationComp->AddAnimation("Down", {{0,1,2},framesPS });
+	animationComp->AddAnimation("Left", { {3, 4,5,}, framesPS });
 	//animationComp->AddAnimation("Throw", {15, 1, 1.f});
-	animationComp->AddAnimation("Throw", { 16, 1, 1.f });
+	animationComp->AddAnimation("Throw", { {16}, 1.f });
 	//animationComp->AddAnimation("Throw", { 17, 1, 1.f });
-	animationComp->AddAnimation("Death", {18, 6, framesPS });
+	animationComp->AddAnimation("Dying", { { 22, 23}, 6 });
+	animationComp->AddAnimation("Death", { {18, 19, 20,21,22}, 4 });
+	animationComp->AddAnimation("Celebration", { {18, 1}, framesPS });
 
 
 	animationComp->SetAnimation("Idle");
@@ -116,22 +120,91 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreatePlayer(glm::vec3 startPos,
 	player->GetTransform().SetPosition(pos);
 	
 	//MOVE TO PLAYER COMPONENT?
-	auto livesComp = player->AddComponent<dae::LivesComponent>();
-	auto pointsComp = player->AddComponent<dae::PointsComponent>();
+	player->AddComponent<dae::LivesComponent>(lives);
+	player->AddComponent<dae::PointsComponent>();
 	//set lives?
 
 	//player texture size
-	auto colliderSize = glm::vec3{ (animationComp->GetTextureSize().x - 4) * scale.x, ((animationComp->GetTextureSize().y/4 )* scale.y), 0 * scale.z };
-	auto colliserOffest = glm::vec3{ 2 * scale.x, (colliderSize.y * 4 - colliderSize.y) ,0 };
-	auto collider = player->AddComponent<ColliderComponent>(colliderSize, colliserOffest);
+	auto colliderSize = glm::vec3{ (animationComp->GetTextureSize().x - 4) * scale.x, ((animationComp->GetTextureSize().y )* scale.y), 0 * scale.z };
+	auto colliserOffest = glm::vec3{ 2 * scale.x, 0 ,0 };
+	player->AddComponent<ColliderComponent>(colliderSize, colliserOffest);
 
-
-
-	auto playerComp = player->AddComponent<PlayerComponent>();
+	player->AddComponent<PlayerComponent>();
 	//collider->AddObserver(playerComp);
 	//livesComp->AddObserver(m_Galaga);
 
 	return player;
+}
+std::unique_ptr<dae::GameObject> ObjectFactory::CreatePepper(Direction direction, glm::vec3 startPos, glm::vec3 scale)
+{
+	auto pepper = std::make_unique<dae::GameObject>();
+	pepper->SetTag(Tag::PEPPER);
+	
+
+	int cols{ 15 };
+	int rows{ 11 };
+	auto animationComp = pepper->AddComponent<dae::SpriteSheetComponent>("spritesheet.png", rows, cols);
+
+	float framesPS{ 4.f };
+	animationComp->AddAnimation("Right", { {26,27,28,29}, framesPS, false});
+	animationComp->AddAnimation("Up", { {56,57,58, 59}, framesPS, false });
+	animationComp->AddAnimation("Down", { {41,42,43, 44},framesPS, false });
+
+	pepper->AddComponent<PepperComponent>(direction);
+
+	//animationComp->SetAnimation("Right");
+	//animationComp->SetAnimate(true);
+
+	//glm::vec3 bulletPos = { position.x - (texture->GetTextureSize().x / 2) * scale, position.y - (texture->GetTextureSize().y / 2 * scale) , position.z };
+	pepper->GetTransform().SetPosition(startPos);
+	pepper->GetTransform().SetScale(scale);
+	
+	auto colliderSize = glm::vec3{ animationComp->GetTextureSize().x * scale.x, animationComp->GetTextureSize().y * scale.y, 0 };
+	pepper->AddComponent<ColliderComponent>(colliderSize);
+	
+	return pepper;
+}
+
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateMrHotDog(glm::vec3 startPos, glm::vec3 scale)
+{
+	std::string texture{ "spritesheet.png" };
+	int cols{ 15 };
+	int rows{ 11 };
+	//glm::vec3 scale{1,1,1};
+
+	auto enemy = std::make_unique<dae::GameObject>();
+	enemy->SetTag(Tag::ENEMY);
+
+	float framesPS{ 4 };
+
+	auto animationComp = enemy->AddComponent<dae::SpriteSheetComponent>(texture, rows, cols);
+	animationComp->AddAnimation("Down", { { 30, 31}, framesPS });
+	animationComp->AddAnimation("Up", { {34,35}, framesPS });
+	animationComp->AddAnimation("Left", { {32,33},framesPS });
+	animationComp->AddAnimation("Peppered", { {49, 50}, framesPS });
+	animationComp->AddAnimation("Death", { {45, 46,47,48 }, framesPS});
+
+
+	animationComp->SetAnimation("Left");
+
+	auto pos = startPos;
+	pos.y -= 3 * scale.y;
+
+	enemy->GetTransform().SetScale(scale);
+	enemy->GetTransform().SetPosition(pos);
+
+	//player texture size
+	int colliderXOffset{ 0 };
+
+	auto colliderSize = glm::vec3{ (animationComp->GetTextureSize().x - colliderXOffset*2) * scale.x, ((animationComp->GetTextureSize().y) * scale.y), 0 * scale.z };
+	auto colliserOffest = glm::vec3{ colliderXOffset * scale.x, 0 ,0 };
+	enemy->AddComponent<ColliderComponent>(colliderSize, colliserOffest);
+
+
+
+	enemy->AddComponent<EnemyComponent>();
+
+	return enemy;
 }
 
 std::unique_ptr<dae::GameObject> ObjectFactory::CreateShortPlatform(glm::vec3 position, glm::vec3 scale)
@@ -139,17 +212,10 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateShortPlatform(glm::vec3 po
 	auto platform = std::make_unique<dae::GameObject>();
 	platform.get()->SetTag(Tag::PLATFORM);
 
-	auto texture = platform->AddComponent<dae::TextureComponent>("ShortPlatform.png");
+	platform->AddComponent<dae::TextureComponent>("ShortPlatform.png");
 
 	platform->GetTransform().SetPosition(position);
 	platform->GetTransform().SetScale(scale);
-
-
-	////create custom collider (1 pixels from the bottom, 2 pixels thick, full width)
-	//auto colliderSize = glm::vec3{texture->GetTextureSize().x * scale.x, 2 * scale.y, 0 * scale.z };
-	//auto colliderOffset = glm::vec3(0, 1 * scale.y, 0);
-	//auto collider = platform->AddComponent<ColliderComponent>(colliderSize, colliderOffset);
-
 
 	return platform;
 }
@@ -168,7 +234,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateLongLeftPlatform(glm::vec3
 	////create custom collider (2 pixels from the bottom, 2 pixels thick, full width)
 	auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x * 2, 2 * scale.y, 0 * scale.z };
 	auto colliderOffset = glm::vec3(0, texture->GetTextureSize().y * scale.y - (2 * scale.y), 0);
-	auto collider = platform->AddComponent<ColliderComponent>(colliderSize, colliderOffset);
+	platform->AddComponent<ColliderComponent>(colliderSize, colliderOffset);
 
 
 	return platform;
@@ -178,18 +244,11 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateLongRightPlatform(glm::vec
 {
 	auto platform = std::make_unique<dae::GameObject>();
 
-	auto texture = platform->AddComponent<dae::TextureComponent>("LongPlatformR.png");
+	platform->AddComponent<dae::TextureComponent>("LongPlatformR.png");
 
 	auto pos = position;
 	platform->GetTransform().SetPosition(position);
 	platform->GetTransform().SetScale(scale);
-
-
-	////create custom collider (2 pixels from the bottom, 2 pixels thick, full width)
-	//auto colliderSize = glm::vec3{ texture->GetTextureSize().x * scale.x, 2 * scale.y, 0 * scale.z };
-	//auto colliderOffset = glm::vec3(0, 2 * scale.y, 0);
-	//auto collider = platform->AddComponent<ColliderComponent>(colliderSize, colliderOffset);
-
 
 	return platform;
 }
@@ -198,17 +257,10 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateLadder(glm::vec3 position,
 {
 	auto platform = std::make_unique<dae::GameObject>();
 
-	auto texture = platform->AddComponent<dae::TextureComponent>("Ladder.png");
+	platform->AddComponent<dae::TextureComponent>("Ladder.png");
 
 	platform->GetTransform().SetPosition(position);
 	platform->GetTransform().SetScale(scale);
-
-
-	//REplace texture size with cell size?
-	/*auto colliderSize = glm::vec3{ (texture->GetTextureSize().x - (3*2)) * scale.x,  texture->GetTextureSize().y * scale.y, 0 * scale.z};
-	auto colliderOffset = glm::vec3(0, 2 * scale.y, 0);
-	auto collider = platform->AddComponent<ColliderComponent>(colliderSize, colliderOffset);*/
-
 
 	return platform;
 }
@@ -231,7 +283,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateTray(glm::vec3 position, g
 	auto colliderSize = glm::vec3{ (texture->GetTextureSize().x/2 * scale.x), 1 * scale.y, 0 * scale.z };
 	auto colliderOffset = glm::vec3(16*scale.x, 6 * scale.y, 0);
 
-	auto collider = tray->AddComponent<ColliderComponent>(colliderSize, colliderOffset);
+	tray->AddComponent<ColliderComponent>(colliderSize, colliderOffset);
 
 
 	return tray;
@@ -253,10 +305,10 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateIngredientPiece(Ingredient
 {
 	auto piece = std::make_shared<dae::GameObject>();
 	piece.get()->SetTag(Tag::BURGER);
-	auto pieceComp = piece->AddComponent<IngredientPieceComponent>(type, index, parent);
+	piece->AddComponent<IngredientPieceComponent>(type, index, parent);
 
-	int pieceSize = GameSettings::cellSize/2 * GameSettings::scale.x;
-	int scale = GameSettings::scale.x; // get from game settings
+	int pieceSize = static_cast<int>(GameSettings::cellSize/2 * GameSettings::scale.x);
+	float scale = GameSettings::scale.x; // get from game settings
 
 	glm::vec3 offset = glm::vec3{ index * pieceSize, 0 , 0 };
 	piece->GetTransform().SetPosition(offset);
@@ -264,7 +316,7 @@ std::shared_ptr<dae::GameObject> ObjectFactory::CreateIngredientPiece(Ingredient
 
 	//collision box
 	auto colliderSize = glm::vec3{ pieceSize, pieceSize, 0};
-	auto collider = piece->AddComponent<ColliderComponent>(colliderSize);
+	piece->AddComponent<ColliderComponent>(colliderSize);
 
 	return piece;
 }
@@ -288,14 +340,8 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateHighScoreEntryKeypad(glm::
 {
 	auto keypad = std::make_unique<dae::GameObject>();
 
-	auto font = ResourceManager::GetInstance().GetFont("emulogic.ttf", 8);
-	auto texture = keypad->AddComponent<dae::TextureComponent>("ScoresBG.png");
+	keypad->AddComponent<dae::TextureComponent>("ScoresBG.png");
 	keypad->AddComponent<KeypadComponent>();
-	
-
-
-
-
 
 	keypad->GetTransform().SetPosition(position);
 	keypad->GetTransform().SetScale(scale);

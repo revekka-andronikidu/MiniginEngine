@@ -34,14 +34,23 @@ namespace dae
 	class PeppersChangedEvent final : public BaseEvent
 	{
 	public:
-		explicit PeppersChangedEvent(int peppers)
-			: m_Peppers(peppers) {
-		}
+		explicit PeppersChangedEvent() {};
 
-		int GetPeppers() const { return m_Peppers; }
+	};
 
+	class LivesUpdatedEvent final : public BaseEvent
+	{
+	public:
+		explicit LivesUpdatedEvent(int lives) : m_Lives(lives) {};
+		int GetLives() const { return m_Lives; }
 	private:
-		int m_Peppers;
+		int m_Lives;
+	};
+
+	class PlayerDeathEvent final : public BaseEvent
+	{
+	public:
+		explicit PlayerDeathEvent() {};
 	};
 
 	class BurgerCompletedEvent final : public BaseEvent
@@ -63,5 +72,7 @@ namespace dae
 		//inline const Event LIVES_UPDATED{};
 		inline const BurgerCompletedEvent BURGER_COMPLETED{};
 		inline const LevelCompleteEvent LEVEL_COMPLETED{};
+		inline const PlayerDeathEvent PLAYER_DEATH{};
+		inline const PeppersChangedEvent PEPPERS_CHANGED{};
 	}
 }

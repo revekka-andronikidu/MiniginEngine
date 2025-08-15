@@ -27,6 +27,7 @@ namespace dae
 
 		int m_HighScore{ 0 };
 		int m_LowestSavedScore{ 0 };
+		glm::vec3 m_playerStartPosition{ 0, 0, 0 }; //default start pos}
 
 		unsigned short m_CurrentStage{ 1 };
 		StateMachine<GameState> m_GameModeMachine;
@@ -38,12 +39,13 @@ namespace dae
 
 		void Initialize() override;
 		void Update() override;
-
+		bool IsGameplayActive() const;
 
 		void OnNotify(const GameObject& entity, const BaseEvent& event) override;
 
-		void Reset();
-		void GameStart();
+		void ResetGame();
+		void RestartStage();
+		void SkipLevel();
 		//void GameOver();
 		//void StageWon();
 		//void GameWon();

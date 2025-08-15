@@ -13,40 +13,79 @@ void SpriteSheetComponent::AddAnimation(const std::string& animName, const Anima
     m_Animations[animName] = anim;
 }
 
-void SpriteSheetComponent::SetAnimation(const std::string& animName, bool isMirrored)
+void SpriteSheetComponent::SetAnimation(const std::string& animName, bool isMirrored, const std::string& nextAnim)
 {
     if (animName == m_CurrentState && isMirrored == m_IsMirrored) return;
 
     m_CurrentState = animName;
     m_IsMirrored = isMirrored;
+    m_NextAnimation = nextAnim; // store the next animation to play (can be empty)
 
-    auto it = m_Animations.find(animName);
+    auto it = m_Animations.find(m_CurrentState);
     if (it != m_Animations.end())
     {
         m_pCurrentAnimation = &it->second;
         m_CurrentFrame = 0;
         m_ElapsedTime = 0.f;
+		m_AnimationFinished = false; 
     }
 }
+
+//void SpriteSheetComponent::SetAnimation(const std::string& animName, bool isMirrored)
+//{
+//    if (animName == m_CurrentState && isMirrored == m_IsMirrored) return;
+//
+//    m_CurrentState = animName;
+//    m_IsMirrored = isMirrored;
+//
+//    auto it = m_Animations.find(animName);
+//    if (it != m_Animations.end())
+//    {
+//        m_pCurrentAnimation = &it->second;
+//        m_CurrentFrame = 0;
+//        m_ElapsedTime = 0.f;
+//    }
+//}
 
 
 void SpriteSheetComponent::Animate()
 {
     if (!m_pCurrentAnimation) return;
+    if (m_pCurrentAnimation->frames.empty()) return;
 
     m_ElapsedTime += TimeManager::GetInstance().GetDeltaTime();
     if (m_ElapsedTime >= 1.0f / m_pCurrentAnimation->framesPerSecond)
     {
         m_ElapsedTime -= 1.0f / m_pCurrentAnimation->framesPerSecond;
-        m_CurrentFrame = (m_CurrentFrame + 1) % m_pCurrentAnimation->frameCount;
+        m_CurrentFrame++; //= (m_CurrentFrame + 1) % m_pCurrentAnimation->frameCount;
+
+        if (m_CurrentFrame >= m_pCurrentAnimation->frames.size())
+        {
+            if (!m_NextAnimation.empty())
+            {
+                // Play the next animation once current finishes
+                SetAnimation(m_NextAnimation, m_IsMirrored);
+                m_NextAnimation.clear();
+            }
+            else if (!m_pCurrentAnimation->loopAnimation)
+            {
+                m_CurrentFrame = (int)m_pCurrentAnimation->frames.size() - 1;
+                m_AnimationFinished = true; 
+            }
+            else
+            {
+                m_CurrentFrame = 0;
+            }
+        }
     }
 }
 
 SDL_Rect SpriteSheetComponent::GetCurrentSrcRect() const
 {
-    if (!m_pCurrentAnimation) return {};
+    if (!m_pCurrentAnimation || m_pCurrentAnimation->frames.empty()) return {};
 
-    int absoluteFrame = m_pCurrentAnimation->startFrame + m_CurrentFrame;
+    int absoluteFrame = m_pCurrentAnimation->frames[m_CurrentFrame];
+
     const int frameWidth = m_pTexture->GetSize().x / m_Columns;
     const int frameHeight = m_pTexture->GetSize().y / m_Rows;
     const int row = absoluteFrame / m_Columns;

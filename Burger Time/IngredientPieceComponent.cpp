@@ -68,7 +68,7 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEven
 	{
 		const GameObject& other = collision->other;
 
-		if (other.HasTag(Tag::PLAYER))
+		if (other.HasTag(Tag::PLAYER_FEET))
 		{
 			if (!m_SteppedOn)
 			{

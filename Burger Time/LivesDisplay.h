@@ -1,9 +1,10 @@
 #pragma once
 #include "GraphicsComponent.h"
+#include <EventManager.h>
 
 namespace dae
 {
-    class LivesDisplay final : public GraphicsComponent
+    class LivesDisplay final : public GraphicsComponent, public IEventListener
     {
     public:
 
@@ -20,7 +21,8 @@ namespace dae
 		{
 			m_CurrentLives = lives;
 		}
-        //void OnNotify(const GameObject& entity, const BaseEvent& event) override;
+
+        void OnNotify(const GameObject& entity, const BaseEvent& event) override;
 
     private:
         int m_CurrentLives;

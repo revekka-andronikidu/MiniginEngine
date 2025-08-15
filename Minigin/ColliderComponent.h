@@ -6,6 +6,12 @@
 
 namespace dae
 {
+    struct ColliderShape {
+        glm::vec3 size;
+        glm::vec3 offset;
+        int mask; // Bitmask or category
+    };
+
 	class ColliderComponent : public BaseComponent, public Subject
 	{
     public:
@@ -18,6 +24,12 @@ namespace dae
 
         virtual ~ColliderComponent() = default;
 
+        void AddShape(const glm::vec3& size, const glm::vec3& offset, int mask) 
+        {
+            m_Shapes.push_back({ size, offset, mask });
+        }
+
+        //const std::vector<ColliderShape>& GetShapes() const { return m_Shapes; }
        
         void Update() override { UpdateOverlaps(); };
         void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
@@ -29,6 +41,7 @@ namespace dae
         const glm::vec3 m_Offset;
         std::unordered_set<GameObject*> m_CurrentOverlaps{};
         std::unordered_set<GameObject*> m_PreviousOverlaps{};
+        std::vector<ColliderShape> m_Shapes;
 
         void UpdateOverlaps();
         bool IsOverlapping(const ColliderComponent* other);

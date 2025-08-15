@@ -54,6 +54,20 @@ namespace dae
 		float m_WaitTime{ 3.0f }; // wait time before next stage
     };
 
+    class PlayerDeathState : public GameState
+    {
+    public:
+        PlayerDeathState(float waitTime) : m_WaitTime(waitTime), m_Timer{ 0.f } {}
+
+        void OnEnter() override;
+        void Update() override;
+        void OnExit() override;
+
+    private:
+        float m_Timer{ 0.f };
+        float m_WaitTime{ 3.0f }; // wait time before next stage
+    };
+
     class GameOverState : public GameState
     {
     public:

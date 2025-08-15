@@ -41,6 +41,14 @@ namespace dae
 		Lettuce = 5
 	};
 
+	enum class EnemyType
+	{
+		MrHotDog = 0,
+		MrPickle = 1,
+		MrEgg = 2
+	};
+
+
 	struct Sound
 	{
 		int id;
@@ -59,6 +67,10 @@ namespace dae
 		inline constexpr Sound RoundClear{ 4, "RoundClear.wav" };
 		inline constexpr Sound GameStart{ 5, "GameStart.wav" };
 		inline constexpr Sound SystemSound{ 6, "SystemSound.wav" };
+		inline constexpr Sound Death{ 7, "Death.wav" };
+		inline constexpr Sound PepperShake{ 8, "PepperShake.wav" };
+		inline constexpr Sound EnemyPeppered{ 9, "EnemySprayed.wav" };
+		inline constexpr Sound EnemySqiushed{ 10, "EnemySquahed.wav" };
 	}
 	
 
@@ -83,10 +95,13 @@ namespace dae
 	namespace Tag
 	{
 		const std::string PLAYER{ "player" };
+		const std::string PLAYER_FEET{ "playerFeet" };
 		const std::string ENEMY{ "enemy" };
 		const std::string BURGER{ "burger" };
 		const std::string TRAY{ "tray" };
 		const std::string PLATFORM{ "platform" };
+		const std::string LEVEL{ "level" };
+		const std::string PEPPER{ "pepper" };
 	}
 
 

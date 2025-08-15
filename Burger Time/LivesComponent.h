@@ -1,15 +1,14 @@
 #pragma once
 #include "BaseComponent.h"
-#include "Subject.h"
-//#include "GameEvents.h"
+#include <EventManager.h>	
+#include "GameEvents.h"
 
 namespace dae
 {
-	class LivesComponent : public BaseComponent, public Subject
+	class LivesComponent : public BaseComponent
 	{
 	public:
 		LivesComponent(GameObject* owner, int health = 3) : BaseComponent(owner)
-			, Subject()
 			, m_CurrentLives(health)
 		{
 		};
@@ -29,17 +28,18 @@ namespace dae
 		{
 			if (lives <= 0)
 			{
-				//Notify(*GetOwner(), OBJECT_DEATH_EVENT);
+				EventManager::GetInstance().TriggerEvent(GameEvent::PLAYER_DEATH, *GetOwner());
 			}
 			else
 			{
 				m_CurrentLives = lives;
-				//Notify(*GetOwner(), LIVES_UPDATED_EVENT);
+				auto event = std::make_shared<dae::LivesUpdatedEvent>(m_CurrentLives);
+				EventManager::GetInstance().TriggerEvent(*event, *GetOwner());
 
 			}
 		};
 		
-		void RemoveLive() { SetLives(m_CurrentLives - 1); };
+		void RemoveLife() { SetLives(m_CurrentLives - 1); };
 
 	private:
 		int m_CurrentLives;

@@ -4,6 +4,7 @@
 #include "TextComponent.h"
 #include "Helpers.h"
 #include "GameEvents.h"
+#include "BurgerTimeGame.h"
 
 dae::PeppersDisplay::PeppersDisplay(GameObject* owner)
     : GraphicsComponent(owner)
@@ -74,22 +75,16 @@ void dae::PeppersDisplay::SetPeppers(int peppers)
     m_pText->SetText(std::to_string(m_CurrentPeppers));
 }
 
+void dae::PeppersDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
+{
+	if (auto evemt = dynamic_cast<const PeppersChangedEvent*>(&event))
+	{
+        auto game = GameManager::GetInstance().GetActiveGame();
+        auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
 
+        m_CurrentPeppers = burgerTime->m_Peppers;
 
-//void dae::LivesDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
-//{
-//
-//    //if (event == LIVES_UPDATED_EVENT)
-//    //{
-//    //    // Update the health bar UI
-//    //    m_CurrentLives = entity.GetComponent<LivesComponent>()->GetLives();
-//    //    std::cout << "Player Lives: " << std::to_string(m_CurrentLives) << std::endl;
-//
-//    //}
-//
-//    //if (event == OBJECT_DEATH_EVENT)
-//    //{
-//    //    //
-//    //    std::cout << "Player Death" << std::endl;
-//    //}
-//}
+		std::cout << "Player Peppers: " << std::to_string(m_CurrentPeppers) << std::endl;
+		m_pText->SetText(std::to_string(m_CurrentPeppers));
+	}
+}

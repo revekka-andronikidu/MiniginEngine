@@ -17,7 +17,7 @@ namespace dae
         void Update() override {};
         void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
 
-        void OnNotify(const GameObject& entity, const BaseEvent& event) override {};
+        void OnNotify(const GameObject& entity, const BaseEvent& event) override;
 
         void SetPeppers(int peppers);
     private:

@@ -12,7 +12,8 @@
 
 #include "GameEvents.h"
 #include "HighScoresManager.h"
-
+#include "LivesComponent.h"
+#include "PlayerComponent.h"
 
 using namespace dae;
 
@@ -63,18 +64,23 @@ void BurgerTimeGame::LoadResources()
 	ResourceManager::GetInstance().LoadSound(SoundID::RoundClear.filename);
 	ResourceManager::GetInstance().LoadSound(SoundID::GameStart.filename);
 	ResourceManager::GetInstance().LoadSound(SoundID::SystemSound.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::Death.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::PepperShake.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::EnemyPeppered.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::EnemySqiushed.filename);
 }
 void BurgerTimeGame::AddListeners()
 {
 
 	EventManager::GetInstance().AddGlobalListener<LevelCompleteEvent>(this);
 	EventManager::GetInstance().AddGlobalListener<PointsIncreasedEvent>(this);
+	EventManager::GetInstance().AddGlobalListener<LivesUpdatedEvent>(this);
 }
 
 void BurgerTimeGame::Initialize()
 {
-	//m_GameModeMachine.EnterState<MainMenuState>();
-	m_GameModeMachine.EnterState<GameOverState>(5.f);
+	m_GameModeMachine.EnterState<MainMenuState>();
+	//m_GameModeMachine.EnterState<GameOverState>(5.f);
 }
 
 void BurgerTimeGame::SetDebugCommands()
@@ -92,31 +98,61 @@ void BurgerTimeGame::Update()
 {
 
 	m_GameModeMachine.Update();
-	//if (m_GameModeMachine.GetCurrentState() == nullptr) return;
-	//auto state = dynamic_cast<InGameState*>(m_GameModeMachine.GetCurrentState());
-	//if (state)
-	//{
-	//	state->Update();
-	//}
+	
 };
 
-void BurgerTimeGame::GameStart()
+void BurgerTimeGame::SkipLevel()
 {
-	m_CurrentStage = 1;
-	//display tutorial and play game start sound
-
+	if(IsGameplayActive())
+	{
+		if (m_CurrentStage < m_MaxStages)
+		{
+			m_GameModeMachine.EnterState<LevelCompleteState>(1.0f);
+		}
+		else
+		{
+			m_GameModeMachine.EnterState<GameOverState>(5.f);
+		}	//display tutorial and play game start sound
+	}
 }
 
-void BurgerTimeGame::Reset()
+bool BurgerTimeGame::IsGameplayActive() const
+{
+	if (dynamic_cast<InGameState*>(m_GameModeMachine.GetCurrentState()))
+	{
+		return true;
+	}
+	return false;
+}
+
+
+void BurgerTimeGame::ResetGame()
 {
 	m_Score = 0;
-	//m_EnemyScore = 0; 
+	m_PlayerLives = 3;
 	m_CurrentStage = 1;
 	m_Peppers = 5; 
+	m_SelectedGameMode = GameMode::Unknown;
 
-	
+	auto& hs = HighScoreManager::GetInstance();
+	m_HighScore = hs.GetHighestScore();
+
+	if (hs.GetScores().size() >= 5)
+	{
+		m_LowestSavedScore = hs.GetScores().back().score;
+	}
 }
-  
+void BurgerTimeGame::RestartStage()
+{
+	//player spawn
+	// 
+	Scene& scene = SceneManager::GetInstance().GetActiveScene();
+	auto player = scene.GetObjectsWithTag(Tag::PLAYER);
+	player[0]->GetTransform().SetPosition(m_playerStartPosition);
+	player[0]->GetComponent<PlayerComponent>()->ResetPlayer(m_playerStartPosition);
+	//RestartEnemyManager
+
+}
 
 void BurgerTimeGame::OnNotify(const GameObject& entity, const BaseEvent& event)
 {
@@ -145,7 +181,13 @@ void BurgerTimeGame::OnNotify(const GameObject& entity, const BaseEvent& event)
 		GameObject dummySender;
 		EventManager::GetInstance().TriggerEvent(ScoreUpdatedEvent{ m_Score }, dummySender);
 	}
-	
 
+	if (auto livesEvent = dynamic_cast<const LivesUpdatedEvent*>(&event))
+	{
+		// Update the health bar UI
+		m_PlayerLives = entity.GetComponent<LivesComponent>()->GetLives();
 
+		m_GameModeMachine.EnterState<PlayerDeathState>(3.f);
+
+	}
 }

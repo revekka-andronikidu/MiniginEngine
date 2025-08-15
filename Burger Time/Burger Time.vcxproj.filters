@@ -5,14 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="GameHelpers">
       <UniqueIdentifier>{d1e05324-c993-4f54-9577-7ac4a7c20971}</UniqueIdentifier>
     </Filter>
@@ -22,12 +14,18 @@
     <Filter Include="Displays">
       <UniqueIdentifier>{a14495d0-a471-44e5-a300-798440c9d815}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{5782d48e-408c-4dbf-ae58-a797bb6443cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Player">
+      <UniqueIdentifier>{504749ba-e67c-433d-82f7-56e6b7a14135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Components\Level">
+      <UniqueIdentifier>{9bb87297-c307-4707-b612-0e55bb3ad931}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BurgerTimeGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectFactory.cpp">
@@ -36,32 +34,8 @@
     <ClCompile Include="GameCommands.cpp">
       <Filter>GameHelpers</Filter>
     </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SceneFactory.cpp">
       <Filter>GameHelpers</Filter>
-    </ClCompile>
-    <ClCompile Include="PointsDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PointsComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="GridComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="IngredientComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="IngredientPieceComponent.cpp">
-      <Filter>Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TrayComponent.cpp">
-      <Filter>Components</Filter>
     </ClCompile>
     <ClCompile Include="LivesDisplay.cpp">
       <Filter>Displays</Filter>
@@ -75,6 +49,42 @@
     <ClCompile Include="AnimatedTextComponent.cpp">
       <Filter>Components</Filter>
     </ClCompile>
+    <ClCompile Include="PointsDisplay.cpp">
+      <Filter>Displays</Filter>
+    </ClCompile>
+    <ClCompile Include="BurgerTimeGame.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyComponent.cpp">
+      <Filter>Components</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerComponent.cpp">
+      <Filter>Components\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PepperComponent.cpp">
+      <Filter>Components\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PointsComponent.cpp">
+      <Filter>Components\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="IngredientPieceComponent.cpp">
+      <Filter>Components\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="IngredientComponent.cpp">
+      <Filter>Components\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="GridComponent.cpp">
+      <Filter>Components\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="TrayComponent.cpp">
+      <Filter>Components\Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectFactory.h">
@@ -86,59 +96,68 @@
     <ClInclude Include="SceneFactory.h">
       <Filter>GameHelpers</Filter>
     </ClInclude>
-    <ClInclude Include="PointsComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="LivesComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="GridComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="Helpers.h">
       <Filter>GameHelpers</Filter>
-    </ClInclude>
-    <ClInclude Include="IngredientComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
-    <ClInclude Include="IngredientPieceComponent.h">
-      <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="GameEvents.h">
       <Filter>GameHelpers</Filter>
     </ClInclude>
-    <ClInclude Include="TrayComponent.h">
-      <Filter>Components</Filter>
-    </ClInclude>
     <ClInclude Include="LivesDisplay.h">
       <Filter>Displays</Filter>
     </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PointsDisplay.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BurgerTimeGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PeppersDisplay.h">
       <Filter>Displays</Filter>
-    </ClInclude>
-    <ClInclude Include="TrayManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HighScoresManager.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KeypadComponent.h">
       <Filter>Components</Filter>
     </ClInclude>
     <ClInclude Include="AnimatedTextComponent.h">
       <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PointsDisplay.h">
+      <Filter>Displays</Filter>
+    </ClInclude>
+    <ClInclude Include="TrayManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="HighScoresManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="BurgerTimeGame.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyComponent.h">
+      <Filter>Components</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerComponent.h">
+      <Filter>Components\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="LivesComponent.h">
+      <Filter>Components\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PepperComponent.h">
+      <Filter>Components\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PointsComponent.h">
+      <Filter>Components\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="IngredientComponent.h">
+      <Filter>Components\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="IngredientPieceComponent.h">
+      <Filter>Components\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="GridComponent.h">
+      <Filter>Components\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="TrayComponent.h">
+      <Filter>Components\Level</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

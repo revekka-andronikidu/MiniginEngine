@@ -25,6 +25,10 @@
 #include "KeypadComponent.h"
 #include "AnimatedTextComponent.h"
 
+#include "GameEvents.h"
+
+#include "ColliderComponent.h"
+
 using namespace dae;
 
 SceneFactory::SceneFactory()
@@ -154,6 +158,7 @@ void SceneFactory::CreateLevel(unsigned short stage)
 
 	auto levelObject = std::make_unique<dae::GameObject>();
 	auto gridComp = levelObject->AddComponent<GridComponent>(kRows, kCols);
+	levelObject->SetTag(Tag::LEVEL);
 
 
 	for (const auto& coord : data["ladder"]) 
@@ -278,6 +283,8 @@ void SceneFactory::CreateLevel(unsigned short stage)
 		scene.Add(std::move(tray));
 	}
 
+	std::unique_ptr<GameObject> player;
+
 	if (!data.contains("peter") || data["peter"].empty()) {
 		std::cerr << "No 'peter' data found\n";
 		return;
@@ -288,43 +295,85 @@ void SceneFactory::CreateLevel(unsigned short stage)
 		float x = coord[0];
 		float y = coord[1];
 
-		std::cout << "Peter is at: (" << x << ", " << y << ")\n";
-
-		auto posX = cellSize * x;
-		auto posY = cellSize * y;
-
-		auto player = ObjectFactory::GetInstance().CreatePlayer({ posX,posY, 0 }, scale);
-		auto playerComponent = player->GetComponent<PlayerComponent>();
-		playerComponent->SetGrid(gridComp);
-
-		auto& input = dae::InputManager::GetInstance();
-
-		auto moveUp = std::make_unique<MoveCommand>(player.get(), Direction::Up);
-		auto moveDown = std::make_unique<MoveCommand>(player.get(), Direction::Down);
-		auto moveLeft = std::make_unique<MoveCommand>(player.get(), Direction::Left);
-		auto moveRight = std::make_unique<MoveCommand>(player.get(), Direction::Right);
-
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_D }, std::move(moveRight));
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_A }, std::move(moveLeft));
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_S }, std::move(moveDown));
-		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_W }, std::move(moveUp));
-
+		player = CreatePlayer(scene, x, y, gridComp);
 		player->SetParent(levelObject.get());
-		scene.Add(std::move(player));
-
 	}
+
+
+	CreateEnemies(scene);
+	//parent enemies to the level(or at least the nemy manager)
+
 
 	auto pos = levelObject->GetTransform().GetWorldPosition();
 	pos.y += yOffset;
 	pos.x += GameSettings::xOffset;
 	levelObject->GetTransform().SetPosition(pos);
 	scene.Add(std::move(levelObject));
+	
 
+	CreateHUD(scene, player.get());
 
-	CreateHUD(scene);
+	scene.Add(std::move(player));
 }
 
-void SceneFactory::CreateHUD(Scene& scene)
+std::unique_ptr<GameObject> SceneFactory::CreatePlayer(Scene& scene, int x, int y, GridComponent* grid)
+{
+	auto posX = GameSettings::cellSize * GameSettings::scale.x * x;
+	auto posY = GameSettings::cellSize * GameSettings::scale.y * y;
+
+	
+	auto player = ObjectFactory::GetInstance().CreatePlayer({ posX,posY, 0 }, GameSettings::scale, m_Game->m_PlayerLives);
+	auto playerComponent = player->GetComponent<PlayerComponent>();
+	playerComponent->SetGrid(grid);
+
+	m_Game->m_playerStartPosition = player.get()->GetTransform().GetLocalPosition();
+
+
+	auto& input = dae::InputManager::GetInstance();
+
+	auto moveUp = std::make_unique<MoveCommand>(player.get(), Direction::Up);
+	auto moveDown = std::make_unique<MoveCommand>(player.get(), Direction::Down);
+	auto moveLeft = std::make_unique<MoveCommand>(player.get(), Direction::Left);
+	auto moveRight = std::make_unique<MoveCommand>(player.get(), Direction::Right);
+	auto pepper = std::make_unique<PepperCommand>(player.get());
+
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_D }, std::move(moveRight));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_A }, std::move(moveLeft));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_S }, std::move(moveDown));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_W }, std::move(moveUp));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_SPACE }, std::move(pepper));
+
+	auto colliderSize = glm::vec3{ (GameSettings::cellSize - 4) * GameSettings::scale.x,(GameSettings::cellSize / 4) * GameSettings::scale.y, 0 * GameSettings::scale.z };
+	auto colliserOffest = glm::vec3{ 2 * GameSettings::scale.x, (colliderSize.y * 4 - colliderSize.y) ,0 };
+
+	auto feet = std::make_unique<dae::GameObject>();
+	feet.get()->SetParent(player.get(), false);
+	feet->SetTag(Tag::PLAYER_FEET);
+	auto collider = feet->AddComponent<ColliderComponent>(colliderSize, colliserOffest);
+	feet->GetTransform().SetScale(GameSettings::scale);
+
+	scene.Add(std::move(feet));
+
+	return player;
+}
+
+void SceneFactory::CreateEnemies(Scene& scene)
+{
+	int x = 3;
+	int y = 9; 
+
+	auto posX = GameSettings::cellSize * GameSettings::scale.x * x;
+	auto posY = GameSettings::cellSize * GameSettings::scale.y * y;
+
+	auto enemy = ObjectFactory::GetInstance().CreateMrHotDog({ posX,posY, 0 });
+
+		//create enemies hereRead number of enemies per level from file and init here 
+	//add to enemy manager and that will determine thwir spawn pos (or the file will)
+	scene.Add(std::move(enemy));
+
+}
+
+void SceneFactory::CreateHUD(Scene& scene, GameObject* playerPtr)
 {
 	//auto& scene = SceneManager::GetInstance().GetScene(SceneNames::Stage1);
 
@@ -350,13 +399,16 @@ void SceneFactory::CreateHUD(Scene& scene)
 	
 
 	//LIVES
-	auto livedDisplay = std::make_unique<dae::GameObject>();
-	auto livesComp = livedDisplay.get()->AddComponent<LivesDisplay>();
+	auto livesDisplay = std::make_unique<dae::GameObject>();
+
+	auto livesComp = livesDisplay.get()->AddComponent<LivesDisplay>();
 	livesComp->SetLives(m_Game->m_PlayerLives);
 
 	glm::vec3 pos = { 0, GameSettings::windowHeight * GameSettings::scale.y, 0 };
-	livedDisplay.get()->GetTransform().SetPosition(pos);
-	livedDisplay.get()->GetTransform().SetScale(GameSettings::scale);
+	livesDisplay.get()->GetTransform().SetPosition(pos);
+	livesDisplay.get()->GetTransform().SetScale(GameSettings::scale);
+
+	EventManager::GetInstance().AddListener<LivesUpdatedEvent>(playerPtr, livesComp);
 
 	//PEPPERS
 	auto peppersDisplay = std::make_unique<dae::GameObject>();
@@ -371,7 +423,7 @@ void SceneFactory::CreateHUD(Scene& scene)
 
 	scene.Add(std::move(points));
 	scene.Add(std::move(text));
-	scene.Add(std::move(livedDisplay));
+	scene.Add(std::move(livesDisplay));
 	scene.Add(std::move(peppersDisplay));
 }
 

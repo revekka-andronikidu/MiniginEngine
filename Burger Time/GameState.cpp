@@ -11,6 +11,11 @@ using namespace dae;
 
 void MainMenuState::OnEnter()
 {	
+	auto game = GameManager::GetInstance().GetActiveGame();
+	auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
+	burgerTime->ResetGame();
+
+
 	auto& sceneManager = dae::SceneManager::GetInstance();
 
 	if (!sceneManager.HasScene(SceneNames::MainMenu))
@@ -31,20 +36,30 @@ void InGameState::OnEnter()
 {
 	auto game = GameManager::GetInstance().GetActiveGame();
 	auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
+	auto& sm = SceneManager::GetInstance();
 
-	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::GetStageName(burgerTime->m_CurrentStage));
+	ServiceLocator::GetAudioService().PlayEffect(SoundID::BGM.id, 0.4f, true);
+
+	if (sm.HasScene(SceneNames::GetStageName(burgerTime->m_CurrentStage)))
+	{
+		burgerTime->RestartStage();
+		//RestartEnemyManager();
+
+		//sm.SetActiveScene(SceneNames::GetStageName(burgerTime->m_CurrentStage));
+		return;
+	}
+
+	auto& scene = sm.CreateScene(SceneNames::GetStageName(burgerTime->m_CurrentStage));
 	SceneFactory::GetInstance().CreateLevel(burgerTime->m_CurrentStage);
 
 	if (burgerTime->m_CurrentStage == 1)
 	{
-		SceneManager::GetInstance().SetActiveScene(SceneNames::Stage1);
+		sm.SetActiveScene(SceneNames::Stage1);
 	}
 	else
 	{
-		SceneManager::GetInstance().QueueSceneChange(SceneNames::GetStageName(burgerTime->m_CurrentStage), SceneNames::GetStageName(burgerTime->m_CurrentStage - 1));
+		sm.QueueSceneChange(SceneNames::GetStageName(burgerTime->m_CurrentStage), SceneNames::GetStageName(burgerTime->m_CurrentStage - 1));
 	}
-
-	ServiceLocator::GetAudioService().PlayEffect(SoundID::BGM.id, 0.4f, true);
 }
 
 void InGameState::OnExit()
@@ -86,6 +101,42 @@ void LevelCompleteState::OnExit()
 	ServiceLocator::GetAudioService().StopSound(SoundID::RoundClear.id);
 	m_Timer = 0.f;
 }
+
+void PlayerDeathState::OnEnter()
+{
+	//ServiceLocator::GetAudioService().PlayEffect(SoundID::RoundClear.id, 0.8f, false);
+	m_Timer = 0.f;
+	//StopAllEnemies(); in enemy manager
+	//PlayCompletionAnimation();
+		//in player, stop input and play custom animation
+}
+
+void PlayerDeathState::Update()
+{
+	m_Timer += TimeManager::GetInstance().GetDeltaTime();
+	if (m_Timer >= m_WaitTime)
+	{
+		m_Timer = 0.f;
+		auto game = GameManager::GetInstance().GetActiveGame();
+		auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
+
+		if (burgerTime->m_PlayerLives > 0)
+		{
+			burgerTime->m_GameModeMachine.EnterState<InGameState>(burgerTime->m_SelectedGameMode);
+		}
+		else
+		{
+			burgerTime->m_GameModeMachine.EnterState<GameOverState>(5.f);
+		}
+		//NextStage();
+	}
+}
+void PlayerDeathState::OnExit()
+{
+	//ServiceLocator::GetAudioService().StopSound(SoundID::RoundClear.id);
+	m_Timer = 0.f;
+}
+
 
 void HighScoresState::OnEnter()
 {

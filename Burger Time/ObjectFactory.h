@@ -27,8 +27,9 @@ namespace dae
         std::shared_ptr<dae::GameObject> CreateMenuItem(const std::string& text, std::shared_ptr<Font> font, const glm::vec3& position, dae::MenuComponent* menu, std::function<void()> action);
         std::shared_ptr<dae::GameObject> CreateMenuArrow(const std::string& textureName, dae::MenuComponent* menu, const float scale = 1.f);
 
-        std::unique_ptr<dae::GameObject> CreatePlayer(glm::vec3 startPos, glm::vec3 scale);
-
+        std::unique_ptr<dae::GameObject> CreatePlayer(glm::vec3 startPos, glm::vec3 scale, int lives);
+        std::unique_ptr<dae::GameObject> CreatePepper(Direction direction, glm::vec3 startPos, glm::vec3 scale = GameSettings::scale);
+        std::unique_ptr<dae::GameObject> CreateMrHotDog(glm::vec3 startPos, glm::vec3 scale = GameSettings::scale);
 
         std::unique_ptr<dae::GameObject> CreateShortPlatform(glm::vec3 position, glm::vec3 scale);
         std::unique_ptr<dae::GameObject> CreateLongLeftPlatform(glm::vec3 position, glm::vec3 scale);

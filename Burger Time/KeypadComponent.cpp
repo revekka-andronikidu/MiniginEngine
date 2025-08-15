@@ -181,10 +181,6 @@ void KeypadComponent::Select()
 
             dae::HighScoreManager::GetInstance().AddScore(m_name, burgerTime->m_Score);
 
-            // TODO: transition to high score display or next scene
-            
-            //RESET the game
-            //(on exit this state)
             m_showCursor = false;
             m_isDirty = true;
             m_nameEntered = true;

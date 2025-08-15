@@ -26,6 +26,7 @@ dae::LivesDisplay::LivesDisplay(GameObject* owner)
     int sizeY = textureSize.y / sheetHeight;
 
     m_SrcRect = { posX * sizeX, posY * sizeY, sizeX, sizeY };
+
 }
 
 void dae::LivesDisplay::Render() const
@@ -43,27 +44,27 @@ void dae::LivesDisplay::Render() const
 
 dae::LivesDisplay::~LivesDisplay()
 {
-	/*if (EventManager::IsAlive())
+	if (EventManager::IsAlive())
 	{
 		EventManager::GetInstance().RemoveListener(this);
-	}*/
+	}
 }
 
 
-//void dae::LivesDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
-//{
-//
-//    //if (event == LIVES_UPDATED_EVENT)
-//    //{
-//    //    // Update the health bar UI
-//    //    m_CurrentLives = entity.GetComponent<LivesComponent>()->GetLives();
-//    //    std::cout << "Player Lives: " << std::to_string(m_CurrentLives) << std::endl;
-//
-//    //}
-//
-//    //if (event == OBJECT_DEATH_EVENT)
-//    //{
-//    //    //
-//    //    std::cout << "Player Death" << std::endl;
-//    //}
-//}
+void dae::LivesDisplay::OnNotify(const GameObject& entity, const BaseEvent& event)
+{
+
+    if (auto evemt = dynamic_cast<const LivesUpdatedEvent*>(&event))
+    {
+        // Update the health bar UI
+        m_CurrentLives = entity.GetComponent<LivesComponent>()->GetLives();
+        std::cout << "Player Lives: " << std::to_string(m_CurrentLives) << std::endl;
+
+    }
+
+    //if (event == OBJECT_DEATH_EVENT)
+    //{
+    //    //
+    //    std::cout << "Player Death" << std::endl;
+    //}
+}

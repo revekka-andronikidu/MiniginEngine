@@ -29,6 +29,14 @@ namespace dae
 		MenuComponent::Direction m_direction{ MenuComponent::Direction::Up};
 	};
 
+	class PepperCommand : public GameObjectCommand
+	{
+	public:
+		PepperCommand(GameObject* gameObject) : GameObjectCommand(gameObject) {};
+
+		void Execute() override;
+	};
+
 	class MenuEnterCommand : public GameObjectCommand
 	{
 	public:

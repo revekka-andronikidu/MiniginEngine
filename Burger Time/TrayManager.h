@@ -19,6 +19,7 @@ namespace dae
 
 		void OnNotify(const GameObject& entity, const BaseEvent& event) override
 		{
+			entity;
 			if (dynamic_cast<const BurgerCompletedEvent*>(&event))
 			{
 				++m_CompletedTrays;
