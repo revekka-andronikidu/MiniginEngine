@@ -108,7 +108,7 @@ void dae::GameObject::SetParent(GameObject* newParent, bool keepWorldPosition)
 	{
 		if (keepWorldPosition)
 		{
-			m_transform.SetPosition(m_transform.GetLocalPosition() - newParent->m_transform.GetWorldPosition());
+			m_transform.SetPosition(m_transform.GetWorldPosition() - newParent->m_transform.GetWorldPosition());
 		
 		}
 		

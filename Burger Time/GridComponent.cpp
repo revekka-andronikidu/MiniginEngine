@@ -1,6 +1,8 @@
 // GridComponent.cpp
 #include "GridComponent.h"
 #include <set>
+#include <queue>
+#include <unordered_map>
 
 using namespace dae;
 
@@ -200,4 +202,81 @@ const int GridComponent::GetBaseCellX(int cellX) const
     }
     // If no pair found, return cellX itself (single cell)
     return cellX;
+}
+
+std::vector<CellPos> GridComponent::FindShortestPath(CellPos start, CellPos goal) const
+{
+    if (!IsValidPosition(start.x, start.y) || !IsValidPosition(goal.x, goal.y))
+        return {};
+
+    // BFS frontier (cells to explore)
+    std::queue<CellPos> frontier;
+    frontier.push(start);
+
+    // "Came from" map to reconstruct path later
+    std::unordered_map<CellPos, CellPos, CellPosHash> cameFrom;
+    cameFrom[start] = start;
+
+    // BFS loop
+    while (!frontier.empty()) {
+        CellPos current = frontier.front();
+        frontier.pop();
+
+        if (current == goal)
+            break;
+
+        // Explore valid neighbors
+        for (const auto& neighbor : GetNeighbors(current)) {
+            if (cameFrom.find(neighbor) == cameFrom.end()) {
+                frontier.push(neighbor);
+                cameFrom[neighbor] = current;
+            }
+        }
+    }
+
+    // No path found
+    if (cameFrom.find(goal) == cameFrom.end())
+        return {};
+
+    std::vector<CellPos> path;
+    for (CellPos at = goal; !(at == start); at = cameFrom[at]) {
+        path.push_back(at);
+    }
+    path.push_back(start);
+    std::reverse(path.begin(), path.end());
+    return path;
+
+}
+
+std::vector<CellPos> GridComponent::GetNeighbors(const CellPos& cell) const
+{
+    std::vector<CellPos> neighbors;
+    int x = cell.x;
+    int y = cell.y;
+
+    // Left
+    if (IsValidPosition(x - 1, y) && GetCell(x - 1, y).HasObject(CellObject::PLATFORM))
+        neighbors.push_back({ x - 1, y });
+
+    // Right
+    if (IsValidPosition(x + 1, y) && GetCell(x + 1, y).HasObject(CellObject::PLATFORM))
+        neighbors.push_back({ x + 1, y });
+
+    // Up (ladder)
+    if (IsValidPosition(x, y - 1) && GetCell(x, y).HasObject(CellObject::LADDER))
+        neighbors.push_back({ x, y - 1 });
+
+    // Down (ladder)
+    if (IsValidPosition(x, y + 1) && GetCell(x, y + 1).HasObject(CellObject::LADDER))
+        neighbors.push_back({ x, y + 1 });
+
+    //// Up (ladder)
+    //if (IsValidPosition(x, y - 1) && GetCell(x, y).HasObject(CellObject::OFFSETLADDER))
+    //    neighbors.push_back({ x, y - 1 });
+
+    //// Down (ladder)
+    //if (IsValidPosition(x, y + 1) && GetCell(x, y + 1).HasObject(CellObject::OFFSETLADDER))
+    //    neighbors.push_back({ x, y + 1 });
+
+    return neighbors;
 }

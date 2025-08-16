@@ -25,7 +25,7 @@ namespace dae
 		void CreateHUD(Scene& scene, GameObject* playerPtr);
 
 		std::unique_ptr<GameObject> CreatePlayer(Scene& scene, int x, int y, GridComponent* grid);
-		void CreateEnemies(Scene& scene);
+		void CreateEnemies(Scene& scene, GameObject* level, GridComponent* grid);
 	};
 
 }

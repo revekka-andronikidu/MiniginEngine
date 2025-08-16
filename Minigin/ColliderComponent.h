@@ -35,6 +35,8 @@ namespace dae
         void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
         
         bool m_IsActive{};
+		std::unordered_set<GameObject*> GetCurrentOverlaps() const { return m_CurrentOverlaps; }
+
 
     private:
         const glm::vec3 m_Size;

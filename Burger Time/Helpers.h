@@ -71,6 +71,7 @@ namespace dae
 		inline constexpr Sound PepperShake{ 8, "PepperShake.wav" };
 		inline constexpr Sound EnemyPeppered{ 9, "EnemySprayed.wav" };
 		inline constexpr Sound EnemySqiushed{ 10, "EnemySquahed.wav" };
+		inline constexpr Sound EnemyFall{ 11, "EnemyFall.wav" };
 	}
 	
 

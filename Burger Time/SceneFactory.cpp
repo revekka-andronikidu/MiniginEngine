@@ -28,7 +28,7 @@
 #include "GameEvents.h"
 
 #include "ColliderComponent.h"
-
+#include "EnemyComponent.h"
 using namespace dae;
 
 SceneFactory::SceneFactory()
@@ -300,7 +300,7 @@ void SceneFactory::CreateLevel(unsigned short stage)
 	}
 
 
-	CreateEnemies(scene);
+	CreateEnemies(scene, levelObject.get(), gridComp);
 	//parent enemies to the level(or at least the nemy manager)
 
 
@@ -357,20 +357,26 @@ std::unique_ptr<GameObject> SceneFactory::CreatePlayer(Scene& scene, int x, int 
 	return player;
 }
 
-void SceneFactory::CreateEnemies(Scene& scene)
+void SceneFactory::CreateEnemies(Scene& scene, GameObject* level, GridComponent* grid)
 {
-	int x = 3;
-	int y = 9; 
+	int x = 2;
+	int y = 2; 
 
 	auto posX = GameSettings::cellSize * GameSettings::scale.x * x;
 	auto posY = GameSettings::cellSize * GameSettings::scale.y * y;
 
 	auto enemy = ObjectFactory::GetInstance().CreateMrHotDog({ posX,posY, 0 });
+	enemy.get()->SetParent(level, false);
+	enemy->GetComponent<EnemyComponent>()->SetGrid(grid);
 
+	//auto enemy2 = ObjectFactory::GetInstance().CreateMrHotDog({ posX - 24,posY, 0 });
+	//enemy2.get()->SetParent(level, false);
+	
+	//parent to level so it can be moved with the level
 		//create enemies hereRead number of enemies per level from file and init here 
 	//add to enemy manager and that will determine thwir spawn pos (or the file will)
 	scene.Add(std::move(enemy));
-
+	//scene.Add(std::move(enemy2));
 }
 
 void SceneFactory::CreateHUD(Scene& scene, GameObject* playerPtr)

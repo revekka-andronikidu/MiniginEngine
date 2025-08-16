@@ -3,6 +3,7 @@
 #include <EngineEvents.h>
 #include "IngredientComponent.h"
 #include "ServiceLocator.h"
+#include "EnemyComponent.h"
 
 using namespace dae;
 IngredientPieceComponent::IngredientPieceComponent(dae::GameObject* owner, IngredientType type, int piece, IngredientComponent& parent) : GraphicsComponent(owner), IEventListener()
@@ -66,11 +67,11 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEven
 
 	if (auto collision = dynamic_cast<const CollisionEvent*>(&event))
 	{
-		const GameObject& other = collision->other;
+		GameObject& other = collision->other;
 
 		if (other.HasTag(Tag::PLAYER_FEET))
 		{
-			if (!m_SteppedOn)
+			if (!m_SteppedOn && !m_ParentIngredient.m_IsBouncing && !m_ParentIngredient.m_IsFalling && !m_ParentIngredient.m_IsWaitingToFall)
 			{
 				m_SteppedOn = true;
 				ServiceLocator::GetAudioService().PlayEffect(SoundID::BurgerStep.id, 0.8f, false);
@@ -81,36 +82,68 @@ void IngredientPieceComponent::OnNotify(const GameObject& entity, const BaseEven
 
 		else if (other.HasTag(Tag::BURGER))
 		{
-			//if not on the tray
-			if (!m_ParentIngredient.m_IsOnTheTray)
-				m_ParentIngredient.Fall();
-			else
+			auto otherPiece = other.GetComponent<IngredientPieceComponent>();
+			auto otherIngredient = &otherPiece->m_ParentIngredient;
+
+			// Only trigger if this ingredient is above the other
+			if (m_ParentIngredient.GetOwner()->GetTransform().GetWorldPosition().y > otherIngredient->GetOwner()->GetTransform().GetWorldPosition().y)
 			{
-				auto ingredient = other.GetParent()->GetComponent<IngredientComponent>();
-				if(!ingredient->m_IsOnTheTray)
-				ingredient->RegisterToTray(*m_ParentIngredient.m_Tray);
+				if (!m_ParentIngredient.m_IsOnTheTray && !m_ParentIngredient.m_IsFalling)
+				{
+					otherIngredient->m_IsBouncing = true;
+					otherIngredient->m_BounceTimer = 0.f;
+					otherIngredient->m_IsFalling = false;
+
+					m_ParentIngredient.m_IsBouncing = false;
+					m_ParentIngredient.Fall();
+				}
+				else if (m_ParentIngredient.m_IsOnTheTray)
+				{
+					if (!otherIngredient->m_IsOnTheTray)
+						otherIngredient->RegisterToTray(*m_ParentIngredient.m_Tray);
+				}
 			}
 		}
-		else if (other.HasTag(Tag::TRAY))
+		if (m_ParentIngredient.m_IsFalling)
 		{
-			if (m_ParentIngredient.m_IsFalling)
+			if (other.HasTag(Tag::TRAY))
 			{
 				m_ParentIngredient.RegisterToTray(other);
+				//if enemies on burger, get extra points
 			}
-		}
-		else if (other.HasTag(Tag::PLATFORM))
-		{
-			if (m_ParentIngredient.m_IsFalling)
+			else if (other.HasTag(Tag::PLATFORM))
 			{
 				if (!m_ParentIngredient.ShouldFall())
 				{
-					m_ParentIngredient.m_IsFalling = false;
 					ServiceLocator::GetAudioService().PlayEffect(SoundID::BurgerLand.id, 0.8f, false);
+					m_ParentIngredient.m_IsFalling = false;
+					if (m_ParentIngredient.m_FloorsToDrop > 0)
+					{
+						m_ParentIngredient.m_FloorsToDrop--;
+						m_ParentIngredient.m_IsWaitingToFall = true;
+						m_ParentIngredient.m_DelayBeforeFall = 0.3f; // seconds
+						//return;
+					}
+					else
+					{
+						m_ParentIngredient.KillEnemies();
+
+					}
+				}
+			}
+			else if (other.HasTag(Tag::ENEMY))
+			{
+				const auto& ingredientPos = GetOwner()->GetTransform().GetWorldPosition();
+				const auto& enemyPos = other.GetTransform().GetWorldPosition();
+
+				// Require ingredient to be above enemy
+				if (ingredientPos.y <= enemyPos.y)
+				{
+					other.GetComponent<EnemyComponent>()->Squish();
 				}
 			}
 		}
 	}
-
 }
 
 void IngredientPieceComponent::IncrementNudge()

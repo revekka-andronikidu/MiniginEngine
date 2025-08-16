@@ -68,6 +68,7 @@ void BurgerTimeGame::LoadResources()
 	ResourceManager::GetInstance().LoadSound(SoundID::PepperShake.filename);
 	ResourceManager::GetInstance().LoadSound(SoundID::EnemyPeppered.filename);
 	ResourceManager::GetInstance().LoadSound(SoundID::EnemySqiushed.filename);
+	ResourceManager::GetInstance().LoadSound(SoundID::EnemyFall.filename);
 }
 void BurgerTimeGame::AddListeners()
 {

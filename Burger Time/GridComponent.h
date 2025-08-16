@@ -25,9 +25,30 @@ namespace dae
         std::bitset<8> m_objects;  // Supports up to 8 object types
     };
 
+    struct CellPos
+    {
+        int x;
+        int y;
+
+        bool operator==(const CellPos& other) const
+        {
+            return x == other.x && y == other.y;
+        }
+    };
+
+
+    struct CellPosHash 
+    {
+        std::size_t operator()(const CellPos& pos) const noexcept {
+            return std::hash<int>()(pos.x) ^ (std::hash<int>()(pos.y) << 1);
+        }
+    };
+
     class GridComponent : public dae::BaseComponent 
     {
     public:
+      
+
         GridComponent(dae::GameObject* owner, int width, int height);
         ~GridComponent() = default;
 
@@ -49,6 +70,10 @@ namespace dae
         int GetWidth() const { return m_Width; }
         int GetHeight() const { return m_Height; }
 
+        std::vector<CellPos> FindShortestPath(CellPos start, CellPos goal) const;
+
+
+
     private:
         int m_Width;
         int m_Height;
@@ -56,5 +81,6 @@ namespace dae
         std::vector<std::vector<GridCell>> m_grid;
 
         const int GetBaseCellX(int cellX) const;
+        std::vector<CellPos> GetNeighbors(const CellPos& cell) const;
     };
 }

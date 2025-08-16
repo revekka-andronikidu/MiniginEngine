@@ -182,9 +182,9 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateMrHotDog(glm::vec3 startPo
 	animationComp->AddAnimation("Up", { {34,35}, framesPS });
 	animationComp->AddAnimation("Left", { {32,33},framesPS });
 	animationComp->AddAnimation("Peppered", { {49, 50}, framesPS });
-	animationComp->AddAnimation("Death", { {45, 46,47,48 }, framesPS});
+	animationComp->AddAnimation("Death", { {45, 46,47,48 }, framesPS, false});
 
-
+	animationComp->SetAnimate(true);
 	animationComp->SetAnimation("Left");
 
 	auto pos = startPos;

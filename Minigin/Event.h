@@ -19,7 +19,7 @@ namespace dae
     // Example collision event
     struct CollisionEvent final : public BaseEvent
     {
-        const GameObject& other; // the object this one collided with
-        CollisionEvent(const GameObject& otherObj) : other(otherObj) {}
+        GameObject& other; // the object this one collided with
+        CollisionEvent(GameObject& otherObj) : other(otherObj) {}
     };
 }

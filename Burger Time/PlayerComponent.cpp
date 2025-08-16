@@ -13,6 +13,7 @@
 #include "BurgerTimeGame.h"
 #include "GameState.h"
 #include "ObjectFactory.h"
+#include "EnemyComponent.h"
 
 using namespace dae;
 
@@ -136,10 +137,9 @@ void PlayerComponent::OnNotify(const GameObject& entity, const BaseEvent& event)
 		const GameObject& other = collision->other;
 		if (other.GetTag() == Tag::ENEMY)
 		{
-			if (m_IsDead) return; // already dead, ignore further collisions
-			// Death animation
-			//ENEMY MANAGER RESTART LEVEL
-			//std::cout << "Player collided with enemy!" << std::endl;
+			if (m_IsDead) return; 
+			if (!other.GetComponent<EnemyComponent>()->IsActive()) return;
+
 			m_IsDead = true;
 			m_CanMove = false;
 
@@ -151,14 +151,9 @@ void PlayerComponent::OnNotify(const GameObject& entity, const BaseEvent& event)
 
 	if (auto collision = dynamic_cast<const LevelCompleteEvent*>(&event))
 	{
-		//auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
-		//sprite->SetAnimation("Celebration");
-		//sprite->SetAnimate(true);
 		m_CurrentDirection = Direction::None;
 		StopMovement();
-
 		
-		//WinAnimation();
 	}
 }
 
@@ -220,10 +215,12 @@ void PlayerComponent::Animate()
 
 void PlayerComponent::Pepper()
 {
+	if (m_IsDead || !m_CanMove) return;
+
 	auto game = GameManager::GetInstance().GetActiveGame();
 	auto burgerTime = dynamic_cast<BurgerTimeGame*>(game);
 
-	if (burgerTime->m_Peppers > 0)
+	if (burgerTime->m_Peppers > 0 )
 	{
 		if (m_TimeSinceLastPepper >= m_PepperCooldown)
 		{
