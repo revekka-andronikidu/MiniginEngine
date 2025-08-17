@@ -67,6 +67,7 @@ void InGameState::OnEnter()
 void InGameState::OnExit()
 {
 	ServiceLocator::GetAudioService().StopSound(SoundID::BGM.id);
+	//EnemyManager::GetInstance().Restart();
 }
 
 

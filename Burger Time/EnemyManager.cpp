@@ -39,9 +39,9 @@ void EnemyManager::Restart()
 	{
 		m_EnemiesToRespawn.push_back(enemy);
 	}
-	for (auto enemy : m_Enemies)
+	auto enemies = SceneManager::GetInstance().GetActiveScene().GetObjectsWithTag(Tag::ENEMY);
+	for (auto enemy : enemies)
 	{
-		EventManager::GetInstance().RemoveListener(this);
 		enemy->Destroy();
 	}
 	m_Enemies.clear();
@@ -71,9 +71,42 @@ void dae::EnemyManager::OnNotify(const GameObject& entity, const BaseEvent& even
 
 	if (auto evemt = dynamic_cast<const EnemyDefeatedEvent*>(&event))
 	{
-
-		m_EnemiesToRespawn.push_back(entity.GetComponent<EnemyComponent>()->GetType());
+		AddSpawnEnemy();
+		//m_EnemiesToRespawn.push_back(entity.GetComponent<EnemyComponent>()->GetType());
 		//EventManager::GetInstance().RemoveListener<EnemyDefeatedEvent>(enemy.get(), this);
+	}
+}
+
+void EnemyManager::AddSpawnEnemy()
+{
+	auto& scene = SceneManager::GetInstance().GetActiveScene();
+	auto existingEnemies = scene.GetObjectsWithTag(Tag::ENEMY);
+
+	std::unordered_map<EnemyType, int> existingCount;
+	for (auto& enemyObj : existingEnemies)
+	{
+		if (auto enemyComp = enemyObj->GetComponent<EnemyComponent>())
+		{
+			if(enemyComp)
+			existingCount[enemyComp->GetType()]++;
+		}
+	}
+
+	// Count desired enemies of each type (from m_EnemyTypes)
+	std::unordered_map<EnemyType, int> desiredCount;
+	for (auto& type : m_EnemyTypes)
+	{
+		desiredCount[type]++;
+	}
+
+	// Add missing enemies to respawn list
+	for (auto& [type, count] : desiredCount)
+	{
+		int missing = count - existingCount[type]; // how many we need to spawn
+		for (int i = 0; i < missing; ++i)
+		{
+			m_EnemiesToRespawn.push_back(type);
+		}
 	}
 }
 

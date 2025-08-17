@@ -295,13 +295,70 @@ void SceneFactory::CreateLevel(unsigned short stage)
 		player = CreatePlayer(scene, x, y, gridComp);
 		player->SetParent(levelObject.get());
 	}
+	if (m_Game->m_SelectedGameMode == GameMode::Coop)
+	{
+		//Create second player
+		//std::unique_ptr<GameObject> SceneFactory::CreatePlayer(Scene& scene, int x, int y, GridComponent* grid);
+		//set diffferent sprite sheet
+		//different input
+		//offset lives display
+		//update enemies to chase after either player
+	}
+	if (m_Game->m_SelectedGameMode == GameMode::Versus)
+	{
+		for (const auto& sp : data["enemyPlayer"])
+		{
+			int X = sp[0];
+			int Y = sp[1];
+
+			constexpr int cellSize = GameSettings::cellSize * GameSettings::scale.x; // <-- replace with your tile size
+			glm::vec3 startPos{};
+			startPos.x = X * cellSize;
+			startPos.y = Y * cellSize;
+
+			auto enemyPlayer = ObjectFactory::GetInstance().CreateEnemyPlayer(startPos, GameSettings::scale);
+			enemyPlayer.get()->SetTag(Tag::ENEMY);
+			enemyPlayer.get()->SetParent(levelObject.get());
+			//add enemyplayercomponent
+			//enemyPlayer->SetGrid(grid);
+
+			auto& input = dae::InputManager::GetInstance();
+
+			auto moveUp = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Up);
+			auto moveDown = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Down);
+			auto moveLeft = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Left);
+			auto moveRight = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Right);
 
 
+
+			input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_D }, std::move(moveRight));
+			input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_A }, std::move(moveLeft));
+			input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_S }, std::move(moveDown));
+			input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_W }, std::move(moveUp));
+
+
+
+			input.AddController(1);
+			auto UpController = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Up);
+			auto DownController = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Down);
+			auto LeftController = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Left);
+			auto RightController = std::make_unique<EnemyMoveCommand>(enemyPlayer.get(), Direction::Right);
+
+			input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadUp,1 }, std::move(UpController));
+			input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadDown,1 }, std::move(DownController));
+			input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadLeft,1 }, std::move(LeftController));
+			input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadRight,1 }, std::move(RightController));
+
+			scene.Add(std::move(enemyPlayer));
+
+		}
+	}
 	
-
-
-	CreateEnemies(data, scene, levelObject.get(), gridComp);
-	//parent enemies to the level(or at least the nemy manager)
+	if (m_Game->m_SelectedGameMode != GameMode::Versus)
+	{
+		CreateEnemies(data, scene, levelObject.get(), gridComp);
+		//or create but less
+	}
 
 
 	auto pos = levelObject->GetTransform().GetWorldPosition();
@@ -339,16 +396,17 @@ std::unique_ptr<GameObject> SceneFactory::CreatePlayer(Scene& scene, int x, int 
 	auto moveRight = std::make_unique<MoveCommand>(player.get(), Direction::Right);
 	auto pepper = std::make_unique<PepperCommand>(player.get());
 
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_D }, std::move(moveRight));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_A }, std::move(moveLeft));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_S }, std::move(moveDown));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_W }, std::move(moveUp));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_SPACE }, std::move(pepper));
+	if (m_Game->m_SelectedGameMode == GameMode::Solo)
+	{
+		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_D }, std::move(moveRight));
+		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_A }, std::move(moveLeft));
+		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_S }, std::move(moveDown));
+		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_W }, std::move(moveUp));
+		input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_SPACE }, std::move(pepper));
+	}
 
 
 	input.AddController(0);
-	input.AddController(1);
-
 	auto UpController = std::make_unique<MoveCommand>(player.get(), Direction::Up);
 	auto DownController = std::make_unique<MoveCommand>(player.get(), Direction::Down);
 	auto LeftController = std::make_unique<MoveCommand>(player.get(), Direction::Left);
@@ -356,10 +414,10 @@ std::unique_ptr<GameObject> SceneFactory::CreatePlayer(Scene& scene, int x, int 
 	auto pepperController = std::make_unique<PepperCommand>(player.get());
 
 	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadUp ,0}, std::move(UpController));
-	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadDown,0 }, std::move(DownController));
-	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadLeft ,1}, std::move(LeftController));
-	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadRight ,1}, std::move(RightController));
-	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA }, std::move(pepperController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadDown ,0}, std::move(DownController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadLeft ,0}, std::move(LeftController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadRight,0 }, std::move(RightController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA,0 }, std::move(pepperController));
 
 
 

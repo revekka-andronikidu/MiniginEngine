@@ -5,11 +5,59 @@
 #include <ServiceLocator.h>
 #include <SpriteSheetComponent.h>
 #include <TimeManager.h>
+#include "GridComponent.h"
+#include "Helpers.h"
 
 
 
 using namespace dae;
 
+dae::EnemyPlayerComponent::EnemyPlayerComponent(GameObject* owner) : BaseComponent(owner)
+{
+	//EventManager::GetInstance().AddListener<CollisionEvent>(owner, this);
+	EventManager::GetInstance().AddGlobalListener<LevelCompleteEvent>(this);
+
+	auto& transform = GetOwner()->GetTransform();
+	auto cellSize = GameSettings::cellSize * GameSettings::scale.x;
+
+	// get world position relative to the level
+	glm::vec3 pos = transform.GetWorldPosition();
+	m_SpawnPosition = pos;
+
+
+	// Offset if on left half of the screen
+
+		pos.y -= 4 * cellSize;
+		m_CurrentDirection = Direction::Down;  // default: move left
+	
+
+	transform.SetPosition(pos);
+}
+
+
+dae::EnemyPlayerComponent::~EnemyPlayerComponent()
+{
+	if (EventManager::IsAlive())
+	{
+		EventManager::GetInstance().RemoveListener(this);
+	}
+}
+
+void EnemyPlayerComponent::Update()
+{
+	Animate();
+	m_IsMoving = false;
+}
+
+void EnemyPlayerComponent::OnNotify(const GameObject& entity, const BaseEvent& event)
+{
+	if (auto collision = dynamic_cast<const LevelCompleteEvent*>(&event))
+	{
+		m_CurrentDirection = Direction::None;
+		StopMovement();
+
+	}
+}
 void EnemyPlayerComponent::Move(Direction dir)
 {
 	if (!m_pGrid || !m_CanMove)
@@ -127,6 +175,13 @@ void EnemyPlayerComponent::RegisterToIngredient(GameObject* burger)
 	GetOwner()->SetParent(burger, true);
 }
 
+void EnemyPlayerComponent::ResetPlayer(glm::vec3 pos)
+{
+	m_IsDead = false;
+	m_CanMove = true;
+	m_CurrentDirection = Direction::Down;
+	GetOwner()->GetTransform().SetPosition(pos);
+}
 
 void EnemyPlayerComponent::Animate()
 {

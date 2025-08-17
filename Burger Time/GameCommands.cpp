@@ -7,7 +7,7 @@
 #include "BurgerTimeGame.h"
 #include "GameState.h"
 #include "KeypadComponent.h"
-
+#include  "EnemyPlayerComponent.h"
 using namespace dae;
 
 void MuteGameCommand::Execute()
@@ -59,6 +59,12 @@ void BackToMenuCommand::Execute()
 void MoveCommand::Execute()
 {
 	auto player = GetGameObject()->GetComponent<PlayerComponent>();
+	player->Move(m_Direction);
+};
+
+void EnemyMoveCommand::Execute()
+{
+	auto player = GetGameObject()->GetComponent<EnemyPlayerComponent>();
 	player->Move(m_Direction);
 };
 

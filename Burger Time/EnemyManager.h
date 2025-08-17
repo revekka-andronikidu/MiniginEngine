@@ -35,6 +35,7 @@ namespace dae
 		GridComponent* m_pGrid{ nullptr };
 
 		void SpawnEnemy(EnemyType type, const SpawnPoint& spawnPoint);
+        void AddSpawnEnemy();
 
     public:
         void AddEnemy(EnemyType type);

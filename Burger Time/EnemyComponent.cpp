@@ -115,7 +115,7 @@ void EnemyComponent::SetNewTarget()
 	if (m_CalculatePath)
 	{
 		m_NewPath = CalculatePath();
-		if (!m_NewPath.size() < 1)
+		if (!m_NewPath.size() <= 1)
 		{
 
 			if (IsValidNextTarget(m_CurrentDirection, m_CurrentPath[m_CurrentPathPoint], m_NewPath[1]))

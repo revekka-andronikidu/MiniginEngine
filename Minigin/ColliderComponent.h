@@ -2,7 +2,6 @@
 #include "BaseComponent.h"
 #include <vec3.hpp>
 #include <unordered_set>
-#include "Subject.h"
 
 namespace dae
 {
@@ -12,7 +11,7 @@ namespace dae
         int mask; // Bitmask or category
     };
 
-	class ColliderComponent : public BaseComponent, public Subject
+	class ColliderComponent : public BaseComponent
 	{
     public:
         ColliderComponent(GameObject* owner , const glm::vec3 size, const glm::vec3 offset = {0,0,0}) : BaseComponent(owner)

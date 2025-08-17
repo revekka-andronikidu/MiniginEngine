@@ -84,7 +84,7 @@ void dae::PeppersDisplay::OnNotify(const GameObject& entity, const BaseEvent& ev
 
         m_CurrentPeppers = burgerTime->m_Peppers;
 
-		std::cout << "Player Peppers: " << std::to_string(m_CurrentPeppers) << std::endl;
+		//std::cout << "Player Peppers: " << std::to_string(m_CurrentPeppers) << std::endl;
 		m_pText->SetText(std::to_string(m_CurrentPeppers));
 	}
 }

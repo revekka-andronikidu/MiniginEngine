@@ -5,7 +5,6 @@ namespace dae
 {
 	PointsComponent::PointsComponent(GameObject* owner, int points)
 		: BaseComponent(owner)
-		, Subject()
 		, m_Points(points)
 	{
 	}

@@ -100,6 +100,7 @@ void BurgerTimeGame::Update()
 {
 
 	m_GameModeMachine.Update();
+	
 	EnemyManager::GetInstance().Update();
 	
 };

@@ -3,8 +3,6 @@
 #include "GameObject.h"
 #include "SceneManager.h"
 #include "Scene.h"
-#include "EngineEvents.h"
-#include "Subject.h"
 #include "EventManager.h"
 
 using namespace dae;

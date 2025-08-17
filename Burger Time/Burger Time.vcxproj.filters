@@ -85,6 +85,9 @@
     <ClCompile Include="TrayComponent.cpp">
       <Filter>Components\Level</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyPlayerComponent.cpp">
+      <Filter>Components\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectFactory.h">
@@ -158,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="TrayComponent.h">
       <Filter>Components\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyPlayerComponent.h">
+      <Filter>Components\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

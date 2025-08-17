@@ -71,21 +71,25 @@ namespace dae
 	class MoveCommand : public GameObjectCommand
 	{
 	public:
-		//MoveCommand(GameObject* gameObject, Direction direction, int leftBorder = 0, int rifgtBorder = 500, float speed = 10.f) : GameObjectCommand(gameObject), m_Direction{ direction }, m_MoveSpeed{ speed }, m_LeftBorder{ leftBorder }, m_RightBorder{ rifgtBorder } {};
 		MoveCommand(GameObject* gameObject, Direction direction) : GameObjectCommand(gameObject), m_Direction{ direction } {};
 
 		void Execute() override;
 		void SetDirection(Direction direction) { m_Direction = direction; };
 
-		//void SetSpeed(float speed) { m_MoveSpeed = speed; };
+	private:
+		Direction m_Direction{};
+	};
+
+	class EnemyMoveCommand : public GameObjectCommand
+	{
+	public:
+		EnemyMoveCommand(GameObject* gameObject, Direction direction) : GameObjectCommand(gameObject), m_Direction{ direction } {};
+
+		void Execute() override;
+		void SetDirection(Direction direction) { m_Direction = direction; };
 
 	private:
-		//int m_LeftBorder;
-		//int m_RightBorder;
-		//float m_MoveSpeed{};
 		Direction m_Direction{};
-
-		
 	};
 }
 

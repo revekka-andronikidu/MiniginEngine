@@ -1,6 +1,5 @@
 #include "IngredientPieceComponent.h"
 #include <ResourceManager.h>
-#include <EngineEvents.h>
 #include "IngredientComponent.h"
 #include "ServiceLocator.h"
 #include "EnemyComponent.h"

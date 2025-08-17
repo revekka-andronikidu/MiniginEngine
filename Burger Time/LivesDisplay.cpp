@@ -58,7 +58,7 @@ void dae::LivesDisplay::OnNotify(const GameObject& entity, const BaseEvent& even
     {
         // Update the health bar UI
         m_CurrentLives = entity.GetComponent<LivesComponent>()->GetLives();
-        std::cout << "Player Lives: " << std::to_string(m_CurrentLives) << std::endl;
+        //std::cout << "Player Lives: " << std::to_string(m_CurrentLives) << std::endl;
 
     }
 

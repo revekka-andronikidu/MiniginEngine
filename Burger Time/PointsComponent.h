@@ -1,12 +1,12 @@
 #pragma once
 #include "BaseComponent.h"
-#include "Subject.h"
+
 
 
 namespace dae {
 
 
-	class PointsComponent final : public BaseComponent, public Subject
+	class PointsComponent final : public BaseComponent
 	{
 	public:
 		PointsComponent(GameObject* pOwner, int points = 0);
