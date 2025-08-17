@@ -24,6 +24,8 @@ public:
 	bool IsUpThisFrame(unsigned int button) const { return m_ButtonsReleasedThisFrame & button; }
 	bool IsPressed(unsigned int button) const { return m_CurrentState.Gamepad.wButtons & button; }
 
+	unsigned int GetIndex() const { return m_ControllerIndex; }
+
 private:
 	XINPUT_STATE m_CurrentState{};
 	XINPUT_STATE m_PreviousState{};
@@ -57,6 +59,11 @@ void XboxController::XboxControllerImpl::Update()
 XboxController::XboxController(unsigned int controllerIndex)
 {
 	m_pImpl = std::make_unique<XboxControllerImpl>(controllerIndex);
+}
+
+unsigned int XboxController::GetIndex()
+{
+	return m_pImpl->GetIndex();
 }
 
 void dae::XboxController::Update()

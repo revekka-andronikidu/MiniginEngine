@@ -43,6 +43,7 @@ namespace dae
 		bool IsDown(ControllerButton button) const;
 		bool IsUp(ControllerButton button) const;
 		bool IsPressed(ControllerButton button) const;
+		unsigned int GetIndex();
 
 	};
 }

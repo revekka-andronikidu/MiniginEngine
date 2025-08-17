@@ -28,6 +28,7 @@ namespace dae
 		{
 			if (lives <= 0)
 			{
+				m_CurrentLives = lives;
 				EventManager::GetInstance().TriggerEvent(GameEvent::PLAYER_DEATH, *GetOwner());
 			}
 			else

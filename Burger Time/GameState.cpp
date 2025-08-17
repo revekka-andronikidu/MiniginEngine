@@ -126,7 +126,7 @@ void PlayerDeathState::Update()
 		}
 		else
 		{
-			burgerTime->m_GameModeMachine.EnterState<GameOverState>(5.f);
+			burgerTime->m_GameModeMachine.EnterState<GameOverState>(4.f);
 		}
 		//NextStage();
 	}
@@ -160,8 +160,9 @@ void HighScoreEnterState::OnEnter()
 	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::HighScoreEntry);
 	SceneFactory::GetInstance().CreateHighScoreEntry();
 
-	SceneManager::GetInstance().SetActiveScene(scene);
+	SceneManager::GetInstance().QueueSceneChange(SceneManager::GetInstance().GetActiveScene().GetSceneName(), scene.GetSceneName());
 }
+
 
 void HighScoreEnterState::OnExit()
 {

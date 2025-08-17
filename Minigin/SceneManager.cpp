@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include <iostream>
+#include "InputManager.h"
 
 void dae::SceneManager::Update()
 {
@@ -102,12 +103,16 @@ bool dae::SceneManager::HasScene(const std::string& name) const
 
 void dae::SceneManager::DestroyScene(const std::string& name) 
 {
+	InputManager::GetInstance().RemoveSceneInput(&GetScene(name));
     auto it = std::remove_if(m_scenes.begin(), m_scenes.end(),
-        [&](const std::shared_ptr<Scene>& scene) {
+        [&](const std::shared_ptr<Scene>& scene) 
+		{
             return scene->GetSceneName() == name;
         });
 
-    if (it != m_scenes.end()) {
+
+    if (it != m_scenes.end()) 
+	{
         m_scenes.erase(it, m_scenes.end()); // unique_ptr will handle destruction
     }
 }

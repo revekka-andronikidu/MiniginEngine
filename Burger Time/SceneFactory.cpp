@@ -261,9 +261,9 @@ void SceneFactory::CreateLevel(unsigned short stage)
 			//Add pieces to the scene
 			auto comp = ingredient.get()->GetComponent<IngredientComponent>();
 			auto pieces = comp->GetPieces();
-			for (auto piece : pieces)
+			for (auto p : pieces)
 			{
-				scene.Add(piece);
+				scene.Add(p);
 			}
 			scene.Add(std::move(ingredient));
 		}
@@ -341,7 +341,25 @@ std::unique_ptr<GameObject> SceneFactory::CreatePlayer(Scene& scene, int x, int 
 	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_A }, std::move(moveLeft));
 	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_S }, std::move(moveDown));
 	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_W }, std::move(moveUp));
-	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyPressed, SDL_SCANCODE_SPACE }, std::move(pepper));
+	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_SPACE }, std::move(pepper));
+
+
+	input.AddController(0);
+
+	auto UpController = std::make_unique<MoveCommand>(player.get(), Direction::Up);
+	auto DownController = std::make_unique<MoveCommand>(player.get(), Direction::Down);
+	auto LeftController = std::make_unique<MoveCommand>(player.get(), Direction::Left);
+	auto RightController = std::make_unique<MoveCommand>(player.get(), Direction::Right);
+	auto pepperController = std::make_unique<PepperCommand>(player.get());
+
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadUp }, std::move(UpController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadDown }, std::move(DownController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadLeft }, std::move(LeftController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyPressed, XboxController::ControllerButton::DPadRight }, std::move(RightController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA }, std::move(pepperController));
+
+
+
 
 	auto colliderSize = glm::vec3{ (GameSettings::cellSize - 4) * GameSettings::scale.x,(GameSettings::cellSize / 4) * GameSettings::scale.y, 0 * GameSettings::scale.z };
 	auto colliserOffest = glm::vec3{ 2 * GameSettings::scale.x, (colliderSize.y * 4 - colliderSize.y) ,0 };
@@ -513,11 +531,13 @@ void SceneFactory::CreateHighScores()
 	auto menu = ObjectFactory::GetInstance().CreateText("TO THE MAIN MENU", font, { 255,255,255,255 }, TextComponent::TextAlign::Center, { GameSettings::windowWidth / 2 * GameSettings::scale.x, (GameSettings::windowHeight - GameSettings::windowHeight / 4 + GameSettings::cellSize * 2) * GameSettings::scale.y, 0 }, GameSettings::scale);
 
 	auto& input = dae::InputManager::GetInstance();
+	input.AddController(0);
+
 	auto menuBack = std::make_unique<BackToMenuCommand>();
 	auto menuBackC = std::make_unique<BackToMenuCommand>();
 
 	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(menuBack));
-	//input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonB }, std::move(menuBackC));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonB }, std::move(menuBackC));
 
 	scene.Add(std::move(back));
 	scene.Add(std::move(menu));
@@ -554,6 +574,19 @@ void SceneFactory::CreateHighScoreEntry()
 	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_A }, std::move(menuLeft));
 	input.BindSceneInput(&scene, KeyboardInput{ ButtonState::KeyDown, SDL_SCANCODE_RETURN }, std::move(menuEnter));
 
+	input.AddController(0);
+
+	auto menuUpController = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Up);
+	auto menuDownController = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Down);
+	auto menuLeftController = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Left);
+	auto menuRightController = std::make_unique<KeypadMoveCommand>(keypad.get(), Direction::Right);
+	auto menuEnterController = std::make_unique<KeypadSelectCommand>(keypad.get());
+
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadUp }, std::move(menuUpController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadDown }, std::move(menuDownController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadLeft }, std::move(menuLeftController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::DPadRight }, std::move(menuRightController));
+	input.BindSceneInput(&scene, ControllerInput{ ButtonState::KeyDown, XboxController::ControllerButton::ButtonA }, std::move(menuEnterController));
 	
 	scene.Add(std::move(keypad));
 	scene.Add(std::move(arrow));

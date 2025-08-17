@@ -57,39 +57,50 @@ void EnemyComponent::Update()
 	}
 	if (m_CanMove)
 	{
-		if (m_CalculatePath)
-		{
-			int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
 
-			auto player = SceneManager::GetInstance().GetActiveScene().GetObjectsWithTag(Tag::PLAYER);
-			auto targetPos = player[0]->GetTransform().GetLocalPosition();
-			targetPos.y += cellSize; // to get player feet position
-			targetPos.x += cellSize / 2; // to get player center position
+		MoveTowardsTarget();
 
-			auto pos = GetOwner()->GetTransform().GetLocalPosition();
-			pos.x += cellSize / 2; // to get enemy center position
-			pos.y += cellSize; // to get enemy feet position
 
-			int cellX = pos.x / cellSize;
-			int cellY = pos.y / cellSize;
-
-			int cellXPlayer = targetPos.x / cellSize;
-			int cellYPlayer = targetPos.y / cellSize;
-
-			CellPos start = CellPos{ cellX, cellY };
-			CellPos goal = CellPos{ cellXPlayer, cellYPlayer };
-
-			m_CurrentPath = m_pGrid->FindShortestPath(start, goal);
-			for (auto p : m_CurrentPath)
-			{
-				std::cout << "Path: (" << p.x << ", " << p.y << ")\n";
-			}
-			m_CalculatePath = false;
-			m_NextCellIndex = 1;
-		}
-		FollowPath();
 		Move();
+	
+
+
+
+		//if (m_CalculatePath)
+		//{
+		//	int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
+
+		//	auto player = SceneManager::GetInstance().GetActiveScene().GetObjectsWithTag(Tag::PLAYER);
+		//	auto targetPos = player[0]->GetTransform().GetLocalPosition();
+		//	targetPos.y += cellSize; // to get player feet position
+		//	targetPos.x += cellSize / 2; // to get player center position
+
+		//	auto pos = GetOwner()->GetTransform().GetLocalPosition();
+		//	pos.x += cellSize / 2; // to get enemy center position
+		//	pos.y += cellSize; // to get enemy feet position
+
+		//	int cellX = pos.x / cellSize;
+		//	int cellY = pos.y / cellSize;
+
+		//	int cellXPlayer = targetPos.x / cellSize;
+		//	int cellYPlayer = targetPos.y / cellSize;
+
+		//	CellPos start = CellPos{ cellX, cellY };
+		//	CellPos goal = CellPos{ cellXPlayer, cellYPlayer };
+
+		//	m_CurrentPath = m_pGrid->FindShortestPath(start, goal);
+		//	for (auto p : m_CurrentPath)
+		//	{
+		//		std::cout << "Path: (" << p.x << ", " << p.y << ")\n";
+		//	}
+		//	m_CalculatePath = false;
+		//	m_NextCellIndex = 1;
+		//}
+		//FollowPath();
+		//Move();
 	}
+
+	Animate();
 }
 
 void EnemyComponent::FollowPath()
@@ -143,6 +154,46 @@ Direction EnemyComponent::CalculateDirection()
 	return Direction::None;
 }
 
+void EnemyComponent::MoveTowardsTarget()
+{
+	auto pos = GetOwner()->GetTransform().GetLocalPosition();
+	glm::vec3 newPos = pos;
+	int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
+	float halfCell = cellSize / 2.0f;
+	float move = m_MoveSpeed * TimeManager::GetInstance().GetDeltaTime();
+
+	auto player = SceneManager::GetInstance().GetActiveScene().GetObjectsWithTag(Tag::PLAYER);
+	auto targetPos = player[0]->GetTransform().GetLocalPosition();
+
+	float dx = targetPos.x - pos.x;
+	float dy = targetPos.y - pos.y;
+
+	// Determine priority
+	{
+		if (dy < 0 && m_CurrentDirection != Direction::Down && CanGoUp()) // Up
+		{
+			m_CurrentDirection = Direction::Up;
+			return;
+		}
+		else if (dy > 0 && m_CurrentDirection != Direction::Up && CanGoDown()) // Down
+		{
+			m_CurrentDirection = Direction::Down;
+			return;
+		}
+
+	}
+	if (true)// Horizontal movement
+	{
+		if (dx < 0 && m_CurrentDirection != Direction::Right && CanGoLeft()) // Left
+		{
+			m_CurrentDirection = Direction::Left;
+		}
+		else if (dx > 0 && m_CurrentDirection != Direction::Left && CanGoRight()) // Right
+		{
+			m_CurrentDirection = Direction::Right;
+		}
+	}
+}
 
 
 bool EnemyComponent::CanGoLeft()
@@ -206,6 +257,8 @@ void EnemyComponent::Move()
 	{
 	case Direction::Left:
 	{
+		if (!CanGoLeft())
+			return; // can't move left, so return
 		newPos.x -= move;
 		int cellY = static_cast<int>(newPos.y + cellSize) / (cellSize);
 		newPos.y = static_cast<float>(cellY * (cellSize)-3 * GameSettings::scale.y);
@@ -213,16 +266,22 @@ void EnemyComponent::Move()
 		break;
 	case Direction::Right:
 	{
+		if (!CanGoRight())
+			return; // can't move right, so return
 		newPos.x += move;
 		int cellY = static_cast<int>(newPos.y + cellSize) / cellSize;
 		newPos.y = static_cast<float>(cellY * (cellSize)-3 * GameSettings::scale.y);
 	}
 		break;
 	case Direction::Up:
+		if (!CanGoUp())
+			return; // can't move up, so return
 		newPos.y -= move;
 		newPos.x = m_pGrid->GetLadderCenterX(pos.x + cellSize / 2, pos.y);
 		break;
 	case Direction::Down:
+		if (!CanGoDown())
+			return; // can't move down, so return
 		newPos.y += move;
 		newPos.x = m_pGrid->GetLadderCenterX(static_cast<int>(pos.x + cellSize / 2), pos.y);
 		break;
@@ -239,21 +298,17 @@ void EnemyComponent::Pepper()
 	m_PepperedTimer = 0.f;
 	auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
 	if (!sprite) return;
-
-
-	sprite->SetAnimation("Peppered");
-	sprite->SetAnimate(true);
 }
 void EnemyComponent::UnPepper()
 {
 	m_IsPeppered = false;
 	m_CanMove = true;
 
-	//later exclude this
-	auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
-	if (!sprite) return;
-	sprite->SetAnimation("Down");
-	sprite->SetAnimate(false);
+	////later exclude this
+	//auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
+	//if (!sprite) return;
+	//sprite->SetAnimation("Down");
+	//sprite->SetAnimate(false);
 
 
 }
@@ -276,10 +331,10 @@ void EnemyComponent::Die()
 	m_IsDead = true;
 	m_CanMove = false;
 
-	auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
+	/*auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
 	if (!sprite) return;
 	sprite->SetAnimation("Death");
-	sprite->SetAnimate(true);
+	sprite->SetAnimate(true);*/
 }
 
 void EnemyComponent::RegisterToIngredient(GameObject* burger)
@@ -289,5 +344,41 @@ void EnemyComponent::RegisterToIngredient(GameObject* burger)
 	//diable collision
 	//GetOwner()->GetTransform().SetPosition(burger->GetTransform().GetWorldPosition());
 	GetOwner()->SetParent(burger, true);
+
+}
+
+void EnemyComponent::Animate()
+{
+	auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
+	if (!sprite) return;
+
+	if (m_IsDead)
+	{
+		sprite->SetAnimation("Death");
+		sprite->SetAnimate(true);
+		return;
+	}
+	else if (m_IsPeppered)
+	{
+		sprite->SetAnimation("Peppered");
+		sprite->SetAnimate(true);
+		return;
+	}
+	else if (m_CanMove)
+	{
+		sprite->SetAnimate(true);
+		switch (m_CurrentDirection)
+		{
+		case Direction::Up:    sprite->SetAnimation("Up"); break;
+		case Direction::Down:  sprite->SetAnimation("Down"); break;
+		case Direction::Left:  sprite->SetAnimation("Left"); break;
+		case Direction::Right: sprite->SetAnimation("Left", true); break;
+		default: sprite->SetAnimate(false); return;
+		}
+	}
+	else if (m_IsRegisteredToBurger)
+	{
+		sprite->SetAnimate(false);
+	}
 
 }

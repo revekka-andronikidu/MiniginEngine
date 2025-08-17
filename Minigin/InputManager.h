@@ -8,7 +8,7 @@
 //#include "Gui.h"
 #include <memory>
 #include "Scene.h"
-
+#include <SDL.h>
 
 namespace dae
 {
@@ -85,7 +85,7 @@ namespace dae
 		void BindSceneInput( Scene* scene, KeyboardInput input, std::unique_ptr<Command> command);
 		void BindSceneInput( Scene* scene, ControllerInput input, std::unique_ptr<Command> command);
 
-
+		void RemoveSceneInput(Scene* scene);
 		void ProcessContext(InputContext& context) ;
 
 		bool IsKeyboardTriggered(const KeyboardInput& input) const;

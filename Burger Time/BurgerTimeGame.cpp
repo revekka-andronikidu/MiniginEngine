@@ -76,6 +76,7 @@ void BurgerTimeGame::AddListeners()
 	EventManager::GetInstance().AddGlobalListener<LevelCompleteEvent>(this);
 	EventManager::GetInstance().AddGlobalListener<PointsIncreasedEvent>(this);
 	EventManager::GetInstance().AddGlobalListener<LivesUpdatedEvent>(this);
+	EventManager::GetInstance().AddGlobalListener<PlayerDeathEvent>(this);
 }
 
 void BurgerTimeGame::Initialize()
@@ -171,24 +172,29 @@ void BurgerTimeGame::OnNotify(const GameObject& entity, const BaseEvent& event)
 		}
 		else
 		{
-			m_GameModeMachine.EnterState<GameOverState>(5.f);			
+			m_GameModeMachine.EnterState<GameOverState>(4.f);			
 		}
 		
 	}
 
-	if (auto pointsEvent = dynamic_cast<const PointsIncreasedEvent*>(&event))
+	else if (auto pointsEvent = dynamic_cast<const PointsIncreasedEvent*>(&event))
 	{
 		m_Score += pointsEvent->GetPoints();
 		GameObject dummySender;
 		EventManager::GetInstance().TriggerEvent(ScoreUpdatedEvent{ m_Score }, dummySender);
 	}
 
-	if (auto livesEvent = dynamic_cast<const LivesUpdatedEvent*>(&event))
+	else if (auto livesEvent = dynamic_cast<const LivesUpdatedEvent*>(&event))
 	{
 		// Update the health bar UI
 		m_PlayerLives = entity.GetComponent<LivesComponent>()->GetLives();
 
 		m_GameModeMachine.EnterState<PlayerDeathState>(3.f);
 
+	}
+	else if (auto livesEvent = dynamic_cast<const PlayerDeathEvent*>(&event))
+	{
+		m_PlayerLives = entity.GetComponent<LivesComponent>()->GetLives();
+		m_GameModeMachine.EnterState<PlayerDeathState>(3.f);
 	}
 }

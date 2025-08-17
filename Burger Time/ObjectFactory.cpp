@@ -175,7 +175,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateMrHotDog(glm::vec3 startPo
 	auto enemy = std::make_unique<dae::GameObject>();
 	enemy->SetTag(Tag::ENEMY);
 
-	float framesPS{ 4 };
+	float framesPS{ 8 };
 
 	auto animationComp = enemy->AddComponent<dae::SpriteSheetComponent>(texture, rows, cols);
 	animationComp->AddAnimation("Down", { { 30, 31}, framesPS });

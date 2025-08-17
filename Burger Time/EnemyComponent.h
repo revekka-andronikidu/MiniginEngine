@@ -53,10 +53,14 @@ namespace dae
 		void Move();
 		void FollowPath();
 		void Animate();
+
+
 		bool CanGoLeft();
 		bool CanGoRight();
 		bool CanGoUp();
 		bool CanGoDown();
+
+		void MoveTowardsTarget();
 		//void SetRandomDirection();
 		
 	};

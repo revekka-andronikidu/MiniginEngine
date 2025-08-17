@@ -59,7 +59,7 @@ void SpriteSheetComponent::Animate()
         m_ElapsedTime -= 1.0f / m_pCurrentAnimation->framesPerSecond;
         m_CurrentFrame++; //= (m_CurrentFrame + 1) % m_pCurrentAnimation->frameCount;
 
-        if (m_CurrentFrame >= m_pCurrentAnimation->frames.size())
+        if (m_CurrentFrame >= static_cast<int>(m_pCurrentAnimation->frames.size()))
         {
             if (!m_NextAnimation.empty())
             {

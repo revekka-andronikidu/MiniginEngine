@@ -7,7 +7,7 @@
 
 dae::LivesDisplay::LivesDisplay(GameObject* owner)
     : GraphicsComponent(owner)
-	, m_CurrentLives{ 3 } // Default lives
+	, m_CurrentLives{} // Default lives
 {
     m_pTexture = ResourceManager::GetInstance().GetTexture("spritesheet.png");
     if (!m_pTexture)
