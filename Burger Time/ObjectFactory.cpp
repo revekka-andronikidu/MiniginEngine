@@ -18,6 +18,7 @@
 #include "AnimatedTextComponent.h"
 #include "EnemyComponent.h"
 #include "PepperComponent.h"
+//#include "EnemyPlayerComponent.h"
 
 using namespace dae;
 
@@ -164,6 +165,43 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreatePepper(Direction direction
 	
 	return pepper;
 }
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateEnemyPlayer(glm::vec3 startPos, glm::vec3 scale)
+{
+	std::string texture{ "spritesheet.png" };
+	int cols{ 15 };
+	int rows{ 11 };
+	//glm::vec3 scale{1,1,1};
+
+	auto player = std::make_unique<dae::GameObject>();
+	player->SetTag(Tag::ENEMY);
+
+	float framesPS{ 8.f };
+
+	auto animationComp = player->AddComponent<dae::SpriteSheetComponent>(texture, rows, cols);
+	animationComp->AddAnimation("Down", { { 30 , 31 }, framesPS });
+	animationComp->AddAnimation("Up", { {34 ,35 }, framesPS });
+	animationComp->AddAnimation("Left", { {32 ,33 },framesPS });
+	animationComp->AddAnimation("Peppered", { {49 , 50 }, 6 });
+	animationComp->AddAnimation("Death", { {45 , 46 ,47 ,48  }, framesPS, false });
+
+	animationComp->SetAnimate(true);
+
+	auto pos = startPos;
+	pos.y -= 3 * scale.y;
+
+	player->GetTransform().SetScale(scale);
+	player->GetTransform().SetPosition(pos);
+
+
+	//player texture size
+	auto colliderSize = glm::vec3{ (animationComp->GetTextureSize().x - 4) * scale.x, ((animationComp->GetTextureSize().y) * scale.y), 0 * scale.z };
+	auto colliserOffest = glm::vec3{ 2 * scale.x, 0 ,0 };
+	player->AddComponent<ColliderComponent>(colliderSize, colliserOffest);
+
+	//player->AddComponent<EnemyPlayerComponent>();
+
+	return player;
+}
 
 std::unique_ptr<dae::GameObject> ObjectFactory::CreateEnemy(EnemyType type, glm::vec3 startPos, glm::vec3 scale)
 {
@@ -172,7 +210,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateEnemy(EnemyType type, glm:
 	int rows{ 11 };
 	//glm::vec3 scale{1,1,1};
 
-	int animFramesOffset;
+	int animFramesOffset{0};
 	int points;
 	switch (type)
 	{
@@ -216,8 +254,8 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateEnemy(EnemyType type, glm:
 	//player texture size
 	int colliderXOffset{ 0 };
 
-	auto colliderSize = glm::vec3{ (animationComp->GetTextureSize().x - colliderXOffset*2) * scale.x, ((animationComp->GetTextureSize().y) * scale.y), 0 * scale.z };
-	auto colliserOffest = glm::vec3{ colliderXOffset * scale.x, 0 ,0 };
+	auto colliderSize = glm::vec3{ (animationComp->GetTextureSize().x - colliderXOffset*2) * scale.x, ((animationComp->GetTextureSize().y -4) * scale.y), 0 * scale.z };
+	auto colliserOffest = glm::vec3{ colliderXOffset * scale.x, 2*scale.y ,0 };
 	enemy->AddComponent<ColliderComponent>(colliderSize, colliserOffest);
 	enemy->AddComponent<EnemyComponent>(points, type);
 

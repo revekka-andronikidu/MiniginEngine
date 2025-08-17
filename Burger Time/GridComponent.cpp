@@ -66,7 +66,7 @@ std::vector<glm::vec3> GridComponent::ConvertPathToWorldPositions(const std::vec
         // Adjust X if the cell has an offset ladder
         if (gridCell.HasObject(CellObject::OFFSETLADDER))
         {
-            x += cellSize / 2.0f; // shift right for offset ladder
+           x += cellSize / 2.0f; // shift right for offset ladder
         }
 
 		//x += cellSize / 2; // Center the X position in the cell

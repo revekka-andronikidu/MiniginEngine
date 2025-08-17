@@ -45,7 +45,8 @@ namespace dae
 	{
 		MrHotDog = 0,
 		MrPickle = 1,
-		MrEgg = 2
+		MrEgg = 2,
+		EnemyPlayer = 3// Special enemy for player vs player mode
 	};
 
 

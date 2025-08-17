@@ -33,7 +33,7 @@ namespace dae
 		bool m_IsDead{ false };
 		bool m_AnimSet{ false };
 		bool m_CanMove{ true };
-		float m_MoveSpeed{ 50.f * GameSettings::scale.x };
+		float m_MoveSpeed{ 35.f * GameSettings::scale.x };
 		float m_TimeSinceLastPepper{ 0.f };
 		float m_PepperCooldown{ 0.5f }; // Cooldown for pepper usage
 		Direction m_CurrentDirection{ Direction::Down };

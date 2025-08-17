@@ -210,7 +210,7 @@
   "enemies": [
     {
       "enemyType": "MrHotdog",
-      "count": 0
+      "count": 3
     },
     {
       "enemyType": "MrPickle",
@@ -220,5 +220,8 @@
       "enemyType": "MrEgg",
       "count": 1
     }
+  ],
+  "enemyPlayer": [
+    [ 6, 0 ]
   ]
 }

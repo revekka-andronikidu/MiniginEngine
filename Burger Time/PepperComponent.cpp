@@ -3,6 +3,8 @@
 #include <GameObject.h>
 #include <SpriteSheetComponent.h>
 #include <ServiceLocator.h>
+#include <ColliderComponent.h>
+#include <TimeManager.h>
 
 using namespace dae;
 
@@ -17,6 +19,13 @@ PepperComponent::PepperComponent(GameObject* pOwner, Direction direction) : Base
 
 void PepperComponent::Update() 
 { 
+	if (m_Duration <= 0.f)
+	{
+		GetOwner()->GetComponent<ColliderComponent>()->m_IsActive = false; // Disable collider after duration
+	}
+	m_Duration -= TimeManager::GetInstance().GetDeltaTime();
+
+
 	auto sprite = GetOwner()->GetComponent<SpriteSheetComponent>();
 	if (!sprite) return;
 

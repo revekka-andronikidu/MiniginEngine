@@ -17,6 +17,7 @@ namespace dae
 	private:
 		Direction m_Direction;
 		void SetAnimation();
+		float m_Duration{ 0.2f }; // Duration of the pepper effect
 	};
 }
 

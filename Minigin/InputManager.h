@@ -100,14 +100,6 @@ namespace dae
 		std::vector<std::unique_ptr<XboxController>> m_Controllers;
 
 		Uint8 m_PreviousKeyboardState[SDL_NUM_SCANCODES]{ };
-
-
-		//std::unordered_map<unsigned int, ControllerInput> m_ControllerInputs; //actionID, input
-		//std::unordered_map<unsigned int, KeyboardInput> m_KeyboardInputs;
-		/*	void BindInput(ControllerInput input, std::unique_ptr<Command> command);
-		void BindInput(KeyboardInput input, std::unique_ptr<Command> command);*/
-		//bool HandleControllerInput();
-		//bool HandleKeyboardInput();
 	};
 
 }

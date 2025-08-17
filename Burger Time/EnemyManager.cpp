@@ -17,10 +17,15 @@ void EnemyManager::AddEnemy(EnemyType type)
 
 void EnemyManager::StopAllEnemies()
 {
-	for (auto enemy : m_Enemies)
+	auto enemies = SceneManager::GetInstance().GetActiveScene().GetObjectsWithTag(Tag::ENEMY);
+	for (auto enemy : enemies)
 	{
-		enemy->GetComponent<EnemyComponent>()->m_CanMove = false;
+		if (auto enemyComp = enemy->GetComponent<EnemyComponent>())
+		{
+			enemyComp->m_CanMove = false;
+		}
 	}
+
 }
 
 void EnemyManager::AddSpawnPoint(int x, int y)
@@ -66,6 +71,7 @@ void dae::EnemyManager::OnNotify(const GameObject& entity, const BaseEvent& even
 
 	if (auto evemt = dynamic_cast<const EnemyDefeatedEvent*>(&event))
 	{
+
 		m_EnemiesToRespawn.push_back(entity.GetComponent<EnemyComponent>()->GetType());
 		//EventManager::GetInstance().RemoveListener<EnemyDefeatedEvent>(enemy.get(), this);
 	}

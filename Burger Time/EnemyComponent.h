@@ -11,7 +11,7 @@ namespace dae
 	{
 	public:
 		EnemyComponent(GameObject* pOwner, int points, EnemyType type);
-		~EnemyComponent() = default;
+		~EnemyComponent();
 		void Update() override;
 
 		void FixedUpdate([[maybe_unused]] const float fixedTimeStep) override {};
@@ -41,7 +41,7 @@ namespace dae
 		int m_Points{}; // Points awarded for defeating this enemy
 		float m_PepperedTimer{ 0.f };
 		const float m_PepperedDuration{ 2.f };
-		const float m_MoveSpeed{ 30.f * GameSettings::scale.x };
+		const float m_MoveSpeed{ 25.f * GameSettings::scale.x };
 		glm::vec3 m_SpawnPosition{0,0,0};
 
 		
@@ -52,12 +52,11 @@ namespace dae
 		std::vector<glm::vec3> m_CurrentPath;
 		std::vector<glm::vec3> m_NewPath;
 		glm::vec3 m_TargetPosition{ 0,0,0 };
-
+		int m_CurrentPathPoint{1};
 
 		void Pepper();
 		void UnPepper();
-
-
+		glm::vec3 GetAnchorPosition() const;
 		void Animate();
 		void WalkIn();
 		void Activate();
@@ -65,6 +64,8 @@ namespace dae
 		bool MoveTowardsTarget(glm::vec3 target);
 		void SetNewTarget();
 		std::vector<glm::vec3> CalculatePath();
+		bool IsSameDirection(Direction currentDir, const glm::vec3& currentTarget, const glm::vec3& nextTarget) const;
+		bool IsValidNextTarget(Direction currentDir, const glm::vec3& currentTarget, const glm::vec3& nextTarget) const;
 		//void SetRandomDirection();
 		
 	};

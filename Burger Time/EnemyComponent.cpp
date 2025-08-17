@@ -1,4 +1,4 @@
-#include "EnemyComponent.h"
+﻿#include "EnemyComponent.h"
 #include <GameObject.h>
 #include "SpriteSheetComponent.h"
 #include <TimeManager.h>
@@ -40,6 +40,14 @@ EnemyComponent::EnemyComponent(GameObject* pOwner, int points, EnemyType type)
 	}
 
 	transform.SetPosition(pos);	
+}
+
+EnemyComponent::~EnemyComponent()
+{
+	if (EventManager::IsAlive())
+	{
+		EventManager::GetInstance().RemoveListener(this);
+	}
 }
 
 void EnemyComponent::OnNotify(const GameObject& entity, const BaseEvent& event)
@@ -85,11 +93,153 @@ void EnemyComponent::Update()
 	{
 		if (MoveTowardsTarget(m_TargetPosition))
 		{
-			//m_CanMove = false;
-			//SetNewTarget();
+			SetNewTarget();
 		}
 	}
 	Animate();
+}
+
+void EnemyComponent::SetNewTarget()
+{
+	if (!m_pGrid) return;
+
+	if (m_CurrentPathPoint >= m_CurrentPath.size() - 1)
+	{
+		m_CalculatePath = true; // if we reached end of path, recalculate next frame
+		//std::cout << "Reached end of path, recalculating" << std::endl;
+	}
+	if (m_CurrentPathPoint >= 4)
+	{
+		m_CalculatePath = true;
+	}
+	if (m_CalculatePath)
+	{
+		m_NewPath = CalculatePath();
+		if (!m_NewPath.size() < 1)
+		{
+
+			if (IsValidNextTarget(m_CurrentDirection, m_CurrentPath[m_CurrentPathPoint], m_NewPath[1]))
+			{
+				m_CurrentPath = m_NewPath;
+				m_CurrentPathPoint = 1; // reset to start of new path
+				m_TargetPosition = m_CurrentPath[m_CurrentPathPoint];
+				m_CalculatePath = false;
+				//std::cout << "New path calculated, starting at point: " << m_CurrentPathPoint << std::endl;
+				return;
+			}
+		
+		}
+		if (m_CurrentPathPoint < m_CurrentPath.size() - 1)
+		{
+			m_CurrentPathPoint++;
+			m_TargetPosition = m_CurrentPath[m_CurrentPathPoint];
+			//std::cout << "Continuing in same direction, but recalculating path" << std::endl;
+			return;
+		}
+		else
+		{
+
+		}
+	}
+	
+	//Check if we can change path and climb
+	if (m_CurrentPathPoint + 1 < m_CurrentPath.size() && IsSameDirection(m_CurrentDirection, m_CurrentPath[m_CurrentPathPoint], m_CurrentPath[m_CurrentPathPoint+1]))
+	{
+		//if (m_CurrentDirection == Direction::Left || m_CurrentDirection == Direction::Right)
+		//{
+		//	glm::vec3 enemy = GetAnchorPosition();
+		//	glm::vec3 player = m_CurrentPath.back(); //maybe check for new path?
+		//	float cellSize = GameSettings::cellSize* GameSettings::scale.y;
+		//	Direction preferredDir = (player.y > enemy.y + cellSize/2) ? Direction::Down : Direction::Up;
+		//
+		//	Direction altDir = (preferredDir == Direction::Down) ? Direction::Up : Direction::Down;
+		//
+		//	if (m_pGrid->CanClimb(preferredDir, enemy.x, enemy.y))
+		//	{
+		//		m_CurrentDirection = preferredDir;
+		//		m_TargetPosition.y += (preferredDir == Direction::Down ? cellSize : -cellSize);
+		//		m_CalculatePath = true;
+		//		std::cout << "Climbing in  direction: " << static_cast<int>(preferredDir) << std::endl;
+		//		return;
+		//	}
+		//	// Otherwise try the opposite
+		//	else if (m_pGrid->CanClimb(altDir, enemy.x, enemy.y))
+		//	{
+		//		m_CurrentDirection = altDir;
+		//		m_TargetPosition += (altDir == Direction::Down ? cellSize : -cellSize);
+		//		m_CalculatePath = true;
+		//		std::cout << "Climbing in direction: " << static_cast<int>(altDir) << std::endl;
+		//		return;
+		//	}
+		//	else
+		//	{
+		//		m_CurrentPathPoint++;
+		//		m_TargetPosition = m_CurrentPath[m_CurrentPathPoint]; // continue in same direction
+		//		std::cout << "Continuing in same direction: " << static_cast<int>(m_CurrentDirection) << std::endl;
+		//
+		//		if (m_CurrentPathPoint >= m_CurrentPath.size() - 2)
+		//		{
+		//			m_CalculatePath = true; // if we reached end of path, recalculate next frame
+		//			std::cout << "Reached end of path, recalculating next frame" << std::endl;
+		//			return;
+		//		}
+		//	}
+		//	
+		//}
+		//else //is climbing 
+		{
+			m_CurrentPathPoint++;
+			m_TargetPosition = m_CurrentPath[m_CurrentPathPoint];
+			//std::cout << "Continuing in same direction: " << static_cast<int>(m_CurrentDirection) << std::endl;
+			return;
+		}
+	}
+	else
+	{
+		m_CalculatePath = true;
+		//std::cout << "Direction change detected, recalculating path" << std::endl;
+	}
+	
+	
+
+}
+
+bool EnemyComponent::IsSameDirection(Direction currentDir, const glm::vec3& currentTarget, const glm::vec3& nextTarget) const
+{
+	glm::vec3 delta = nextTarget - currentTarget;
+
+	switch (currentDir)
+	{
+	case Direction::Left:   return delta.x < 0 && fabs(delta.y) < fabs(delta.x);
+	case Direction::Right:  return delta.x > 0 && fabs(delta.y) < fabs(delta.x);
+	case Direction::Up:     return delta.y < 0 && fabs(delta.x) < fabs(delta.y);
+	case Direction::Down:   return delta.y > 0 && fabs(delta.x) < fabs(delta.y);
+	default:                return false;
+	}
+}
+
+bool EnemyComponent::IsValidNextTarget(Direction currentDir, const glm::vec3& currentTarget, const glm::vec3& nextTarget) const
+{
+	glm::vec3 delta = nextTarget - currentTarget;
+
+	// Horizontal
+	if (delta.x > 0 && currentDir == Direction::Left)  return false; // would reverse
+	if (delta.x < 0 && currentDir == Direction::Right) return false;
+
+	// Vertical
+	if (delta.y > 0 && currentDir == Direction::Up)    return false;
+	if (delta.y < 0 && currentDir == Direction::Down)  return false;
+
+	return true; // either same direction or neutral
+}
+
+glm::vec3 EnemyComponent::GetAnchorPosition() const
+{
+	glm::vec3 currentPos = GetOwner()->GetTransform().GetLocalPosition();
+	currentPos.y += GameSettings::cellSize * GameSettings::scale.y; // feet pos
+	currentPos.x += GameSettings::cellSize * GameSettings::scale.x / 2; // center the enemy position
+
+	return currentPos;
 }
 
 std::vector<glm::vec3> EnemyComponent::CalculatePath()
@@ -101,22 +251,22 @@ std::vector<glm::vec3> EnemyComponent::CalculatePath()
 
 	auto player = players[0];
 	auto playerPos = player->GetTransform().GetLocalPosition();
-	playerPos.x += GameSettings::cellSize * GameSettings::scale.x / 2; // center the player position
+	playerPos.x += (GameSettings::cellSize / 3) * GameSettings::scale.x; // center the player position shift to left for offsett ladderse
 	playerPos.y += GameSettings::cellSize * GameSettings::scale.y; // feet pos
 	auto target = m_pGrid->WorldToCellPos(playerPos);
 
-	auto currentPos = GetOwner()->GetTransform().GetLocalPosition();
-	currentPos.x += GameSettings::cellSize * GameSettings::scale.x / 2; // center the enemy position
-	currentPos.y += GameSettings::cellSize * GameSettings::scale.y;// to get feet
-	auto startCell = m_pGrid->WorldToCellPos(currentPos);
+	auto pos = GetAnchorPosition();
+	pos.x -= (GameSettings::cellSize / 4) * GameSettings::scale.x; // center the enemy position shift to left for offsett ladderse -= Gsm
+	auto startCell = m_pGrid->WorldToCellPos(pos);
+	
 
 	auto path = m_pGrid->FindShortestPath(startCell, target);
 	auto worldPath = m_pGrid->ConvertPathToWorldPositions(path);
 
-	for (const auto& cell : worldPath)
-	{
-		std::cout << "Cell: " << cell.x << ", " << cell.y << std::endl;
-	}
+	//for (const auto& cell : worldPath)
+	//{
+	//	std::cout << "Cell: " << cell.x << ", " << cell.y << std::endl;
+	//}
 
 	return worldPath;
 }
@@ -125,7 +275,9 @@ void EnemyComponent::Activate()
 {
 	m_CanMove = true;
 	m_NewPath = CalculatePath();
-	m_TargetPosition = m_NewPath[1]; // Set the first target position
+	m_TargetPosition = m_NewPath[m_CurrentPathPoint]; // Set the first target position
+	m_CurrentPath = m_NewPath;
+	m_CalculatePath = false; // Start with the calculated path
 }
 
 
@@ -250,61 +402,52 @@ bool EnemyComponent::MoveTowardsTarget(glm::vec3 targetPos)
 	int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
 	float move = m_MoveSpeed * TimeManager::GetInstance().GetDeltaTime();
 
-	bool targetReached = false;
+	bool targetReached;
 
 	auto target = targetPos;
 	target.x -= cellSize / 2; // deCenter the target position	
 	target.y -= cellSize / 2; // deCenter the target position
 	target.y -= 3  * GameSettings::scale.y; //feet 
-	std::cout << "Moving towards target: " << target.x << ", " << target.y << std::endl;
-	std::cout << "Current position: " << pos.x << ", " << pos.y << std::endl;
+	//std::cout << "Moving towards target: " << target.x << ", " << target.y << std::endl;
+	//std::cout << "Current position: " << pos.x << ", " << pos.y << std::endl;
 
+	constexpr float epsilon = 2.0f;
 
-	// Move horizontally
-	if (pos.x < target.x)
+	if (pos.x < target.x - epsilon)
 	{
 		newPos.x += move;
-		if (newPos.x >= target.x)
-		{
-			newPos.x = target.x;
-			targetReached = true; // Target reached
-		}
 		m_CurrentDirection = Direction::Right;
 	}
-	else if (pos.x > target.x)
+	else if (pos.x > target.x + epsilon)
 	{
 		newPos.x -= move;
-		if (newPos.x <= target.x)
-		{
-			newPos.x = target.x;
-			targetReached = true; // Target reached
-		}
 		m_CurrentDirection = Direction::Left;
 	}
-	else if (pos.y < target.y)
+	else
 	{
-		newPos.y += move;
-		if (newPos.y >= target.y)
+		newPos.x = target.x; // snap if within tolerance
+		// Vertical movement
+		if (pos.y < target.y - epsilon)
 		{
-			newPos.y = target.y;
-			targetReached = true; // Target reached
+			newPos.y += move;
+			m_CurrentDirection = Direction::Down;
 		}
-		m_CurrentDirection = Direction::Down;
-	}
-	else if (pos.y > target.y)
-	{
-		newPos.y -= move;
-		if (newPos.y <= target.y)
+		else if (pos.y > target.y + epsilon)
 		{
-			newPos.y = target.y;
-			targetReached = true; // Target reached
+			newPos.y -= move;
+			m_CurrentDirection = Direction::Up;
 		}
-		m_CurrentDirection = Direction::Up;
+		else
+		{
+			newPos.y = target.y; // snap if within tolerance
+		}
 	}
+
+	
 
 	GetOwner()->GetTransform().SetPosition(newPos);
 
-	if (targetReached)
+	if (newPos.x == target.x && newPos.y == target.y)
 	{
 		return true;
 	}
