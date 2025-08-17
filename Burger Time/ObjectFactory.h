@@ -29,7 +29,7 @@ namespace dae
 
         std::unique_ptr<dae::GameObject> CreatePlayer(glm::vec3 startPos, glm::vec3 scale, int lives);
         std::unique_ptr<dae::GameObject> CreatePepper(Direction direction, glm::vec3 startPos, glm::vec3 scale = GameSettings::scale);
-        std::unique_ptr<dae::GameObject> CreateMrHotDog(glm::vec3 startPos, glm::vec3 scale = GameSettings::scale);
+        std::unique_ptr<dae::GameObject> CreateEnemy(EnemyType type, glm::vec3 startPos, glm::vec3 scale = GameSettings::scale);
 
         std::unique_ptr<dae::GameObject> CreateShortPlatform(glm::vec3 position, glm::vec3 scale);
         std::unique_ptr<dae::GameObject> CreateLongLeftPlatform(glm::vec3 position, glm::vec3 scale);

@@ -1,6 +1,7 @@
 #pragma once
 #include "Singleton.h"
 #include <memory>
+#include "json.hpp"
 
 namespace dae
 {
@@ -8,6 +9,7 @@ namespace dae
 	class Scene;
 	class GridComponent;
 	class GameObject;
+
 	class SceneFactory final : public Singleton<SceneFactory>
 	{
 	public:
@@ -25,7 +27,7 @@ namespace dae
 		void CreateHUD(Scene& scene, GameObject* playerPtr);
 
 		std::unique_ptr<GameObject> CreatePlayer(Scene& scene, int x, int y, GridComponent* grid);
-		void CreateEnemies(Scene& scene, GameObject* level, GridComponent* grid);
+		void CreateEnemies(const nlohmann::json& levelData, Scene& scene, GameObject* level, GridComponent* grid);
 	};
 
 }

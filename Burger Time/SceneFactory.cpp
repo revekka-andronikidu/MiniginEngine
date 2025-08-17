@@ -9,26 +9,23 @@
 #include <Scene.h>
 #include <InputManager.h>
 #include "GameCommands.h"
-
 #include <fstream>
 #include <iostream>
 #include "json.hpp"
 #include "GridComponent.h"
 #include "PlayerComponent.h"
-
 #include "IngredientComponent.h"
-
 #include "PeppersDisplay.h"
 #include "LivesDisplay.h"
 #include "PointsDisplay.h"
 #include "HighScoresManager.h"
 #include "KeypadComponent.h"
 #include "AnimatedTextComponent.h"
-
 #include "GameEvents.h"
-
 #include "ColliderComponent.h"
 #include "EnemyComponent.h"
+#include "EnemyManager.h"
+
 using namespace dae;
 
 SceneFactory::SceneFactory()
@@ -300,7 +297,10 @@ void SceneFactory::CreateLevel(unsigned short stage)
 	}
 
 
-	CreateEnemies(scene, levelObject.get(), gridComp);
+	
+
+
+	CreateEnemies(data, scene, levelObject.get(), gridComp);
 	//parent enemies to the level(or at least the nemy manager)
 
 
@@ -308,6 +308,8 @@ void SceneFactory::CreateLevel(unsigned short stage)
 	pos.y += yOffset;
 	pos.x += GameSettings::xOffset;
 	levelObject->GetTransform().SetPosition(pos);
+
+
 	scene.Add(std::move(levelObject));
 	
 
@@ -375,26 +377,39 @@ std::unique_ptr<GameObject> SceneFactory::CreatePlayer(Scene& scene, int x, int 
 	return player;
 }
 
-void SceneFactory::CreateEnemies(Scene& scene, GameObject* level, GridComponent* grid)
+void SceneFactory::CreateEnemies(const nlohmann::json& levelData, Scene& scene, GameObject* level, GridComponent* grid)
 {
-	int x = 2;
-	int y = 2; 
+	auto& manager = EnemyManager::GetInstance();
 
-	auto posX = GameSettings::cellSize * GameSettings::scale.x * x;
-	auto posY = GameSettings::cellSize * GameSettings::scale.y * y;
+	for (const auto& sp : levelData["enemySpawnPoints"])
+	{
+		int X = sp[0];
+		int Y = sp[1];
 
-	auto enemy = ObjectFactory::GetInstance().CreateMrHotDog({ posX,posY, 0 });
-	enemy.get()->SetParent(level, false);
-	enemy->GetComponent<EnemyComponent>()->SetGrid(grid);
 
-	//auto enemy2 = ObjectFactory::GetInstance().CreateMrHotDog({ posX - 24,posY, 0 });
-	//enemy2.get()->SetParent(level, false);
-	
-	//parent to level so it can be moved with the level
-		//create enemies hereRead number of enemies per level from file and init here 
-	//add to enemy manager and that will determine thwir spawn pos (or the file will)
-	scene.Add(std::move(enemy));
-	//scene.Add(std::move(enemy2));
+		manager.AddSpawnPoint(X, Y);
+	}
+	for (const auto& enemy : levelData["enemies"])
+	{
+		std::string str = enemy["enemyType"];
+		int count = enemy["count"];
+		EnemyType type{EnemyType::MrHotDog};
+
+		if (str == "MrHotdog")
+			type = EnemyType::MrHotDog;
+		else if (str == "MrPickle")
+			type = EnemyType::MrPickle;
+		else if (str == "MrEgg")
+			type = EnemyType::MrEgg;
+
+
+		for (int i = 0; i < count; ++i)
+		{
+			manager.AddEnemy(type);
+
+		}
+	}
+	manager.SetGrid(grid);
 }
 
 void SceneFactory::CreateHUD(Scene& scene, GameObject* playerPtr)

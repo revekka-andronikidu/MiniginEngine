@@ -79,6 +79,7 @@ void Scene::Render() const
 {
 	for (const auto& object : m_objects)
 	{
+		if(object->m_IsActive)
 		object->Render();
 	}
 }

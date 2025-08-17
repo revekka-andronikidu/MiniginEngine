@@ -5,6 +5,10 @@
             "score": 12000
         },
         {
+            "name": "NXY",
+            "score": 11800
+        },
+        {
             "name": "BBB",
             "score": 9500
         },
@@ -15,10 +19,6 @@
         {
             "name": "L",
             "score": 3500
-        },
-        {
-            "name": "BMNPQ",
-            "score": 900
         }
     ]
 }

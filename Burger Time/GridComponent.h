@@ -72,7 +72,8 @@ namespace dae
 
         std::vector<CellPos> FindShortestPath(CellPos start, CellPos goal) const;
 
-
+        std::vector<glm::vec3> ConvertPathToWorldPositions(const std::vector<CellPos>& path) const;
+        CellPos WorldToCellPos(const glm::vec3& worldPos) const;
 
     private:
         int m_Width;

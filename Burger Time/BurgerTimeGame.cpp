@@ -6,14 +6,14 @@
 #include <InputManager.h>
 #include "GameCommands.h"
 #include "GameState.h"
-
 #include "Helpers.h"
-#include "SceneFactory.h"
-
 #include "GameEvents.h"
+
 #include "HighScoresManager.h"
 #include "LivesComponent.h"
 #include "PlayerComponent.h"
+#include "EnemyManager.h"
+
 
 using namespace dae;
 
@@ -100,6 +100,7 @@ void BurgerTimeGame::Update()
 {
 
 	m_GameModeMachine.Update();
+	EnemyManager::GetInstance().Update();
 	
 };
 
@@ -160,11 +161,6 @@ void BurgerTimeGame::OnNotify(const GameObject& entity, const BaseEvent& event)
 {
 	if (dynamic_cast<const LevelCompleteEvent*>(&event))
 	{
-					//stop all enemy movement
-					// //stop player 
-					//play animation
-					//move to next stage
-
 		if (m_CurrentStage < m_MaxStages)
 		{
 			m_GameModeMachine.EnterState<LevelCompleteState>(4.0f);
@@ -188,7 +184,6 @@ void BurgerTimeGame::OnNotify(const GameObject& entity, const BaseEvent& event)
 	{
 		// Update the health bar UI
 		m_PlayerLives = entity.GetComponent<LivesComponent>()->GetLives();
-
 		m_GameModeMachine.EnterState<PlayerDeathState>(3.f);
 
 	}

@@ -128,28 +128,97 @@
 
   "burgers": [
     [
-      {"ingredientType": 0, "position": [ 1, 2 ]},
-      {"ingredientType": 5, "position": [ 1, 4 ]},
-      {"ingredientType": 3, "position": [ 1, 7 ]},
-      {"ingredientType": 1, "position": [ 1, 9 ]}
+      {
+        "ingredientType": 0,
+        "position": [ 1, 2 ]
+      },
+      {
+        "ingredientType": 5,
+        "position": [ 1, 4 ]
+      },
+      {
+        "ingredientType": 3,
+        "position": [ 1, 7 ]
+      },
+      {
+        "ingredientType": 1,
+        "position": [ 1, 9 ]
+      }
     ],
     [
-      {"ingredientType": 0, "position": [ 4, 0 ]},
-      {"ingredientType": 5, "position": [ 4, 5 ]},
-      {"ingredientType": 3, "position": [ 4, 7 ]},
-      {"ingredientType": 1, "position": [ 4, 9 ]}
+      {
+        "ingredientType": 0,
+        "position": [ 4, 0 ]
+      },
+      {
+        "ingredientType": 5,
+        "position": [ 4, 5 ]
+      },
+      {
+        "ingredientType": 3,
+        "position": [ 4, 7 ]
+      },
+      {
+        "ingredientType": 1,
+        "position": [ 4, 9 ]
+      }
     ],
     [
-      {"ingredientType": 0, "position": [ 7, 0 ]},
-      {"ingredientType": 5, "position": [ 7, 2 ]},
-      {"ingredientType": 3, "position": [ 7, 5 ]},
-      {"ingredientType": 1, "position": [ 7, 9 ]}
+      {
+        "ingredientType": 0,
+        "position": [ 7, 0 ]
+      },
+      {
+        "ingredientType": 5,
+        "position": [ 7, 2 ]
+      },
+      {
+        "ingredientType": 3,
+        "position": [ 7, 5 ]
+      },
+      {
+        "ingredientType": 1,
+        "position": [ 7, 9 ]
+      }
     ],
     [
-      {"ingredientType": 0, "position": [ 10, 0 ]},
-      {"ingredientType": 5, "position": [ 10, 2 ]},
-      {"ingredientType": 3, "position": [ 10, 4 ]},
-      {"ingredientType": 1, "position": [ 10, 6 ]}
+      {
+        "ingredientType": 0,
+        "position": [ 10, 0 ]
+      },
+      {
+        "ingredientType": 5,
+        "position": [ 10, 2 ]
+      },
+      {
+        "ingredientType": 3,
+        "position": [ 10, 4 ]
+      },
+      {
+        "ingredientType": 1,
+        "position": [ 10, 6 ]
+      }
     ]
+  ],
+  "enemySpawnPoints": [
+    [ 0, 9 ],
+    [ 12, 9 ],
+    [ 0, 0 ],
+    [ 12, 0 ]
+  ],
+
+  "enemies": [
+    {
+      "enemyType": "MrHotdog",
+      "count": 0
+    },
+    {
+      "enemyType": "MrPickle",
+      "count": 0
+    },
+    {
+      "enemyType": "MrEgg",
+      "count": 1
+    }
   ]
 }

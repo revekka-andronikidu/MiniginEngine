@@ -165,12 +165,32 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreatePepper(Direction direction
 	return pepper;
 }
 
-std::unique_ptr<dae::GameObject> ObjectFactory::CreateMrHotDog(glm::vec3 startPos, glm::vec3 scale)
+std::unique_ptr<dae::GameObject> ObjectFactory::CreateEnemy(EnemyType type, glm::vec3 startPos, glm::vec3 scale)
 {
 	std::string texture{ "spritesheet.png" };
 	int cols{ 15 };
 	int rows{ 11 };
 	//glm::vec3 scale{1,1,1};
+
+	int animFramesOffset;
+	int points;
+	switch (type)
+	{
+	case EnemyType::MrHotDog:
+		points = 100;
+		animFramesOffset = 0;
+		break;
+
+	case EnemyType::MrEgg:
+		points = 300;
+		animFramesOffset = 60;
+		break;
+	case EnemyType::MrPickle:
+		points = 200;
+		animFramesOffset = 30;
+		break;
+	}
+
 
 	auto enemy = std::make_unique<dae::GameObject>();
 	enemy->SetTag(Tag::ENEMY);
@@ -178,11 +198,11 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateMrHotDog(glm::vec3 startPo
 	float framesPS{ 8 };
 
 	auto animationComp = enemy->AddComponent<dae::SpriteSheetComponent>(texture, rows, cols);
-	animationComp->AddAnimation("Down", { { 30, 31}, framesPS });
-	animationComp->AddAnimation("Up", { {34,35}, framesPS });
-	animationComp->AddAnimation("Left", { {32,33},framesPS });
-	animationComp->AddAnimation("Peppered", { {49, 50}, framesPS });
-	animationComp->AddAnimation("Death", { {45, 46,47,48 }, framesPS, false});
+	animationComp->AddAnimation("Down", { { 30 + animFramesOffset, 31 + animFramesOffset}, framesPS });
+	animationComp->AddAnimation("Up", { {34 + animFramesOffset,35 + animFramesOffset}, framesPS });
+	animationComp->AddAnimation("Left", { {32 + animFramesOffset,33 + animFramesOffset},framesPS });
+	animationComp->AddAnimation("Peppered", { {49 + animFramesOffset, 50 + animFramesOffset}, 6 });
+	animationComp->AddAnimation("Death", { {45 + animFramesOffset, 46 + animFramesOffset,47 + animFramesOffset,48 + animFramesOffset }, framesPS, false});
 
 	animationComp->SetAnimate(true);
 	animationComp->SetAnimation("Left");
@@ -199,10 +219,7 @@ std::unique_ptr<dae::GameObject> ObjectFactory::CreateMrHotDog(glm::vec3 startPo
 	auto colliderSize = glm::vec3{ (animationComp->GetTextureSize().x - colliderXOffset*2) * scale.x, ((animationComp->GetTextureSize().y) * scale.y), 0 * scale.z };
 	auto colliserOffest = glm::vec3{ colliderXOffset * scale.x, 0 ,0 };
 	enemy->AddComponent<ColliderComponent>(colliderSize, colliserOffest);
-
-
-
-	enemy->AddComponent<EnemyComponent>();
+	enemy->AddComponent<EnemyComponent>(points, type);
 
 	return enemy;
 }

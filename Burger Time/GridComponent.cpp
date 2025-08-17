@@ -51,6 +51,33 @@ const GridCell& GridComponent::PositionToCell(int x, int y) const
         return dummyCell;
 }
 
+std::vector<glm::vec3> GridComponent::ConvertPathToWorldPositions(const std::vector<CellPos>& path) const
+{
+    std::vector<glm::vec3> worldPath;
+    int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
+
+    for (const auto& cell : path)
+    {
+        const GridCell& gridCell = GetCell(cell.x, cell.y);
+
+        float x = cell.x*cellSize + cellSize / 2.0f; // default: center of cell
+        float y = cell.y*cellSize + cellSize / 2.0f; // centerY
+
+        // Adjust X if the cell has an offset ladder
+        if (gridCell.HasObject(CellObject::OFFSETLADDER))
+        {
+            x += cellSize / 2.0f; // shift right for offset ladder
+        }
+
+		//x += cellSize / 2; // Center the X position in the cell
+		//y += cellSize / 2; // Center the Y position in the cell
+
+
+        worldPath.emplace_back(x, y, 0.0f); // z = 0
+    }
+
+    return worldPath;
+}
 
 
 bool GridComponent::IsOnPlatform(int posX, int posY) const
@@ -270,13 +297,23 @@ std::vector<CellPos> GridComponent::GetNeighbors(const CellPos& cell) const
     if (IsValidPosition(x, y + 1) && GetCell(x, y + 1).HasObject(CellObject::LADDER))
         neighbors.push_back({ x, y + 1 });
 
-    //// Up (ladder)
-    //if (IsValidPosition(x, y - 1) && GetCell(x, y).HasObject(CellObject::OFFSETLADDER))
-    //    neighbors.push_back({ x, y - 1 });
+    // Up (ladder)
+    if (IsValidPosition(x, y - 1) && GetCell(x, y).HasObject(CellObject::OFFSETLADDER))
+        neighbors.push_back({ x, y - 1 });
 
-    //// Down (ladder)
-    //if (IsValidPosition(x, y + 1) && GetCell(x, y + 1).HasObject(CellObject::OFFSETLADDER))
-    //    neighbors.push_back({ x, y + 1 });
+    // Down (ladder)
+    if (IsValidPosition(x, y + 1) && GetCell(x, y + 1).HasObject(CellObject::OFFSETLADDER))
+        neighbors.push_back({ x, y + 1 });
 
     return neighbors;
+}
+
+CellPos GridComponent::WorldToCellPos(const glm::vec3& worldPos) const
+{
+    int cellSize = static_cast<int>(GameSettings::cellSize * GameSettings::scale.x);
+
+    int cellX = static_cast<int>(worldPos.x) / cellSize;
+    int cellY = static_cast<int>(worldPos.y) / cellSize;
+
+    return { cellX, cellY };
 }

@@ -2,11 +2,13 @@
 #include <SceneManager.h>
 #include <ServiceLocator.h>
 #include "SceneFactory.h"
-#include "GameManager.h"
 #include "BurgerTimeGame.h"
 #include "TimeManager.h"
 #include "TrayManager.h"
 #include <Scene.h>
+#include "EnemyManager.h"
+
+
 using namespace dae;
 
 void MainMenuState::OnEnter()
@@ -43,14 +45,14 @@ void InGameState::OnEnter()
 	if (sm.HasScene(SceneNames::GetStageName(burgerTime->m_CurrentStage)))
 	{
 		burgerTime->RestartStage();
-		//RestartEnemyManager();
-
-		//sm.SetActiveScene(SceneNames::GetStageName(burgerTime->m_CurrentStage));
+		EnemyManager::GetInstance().Restart();
 		return;
 	}
 
 	auto& scene = sm.CreateScene(SceneNames::GetStageName(burgerTime->m_CurrentStage));
+	EnemyManager::GetInstance().NewLevel();
 	SceneFactory::GetInstance().CreateLevel(burgerTime->m_CurrentStage);
+	EnemyManager::GetInstance().Restart();
 
 	if (burgerTime->m_CurrentStage == 1)
 	{
@@ -82,9 +84,7 @@ void LevelCompleteState::OnEnter()
 {
 	ServiceLocator::GetAudioService().PlayEffect(SoundID::RoundClear.id, 0.8f, false);
 	m_Timer = 0.f;
-	//StopAllEnemies(); in enemy manager
-	//PlayCompletionAnimation();
-		//in player, stop input and play custom animation
+	EnemyManager::GetInstance().StopAllEnemies();
 }
 
 void LevelCompleteState::Update()
@@ -104,11 +104,10 @@ void LevelCompleteState::OnExit()
 
 void PlayerDeathState::OnEnter()
 {
-	//ServiceLocator::GetAudioService().PlayEffect(SoundID::RoundClear.id, 0.8f, false);
+	
 	m_Timer = 0.f;
-	//StopAllEnemies(); in enemy manager
-	//PlayCompletionAnimation();
-		//in player, stop input and play custom animation
+	EnemyManager::GetInstance().StopAllEnemies();
+	
 }
 
 void PlayerDeathState::Update()
@@ -160,7 +159,7 @@ void HighScoreEnterState::OnEnter()
 	auto& scene = SceneManager::GetInstance().CreateScene(SceneNames::HighScoreEntry);
 	SceneFactory::GetInstance().CreateHighScoreEntry();
 
-	SceneManager::GetInstance().QueueSceneChange(SceneManager::GetInstance().GetActiveScene().GetSceneName(), scene.GetSceneName());
+	SceneManager::GetInstance().QueueSceneChange(scene.GetSceneName(), SceneManager::GetInstance().GetActiveScene().GetSceneName());
 }
 
 

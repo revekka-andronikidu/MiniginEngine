@@ -37,6 +37,7 @@ namespace dae
 		void SetTag(const std::string& tag);
 		const std::string& GetTag() const;
 		bool HasTag(const std::string& tag) const;
+		bool m_IsActive{ true };
 			
 
 		#pragma region Component system

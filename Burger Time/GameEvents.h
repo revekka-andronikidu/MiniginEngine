@@ -67,6 +67,13 @@ namespace dae
 
 	};
 
+	class EnemyDefeatedEvent final : public BaseEvent
+	{
+	public:
+		explicit EnemyDefeatedEvent() {};
+
+	};
+
 	namespace GameEvent
 	{
 		//inline const Event LIVES_UPDATED{};
@@ -74,5 +81,6 @@ namespace dae
 		inline const LevelCompleteEvent LEVEL_COMPLETED{};
 		inline const PlayerDeathEvent PLAYER_DEATH{};
 		inline const PeppersChangedEvent PEPPERS_CHANGED{};
+		inline const EnemyDefeatedEvent ENEMY_DEFEATED{};
 	}
 }

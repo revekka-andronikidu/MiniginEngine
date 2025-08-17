@@ -48,22 +48,7 @@ void PrintSDLVersion()
 	printf("We are linking against SDL_ttf version %u.%u.%u.\n",
 		version.major, version.minor, version.patch);
 }
-//
-//const glm::vec2 dae::Minigin::GetWindowSize() const
-//{
-//	int width = 0, height = 0;
-//
-//	if (g_window)
-//	{
-//		SDL_GetWindowSize(g_window, &width, &height);
-//	}
-//	else
-//	{
-//		std::cerr << "Warning: g_window is null. Returning (0,0) size.\n";
-//	}
-//
-//	return glm::vec2(width, height);
-//}
+
 
 dae::Minigin::Minigin(const std::string &dataPath, int windowWidth, int windowHeight)
 	: m_WindowWidth(windowWidth)

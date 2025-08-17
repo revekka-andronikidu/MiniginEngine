@@ -25,7 +25,19 @@ void dae::Transform::SetPosition(const glm::vec2& position)
     m_LocalPosition = { position.x, position.y, 0 };
     //UpdateLocalMatrix();
     SetChildrenDirty();
+
 }
+
+void dae::Transform::SetWorldPosition(const glm::vec3& pos)
+{
+    if (m_pOwner->GetParent())
+        m_LocalPosition = pos - m_pOwner->GetParent()->GetTransform().GetWorldPosition();
+    else
+        m_LocalPosition = pos;
+
+    m_IsDirty = true;
+}
+
 
 void dae::Transform::SetPosition(const glm::vec3& newPosition)
 {
@@ -112,8 +124,7 @@ const glm::vec3& dae::Transform::GetWorldPosition()
 
 
 void dae::Transform::UpdateWorldPosition()
-{
-   
+{  
         auto parent = m_pOwner->GetParent();
         if (parent == nullptr)
         {

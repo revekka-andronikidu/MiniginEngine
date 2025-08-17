@@ -35,6 +35,8 @@ namespace dae
 		void SetRotation(const glm::quat& newRotation);
 		void SetScale(const glm::vec3& newScale);
 
+		void SetWorldPosition(const glm::vec3& pos);
+
 		/*void SetLocalMatrix(const glm::mat4& matrix);
 		void DecomposeMatrix(const glm::mat4& transform, glm::vec3& translation, glm::quat& rotation, glm::vec3& scale);*/
 
