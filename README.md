@@ -8,7 +8,7 @@ This project was developed for the **Programming 4** course at Howest — Digita
 2. Build a full retro arcade game on top of that engine to prove it works in practice.
 
  
-## 🎮 Gameplay
+## Gameplay
  
 You play as **Peter Pepper**, a chef trying to assemble giant burgers by walking across their ingredients. Each step you take on a bun, lettuce, patty, or top causes that piece to fall one level down — and if it lands on enemies, even better.
  
@@ -39,7 +39,7 @@ The Minigin engine provides the foundation the game is built on:
 - **Steam-style achievements** — unlocked through observer events (e.g. *“Just started”*, *“Unbeetable”*, *“Serve a whole burger”*)
 
  
-## 🧩 Design Patterns Used
+## Design Patterns Used
  
 The engine is structured around several classic game programming patterns:
  
@@ -55,7 +55,7 @@ The engine is structured around several classic game programming patterns:
 | **Game Loop** | Fixed-update physics + variable-update rendering |
  
  
-## 🛠 Tech Stack
+## Tech Stack
  
 - **Language:** C++20
 - **Platform:** Windows (x64)
@@ -86,7 +86,7 @@ The engine is structured around several classic game programming patterns:
 | Throw pepper | `A` |
 | Back (Menu) | `B` |
 
-### 🐞 Debug Commands
+### Debug Commands
  
 Global debug shortcuts
  
@@ -95,7 +95,7 @@ Global debug shortcuts
 | Skip current level | `F1` |
 | Mute / unmute audio | `F2` |
 
-## 📚 Credits
+## Credits
  
 - **Engine & Game:** Revekka Andronikidu
 - **Starter project:** [Minigin](https://github.com/avadae/minigin) by Alex Vanden Abeele (DAE)
@@ -103,5 +103,5 @@ Global debug shortcuts
 - **Original game:** *Burger Time* — Data East, 1982
 - All trademarks and assets belong to their respective owners. This project is a non-commercial educational recreation.
  
-## 📝 License
+## License
 This project was made as part of the DAE Programming 4 course.
