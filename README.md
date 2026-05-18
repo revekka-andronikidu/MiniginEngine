@@ -19,10 +19,10 @@ You're chased by:
   
 Your only defence is a limited supply of **pepper shakes**, which briefly stun nearby enemies. Drop all the burger ingredients to the plates at the bottom to complete each level.
  
-## 📸 Demo
+## Demo
 ![BurgerTime Gameplay](BurgerTime.gif)
 
-## ⚙️ Engine Features
+## Engine Features
  
 The Minigin engine provides the foundation the game is built on:
  
@@ -69,7 +69,7 @@ The engine is structured around several classic game programming patterns:
 - **Memory leak detection:** Visual Leak Detector (VLD)
 - **Input:** XInput (Xbox controllers)
 
-- ## 🎛 Controls
+- ## Controls
  
 ### Keyboard (Player 1)
 | Action | Key |
